@@ -29,7 +29,10 @@ export const courseService = {  async getAllCourses(): Promise<Course[]> {
       console.log('✅ getCourseById API Response:', response);
       
       // Handle the backend response format which wraps data
-      return response.data || null;
+      if (!response.data) {
+        throw new Error('Course data is missing or invalid');
+      }
+      return response.data;
     } catch (error: any) {
       console.error('❌ getCourseById error:', error);
       throw new Error(error.response?.data?.message || 'Failed to fetch course');
