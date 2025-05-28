@@ -170,10 +170,10 @@ const MyClassesPage: React.FC = () => {
                     src={course.image}
                     alt={course.title}
                     className="h-60 w-full object-cover"
-                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                      e.currentTarget.src = '/images/placeholder.jpg';
-                      console.log('Course image failed to load, using placeholder');
-                    }}
+                    // onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                    //   e.currentTarget.src = '/images/placeholder.jpg';
+                    //   console.log('Course image failed to load, using placeholder');
+                    // }}
                   />
                   <div className="absolute right-4 top-4 bg-[#1C1E53] text-white px-3 py-1 rounded-3xl flex items-center">
                     <FaStar className="text-[#FCD980] mr-1" size={14} />

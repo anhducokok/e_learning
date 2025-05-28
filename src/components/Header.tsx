@@ -31,7 +31,7 @@ const Header: React.FC = () => {
     { text: 'Học tập', path: '/learning-room' },
     { text: 'Lớp học của tôi', path: '/my-classes' },
     { text: 'Blog', path: '/blog' },
-    { text: 'Khóa học', path: '/#courses' },
+    { text: 'Khóa học', path: '/courses' },
     { text: 'Liên hệ', path: '/#contact' },
   ];
 

@@ -121,7 +121,7 @@ const LearningRoomPage: React.FC = () => {
               <img src={tungtungImage} alt="User avatar" className="rounded-full w-full h-full object-cover" />
             </div>
             <div className="text-center">
-              <h3 className="text-xl font-semibold text-gray-800">Nguyễn Văn A</h3>
+              <h3 className="text-xl font-semibold text-gray-800">Nguyễn Việt Hà</h3>
               <p className="text-gray-500 text-sm mb-4">Học viên</p>
               <div className="grid grid-cols-3 gap-2">
                 <div className="text-center">
@@ -199,7 +199,7 @@ const LearningRoomPage: React.FC = () => {
         <div className="flex-1">
           <div className="bg-gradient-to-r from-red-600 to-red-500 text-white p-6 rounded-lg shadow-md mb-6 flex flex-wrap md:flex-nowrap justify-between items-center">
             <div className="w-full md:w-3/5 mb-4 md:mb-0">
-              <h1 className="text-3xl font-bold mb-2">Xin chào, Văn A!</h1>
+              <h1 className="text-3xl font-bold mb-2">Xin chào, Việt Hà!</h1>
               <p className="text-red-100">Chào mừng trở lại với hành trình học tiếng Trung của bạn. Hôm nay bạn muốn học gì?</p>
             </div>
             <div className="w-full md:w-2/5 bg-white/10 backdrop-blur-sm rounded-lg p-4">
