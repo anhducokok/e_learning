@@ -115,7 +115,7 @@ const CourseDetailPage: React.FC = () => {
             <div>
               <h2 className="text-2xl font-semibold mb-3">Nội dung khóa học</h2>
               <p className="text-gray-700 leading-relaxed">
-                {course.description}
+                {course.content}
               </p>
               
               <h3 className="text-xl font-semibold mt-6 mb-3">Mục tiêu khóa học</h3>
