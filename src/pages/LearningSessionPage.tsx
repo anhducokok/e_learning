@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import Header from '../components/Header';
+import { courseService, lessonService } from '../services';
+import { useAuth } from '../contexts/AuthContext';
+import type { Course, Lesson } from '../types/api';
 
 const LearningSessionPage: React.FC = () => {
   const [currentTool] = useState<string>('installasi');

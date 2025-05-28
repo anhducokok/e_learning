@@ -1,36 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { courseService } from '../services';
+import { useAuth } from '../contexts/AuthContext';
+import type { Course } from '../types/api';
 import tralelaImage from '../images/tralela.jpg';
 import tungtungImage from '../images/tungtung.jpg';
+
 const LearningRoomPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('courses');
+  const [myCourses, setMyCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();  useEffect(() => {
+    const fetchMyCourses = async () => {
+      if (!user) return;
+      
+      try {
+        setLoading(true);
+        const courses = await courseService.getMyCourses();
+        setMyCourses(courses);
+      } catch (err: any) {
+        console.error('Error fetching courses:', err);
+        setError(err.message || 'Failed to fetch your courses');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Sample course data
-  const myCourses = [
-    {
-      id: 1,
-      title: 'HSK 1 - Tiếng Trung cho người mới bắt đầu',
-      progress: 45,
-      image: tralelaImage,
-      nextLesson: 'Bài 5: Giao tiếp hàng ngày',
-    },
-    {
-      id: 2,
-      title: 'Tiếng Trung giao tiếp cơ bản',
-      progress: 30,
-      image: tralelaImage,
-      nextLesson: 'Bài 3: Đi mua sắm',
-    },
-    {
-      id: 3,
-      title: 'Ngữ pháp tiếng Trung cơ bản',
-      progress: 15,
-      image: tralelaImage,
-      nextLesson: 'Bài 2: Cấu trúc câu cơ bản',
-    },
-  ];
+    fetchMyCourses();
+  }, [user]);
 
   // Sample learning path data
   const learningPaths = [
@@ -110,6 +110,7 @@ const LearningRoomPage: React.FC = () => {
       image: tralelaImage,
     },
   ];
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <Header />
@@ -121,11 +122,11 @@ const LearningRoomPage: React.FC = () => {
               <img src={tungtungImage} alt="User avatar" className="rounded-full w-full h-full object-cover" />
             </div>
             <div className="text-center">
-              <h3 className="text-xl font-semibold text-gray-800">Nguyễn Việt Hà</h3>
+              <h3 className="text-xl font-semibold text-gray-800">{user?.name || 'Học viên'}</h3>
               <p className="text-gray-500 text-sm mb-4">Học viên</p>
               <div className="grid grid-cols-3 gap-2">
                 <div className="text-center">
-                  <span className="block text-xl font-bold text-red-600">3</span>
+                  <span className="block text-xl font-bold text-red-600">{myCourses.length}</span>
                   <span className="text-xs text-gray-500">Khóa học</span>
                 </div>
                 <div className="text-center">
@@ -199,7 +200,7 @@ const LearningRoomPage: React.FC = () => {
         <div className="flex-1">
           <div className="bg-gradient-to-r from-red-600 to-red-500 text-white p-6 rounded-lg shadow-md mb-6 flex flex-wrap md:flex-nowrap justify-between items-center">
             <div className="w-full md:w-3/5 mb-4 md:mb-0">
-              <h1 className="text-3xl font-bold mb-2">Xin chào, Việt Hà!</h1>
+              <h1 className="text-3xl font-bold mb-2">Xin chào, {user?.name || 'bạn'}!</h1>
               <p className="text-red-100">Chào mừng trở lại với hành trình học tiếng Trung của bạn. Hôm nay bạn muốn học gì?</p>
             </div>
             <div className="w-full md:w-2/5 bg-white/10 backdrop-blur-sm rounded-lg p-4">
@@ -208,71 +209,111 @@ const LearningRoomPage: React.FC = () => {
               <button className="bg-white text-red-600 font-medium py-2 px-4 rounded-lg hover:bg-red-50 transition-colors">Bắt đầu ngay</button>
             </div>
           </div>
+          
           {activeTab === 'courses' && (
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Khóa học của tôi</h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {myCourses.map(course => (
-                  <div className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col md:flex-row" key={course.id}>
-                    <div className="relative md:w-1/3">
-                      <img src={course.image} alt={course.title} className="h-full w-full object-cover" />
-                      <div className="absolute top-4 right-4">
-                        <svg className="w-16 h-16" viewBox="0 0 36 36">
-                          <path
-                            className="stroke-gray-300 fill-none stroke-2"
-                            d="M18 2.0845
-                              a 15.9155 15.9155 0 0 1 0 31.831
-                              a 15.9155 15.9155 0 0 1 0 -31.831"
-                          />
-                          <path
-                            className="stroke-red-500 fill-none stroke-2"
-                            strokeDasharray={`${course.progress}, 100`}
-                            d="M18 2.0845
-                              a 15.9155 15.9155 0 0 1 0 31.831
-                              a 15.9155 15.9155 0 0 1 0 -31.831"
-                          />
-                          <text x="18" y="20.35" className="text-sm font-medium fill-red-600 text-center" textAnchor="middle">{course.progress}%</text>
-                        </svg>
+              {loading ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+                </div>
+              ) : error ? (
+                <div className="text-center py-8">
+                  <p className="text-red-500 mb-4">{error}</p>
+                  <Link
+                    to="/courses"
+                    className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
+                  >
+                    Khám phá khóa học
+                  </Link>
+                </div>
+              ) : myCourses.length === 0 ? (
+                <div className="text-center py-8">
+                  <h3 className="text-xl font-semibold text-gray-700 mb-4">
+                    Bạn chưa đăng ký khóa học nào
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Khám phá các khóa học thú vị và bắt đầu hành trình học tập của bạn
+                  </p>
+                  <Link
+                    to="/courses"
+                    className="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition"
+                  >
+                    Khám phá khóa học
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {myCourses.map(course => (
+                    <div className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col md:flex-row" key={course.id}>
+                      <div className="relative md:w-1/3">
+                        <img 
+                          src={course.image || tralelaImage} 
+                          alt={course.title} 
+                          className="h-full w-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = tralelaImage;
+                          }}
+                        />
+                        <div className="absolute top-4 right-4">
+                          <svg className="w-16 h-16" viewBox="0 0 36 36">
+                            <path
+                              className="stroke-gray-300 fill-none stroke-2"
+                              d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                            />
+                            <path
+                              className="stroke-red-500 fill-none stroke-2"
+                              strokeDasharray="50, 100"
+                              d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                            />
+                            <text x="18" y="20.35" className="text-sm font-medium fill-red-600 text-center" textAnchor="middle">50%</text>
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="p-6 md:w-2/3 flex flex-col justify-between">
+                        <div>
+                          <h3 className="font-bold text-lg mb-2 text-gray-800">{course.title}</h3>
+                          <p className="text-sm text-gray-600 mb-4">
+                            <span className="font-semibold">Giảng viên:</span> {course.instructor?.name || 'Chưa có thông tin'}
+                          </p>
+                        </div>
+                        <Link
+                          to={`/learning-session/${course.id}`}
+                          className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-center"
+                        >
+                          Tiếp tục học
+                        </Link>
                       </div>
                     </div>
-                    <div className="p-6 md:w-2/3 flex flex-col justify-between">
-                      <div>
-                        <h3 className="font-bold text-lg mb-2 text-gray-800">{course.title}</h3>
-                        <p className="text-sm text-gray-600 mb-4">
-                          <span className="font-semibold">Bài học tiếp theo:</span> {course.nextLesson}
-                        </p>
-                      </div>
-                     {/* // In your LearningRoomPage.tsx, add this button: */}
-
-                      <Link
-                        to="/learning-session/installasi-tools"
-                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                      >
-                        Tiếp tục học
-                      </Link></div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
+              
               <div className="mt-8">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">Khám phá thêm khóa học</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+                  <Link to="/courses" className="bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100">
                     <h4 className="font-bold text-gray-800 mb-2">HSK 2 - Nâng cao kỹ năng</h4>
                     <p className="text-gray-600 text-sm">Nâng cao trình độ tiếng Trung với khóa học HSK 2</p>
-                  </div>
-                  <div className="bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+                  </Link>
+                  <Link to="/courses" className="bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100">
                     <h4 className="font-bold text-gray-800 mb-2">Tiếng Trung văn phòng</h4>
                     <p className="text-gray-600 text-sm">Học tiếng Trung chuyên ngành văn phòng và công sở</p>
-                  </div>
-                  <div className="bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+                  </Link>
+                  <Link to="/courses" className="bg-white p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-100">
                     <h4 className="font-bold text-gray-800 mb-2">Xem tất cả khóa học</h4>
                     <p className="text-gray-600 text-sm">Khám phá hơn 50+ khóa học tiếng Trung</p>
-                  </div>
+                  </Link>
                 </div>
               </div>
             </div>
           )}
+          
           {activeTab === 'paths' && (
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Lộ trình học</h2>
@@ -297,15 +338,12 @@ const LearningRoomPage: React.FC = () => {
                           {path.completedSteps}/{path.steps} hoàn thành
                         </span>
                       </div>
-                      {/* // In your LearningRoomPage.tsx, add this button: */}
-
                       <Link
-                        to="/learning-session/installasi-tools"
+                        to={`/learning-session/${path.id}`}
                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                       >
                         Tiếp tục học
                       </Link>
-
                     </div>
                   </div>
                 ))}
@@ -325,6 +363,7 @@ const LearningRoomPage: React.FC = () => {
               </div>
             </div>
           )}
+          
           {activeTab === 'flashcards' && (
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Thẻ ghi nhớ</h2>
@@ -366,6 +405,7 @@ const LearningRoomPage: React.FC = () => {
               </div>
             </div>
           )}
+          
           {activeTab === 'practice' && (
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Bài luyện tập</h2>
@@ -399,41 +439,41 @@ const LearningRoomPage: React.FC = () => {
                 ))}
               </div>
 
-                <div className="mt-10">
+              <div className="mt-10">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">Danh mục luyện tập</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <div className="flex flex-col items-center bg-blue-50 rounded-lg p-4 shadow hover:shadow-md transition">
-                  <div className="text-3xl mb-2">🎧</div>
-                  <h4 className="text-base font-medium text-blue-700">Luyện nghe</h4>
+                    <div className="text-3xl mb-2">🎧</div>
+                    <h4 className="text-base font-medium text-blue-700">Luyện nghe</h4>
                   </div>
                   <div className="flex flex-col items-center bg-green-50 rounded-lg p-4 shadow hover:shadow-md transition">
-                  <div className="text-3xl mb-2">📝</div>
-                  <h4 className="text-base font-medium text-green-700">Luyện viết</h4>
+                    <div className="text-3xl mb-2">📝</div>
+                    <h4 className="text-base font-medium text-green-700">Luyện viết</h4>
                   </div>
                   <div className="flex flex-col items-center bg-purple-50 rounded-lg p-4 shadow hover:shadow-md transition">
-                  <div className="text-3xl mb-2">🔤</div>
-                  <h4 className="text-base font-medium text-purple-700">Ngữ pháp</h4>
+                    <div className="text-3xl mb-2">🔤</div>
+                    <h4 className="text-base font-medium text-purple-700">Ngữ pháp</h4>
                   </div>
                   <div className="flex flex-col items-center bg-yellow-50 rounded-lg p-4 shadow hover:shadow-md transition">
-                  <div className="text-3xl mb-2">💬</div>
-                  <h4 className="text-base font-medium text-yellow-700">Luyện nói</h4>
+                    <div className="text-3xl mb-2">💬</div>
+                    <h4 className="text-base font-medium text-yellow-700">Luyện nói</h4>
                   </div>
                 </div>
-                </div>
+              </div>
             </div>
           )}
 
           {activeTab === 'achievements' && (
-            <div className="tab-content achievements-content">
-              <h2 className="section-title">Thành tựu</h2>
-              <p className="coming-soon">Tính năng đang phát triển. Sẽ sớm ra mắt!</p>
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">Thành tựu</h2>
+              <p className="text-gray-600">Tính năng đang phát triển. Sẽ sớm ra mắt!</p>
             </div>
           )}
 
           {activeTab === 'settings' && (
-            <div className="tab-content settings-content">
-              <h2 className="section-title">Cài đặt</h2>
-              <p className="coming-soon">Tính năng đang phát triển. Sẽ sớm ra mắt!</p>
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">Cài đặt</h2>
+              <p className="text-gray-600">Tính năng đang phát triển. Sẽ sớm ra mắt!</p>
             </div>
           )}
         </div>
