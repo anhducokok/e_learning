@@ -1,24 +1,67 @@
 import React, { useState, useEffect } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 
-const AuthPage: React.FC = () => {
-  const [isLogin, setIsLogin] = useState(true);
+const AuthPage: React.FC = () => {  const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { login, register, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    // Redirect if already authenticated
+    if (isAuthenticated) {
+      navigate('/learning-room');
+    }  }, [isAuthenticated, navigate]);
   
   const toggleAuthMode = () => {
     setIsLogin(!isLogin);
+    setError('');
+    setFormData({
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    });
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);    try {
+      if (isLogin) {
+        await login(formData.email, formData.password);
+        navigate('/learning-room');
+      } else {
+        if (formData.password !== formData.confirmPassword) {
+          setError('Mật khẩu xác nhận không khớp');
+          return;
+        }
+        await register(formData.name, formData.email, formData.password);
+        navigate('/learning-room');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Đã xảy ra lỗi. Vui lòng thử lại.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -61,8 +104,13 @@ const AuthPage: React.FC = () => {
                 <p className="text-gray-600 mb-6">
                   Chào mừng trở lại! Đăng nhập để tiếp tục học tiếng Trung
                 </p>
-                
-                <form className="space-y-4">
+                  <form className="space-y-4" onSubmit={handleSubmit}>
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+                      {error}
+                    </div>
+                  )}
+                  
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                       Email
@@ -73,6 +121,8 @@ const AuthPage: React.FC = () => {
                       type="email"
                       autoComplete="email"
                       required
+                      value={formData.email}
+                      onChange={handleInputChange}
                       placeholder="Nhập địa chỉ email của bạn"
                       className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500"
                     />
@@ -89,6 +139,8 @@ const AuthPage: React.FC = () => {
                         type={showPassword ? 'text' : 'password'}
                         autoComplete="current-password"
                         required
+                        value={formData.password}
+                        onChange={handleInputChange}
                         placeholder="Nhập mật khẩu của bạn"
                         className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500"
                       />
@@ -129,12 +181,22 @@ const AuthPage: React.FC = () => {
                       </RouterLink>
                     </div>
                   </div>
-                  
-                  <button
+                    <button
                     type="submit"
-                    className="w-full py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition duration-150 ease-in-out"
+                    disabled={isLoading}
+                    className="w-full py-3 px-4 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-medium rounded-md transition duration-150 ease-in-out flex items-center justify-center"
                   >
-                    Đăng nhập
+                    {isLoading ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Đang đăng nhập...
+                      </>
+                    ) : (
+                      'Đăng nhập'
+                    )}
                   </button>
                 </form>
                 
@@ -189,37 +251,28 @@ const AuthPage: React.FC = () => {
                 <p className="text-gray-600 mb-6">
                   Đăng ký để bắt đầu hành trình học tiếng Trung của bạn
                 </p>
-                
-                <form className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-                        Họ
-                      </label>
-                      <input
-                        id="firstName"
-                        name="firstName"
-                        type="text"
-                        autoComplete="given-name"
-                        required
-                        placeholder="Nhập họ của bạn"
-                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500"
-                      />
+                  <form className="space-y-4" onSubmit={handleSubmit}>
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+                      {error}
                     </div>
-                    <div>
-                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-                        Tên
-                      </label>
-                      <input
-                        id="lastName"
-                        name="lastName"
-                        type="text"
-                        autoComplete="family-name"
-                        required
-                        placeholder="Nhập tên của bạn"
-                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500"
-                      />
-                    </div>
+                  )}
+                  
+                  <div>
+                    <label htmlFor="register-name" className="block text-sm font-medium text-gray-700 mb-1">
+                      Họ và tên
+                    </label>
+                    <input
+                      id="register-name"
+                      name="name"
+                      type="text"
+                      autoComplete="name"
+                      required
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder="Nhập họ và tên của bạn"
+                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500"
+                    />
                   </div>
                   
                   <div>
@@ -232,22 +285,9 @@ const AuthPage: React.FC = () => {
                       type="email"
                       autoComplete="email"
                       required
+                      value={formData.email}
+                      onChange={handleInputChange}
                       placeholder="Nhập địa chỉ email của bạn"
-                      className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                      Số điện thoại
-                    </label>
-                    <input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      autoComplete="tel"
-                      required
-                      placeholder="Nhập số điện thoại của bạn"
                       className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500"
                     />
                   </div>
@@ -262,6 +302,8 @@ const AuthPage: React.FC = () => {
                         name="password"
                         type={showPassword ? 'text' : 'password'}
                         required
+                        value={formData.password}
+                        onChange={handleInputChange}
                         placeholder="Tạo mật khẩu (ít nhất 8 ký tự)"
                         className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500"
                       />
@@ -291,9 +333,11 @@ const AuthPage: React.FC = () => {
                     <div className="relative">
                       <input
                         id="confirm-password"
-                        name="confirm-password"
+                        name="confirmPassword"
                         type={showConfirmPassword ? 'text' : 'password'}
                         required
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
                         placeholder="Nhập lại mật khẩu của bạn"
                         className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500"
                       />
@@ -339,12 +383,22 @@ const AuthPage: React.FC = () => {
                       </label>
                     </div>
                   </div>
-                  
-                  <button
+                    <button
                     type="submit"
-                    className="w-full py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition duration-150 ease-in-out"
+                    disabled={isLoading}
+                    className="w-full py-3 px-4 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-medium rounded-md transition duration-150 ease-in-out flex items-center justify-center"
                   >
-                    Đăng ký
+                    {isLoading ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Đang đăng ký...
+                      </>
+                    ) : (
+                      'Đăng ký'
+                    )}
                   </button>
                 </form>
                 

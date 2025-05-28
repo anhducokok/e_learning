@@ -5,7 +5,6 @@ import FeaturesSection from '../components/FeaturesSection';
 import CoursesSection from '../components/CoursesSection';
 import TeachersSection from '../components/TeachersSection';
 import TestimonialsSection from '../components/TestimonialsSection';
-import CallToAction from '../components/CallToAction';
 import ContactSection from '../components/ContactSection';
 import Footer from '../components/Footer';
 
