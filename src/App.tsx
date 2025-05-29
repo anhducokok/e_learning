@@ -1,20 +1,21 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
-import HomePage from "./pages/HomePage";
-import AuthPage from "./pages/AuthPage";
-import LearningRoomPage from "./pages/LearningRoomPage";
-import BlogPage from "./pages/BlogPage";
-import MyClassesPage from "./pages/MyClassesPage";
+import HomePage from "./pages/public/HomePage";
+import AuthPage from "./pages/public/AuthPage";
+import LearningRoomPage from "./pages/student/LearningRoomPage";
+import BlogPage from "./pages/public/BlogPage";
+import MyClassesPage from "./pages/student/MyClassesPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import TeacherDashboardPage from "./pages/teacher/TeacherDashboardPage";
-import LearningSessionPage from "./pages/LearningSessionPage";
-import CourseDetailPage from "./pages/CourseDetailPage";
+import LearningSessionPage from "./pages/student/LearningSessionPage";
+import CourseDetailPage from "./pages/public/CourseDetailPage";
 import "./index.css";
-import NotFoundPage from "./pages/404Page";
-import CourseSuccess from "./pages/CourseSuccessPage";
-import InsideClass from "./pages/InsideClassPage";
-import ForgotPassword from "./pages/ForgotPasswordPage";
-import CourseListPage from "./pages/CourseListPage";
+import NotFoundPage from "./pages/public/404Page";
+import CourseSuccess from "./pages/student/CourseSuccessPage";
+import InsideClass from "./pages/student/InsideClassPage";
+import ForgotPassword from "./pages/public/ForgotPasswordPage";
+import CourseListPage from "./pages/public/CourseListPage";
+import ProfilePage from "./pages/public/ProfilePage";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path="/inside-class" element={<InsideClass />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/courses" element={<CourseListPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </Router>
     </AuthProvider>
