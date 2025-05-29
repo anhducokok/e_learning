@@ -5,8 +5,8 @@ import Footer from '../../components/Footer';
 import { courseService } from '../../services';
 import { useAuth } from '../../contexts/AuthContext';
 import type { Course } from '../../types/api';
-import tralelaImage from '../images/tralela.jpg';
-import tungtungImage from '../images/tungtung.jpg';
+import tralelaImage from '../../images/tralela.jpg';
+import tungtungImage from '../../images/tungtung.jpg';
 
 const LearningRoomPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('courses');

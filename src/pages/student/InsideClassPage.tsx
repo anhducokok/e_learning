@@ -3,7 +3,7 @@ import { MessageCircle, FileText } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-import chinaGirl from '../images/china_girl.jpg';
+import chinaGirl from '../../images/china_girl.jpg';
 import { courseService, lessonService } from '../../services';
 import { useAuth } from '../../contexts/AuthContext';
 import type { Course, Lesson } from '../../types/api';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import tralelaPicture from '../../tralela.jpg';
+import tralelaPicture from '../../images/tralela.jpg';
 
 const NotFoundPage: React.FC = () => {
   const navigate = useNavigate();
