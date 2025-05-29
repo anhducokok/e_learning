@@ -5,6 +5,12 @@ import AuthPage from './pages/AuthPage';
 import LearningRoomPage from './pages/LearningRoomPage';
 import BlogPage from './pages/BlogPage';
 import MyClassesPage from './pages/MyClassesPage';
+<<<<<<< Updated upstream
+=======
+import DashboardPage from './pages/DashboardPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import TeacherDashboardPage from './pages/teacher/TeacherDashboardPage';
+>>>>>>> Stashed changes
 import LearningSessionPage from './pages/LearningSessionPage';
 import CourseDetailPage from './pages/CourseDetailPage';
 import './index.css';
@@ -26,6 +32,12 @@ function App() {
         <Route path="/courses/:id" element={<CourseDetailPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/my-classes" element={<MyClassesPage />} />
+<<<<<<< Updated upstream
+=======
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/admin-dashboard" element={<AdminDashboardPage />} />
+        <Route path="/teacher-dashboard" element={<TeacherDashboardPage />} />
+>>>>>>> Stashed changes
         <Route path="/course-detail" element={<CourseDetailPage />} />
         <Route path="/404" element={<NotFoundPage />} />
         <Route path="/course-success" element={<CourseSuccess />} />        <Route path="/inside-class" element={<InsideClass />} />
