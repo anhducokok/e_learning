@@ -61,11 +61,8 @@ const Header: React.FC = () => {
       .join('')
       .toUpperCase()
       .slice(0, 2);
-  };
-  const navItems = [
+  };  const navItems = [
     { text: 'Trang chủ', path: '/home' },
-    { text: 'Học tập', path: '/learning-room' },
-    { text: 'Lớp học của tôi', path: '/my-classes' },
     { text: 'Blog', path: '/blog' },
     { text: 'Khóa học', path: '/courses' },
     { text: 'Liên hệ', path: '/#contact' },
@@ -173,7 +170,7 @@ const Header: React.FC = () => {
                           </p>
                         </div>
                           <Link
-                          to="/my-classes"
+                          to="/learning-room"
                           onClick={() => setIsUserDropdownOpen(false)}
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                         >
@@ -213,17 +210,16 @@ const Header: React.FC = () => {
                         </button>
                       </div>
                     )}
-                  </div>
-                ) : (
+                  </div>                ) : (
                   <>
                     <Link 
-                      to="/auth" 
+                      to="/auth?mode=login" 
                       className="mr-2 px-4 py-2 border border-primary text-primary rounded-md hover:bg-gray-50 transition-colors"
                     >
                       Đăng nhập
                     </Link>
                     <Link 
-                      to="/auth" 
+                      to="/auth?mode=register" 
                       className="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-md transition-colors"
                     >
                       Đăng ký
@@ -259,7 +255,7 @@ const Header: React.FC = () => {
         <div className="fixed right-0 top-0 h-full w-4/5 max-w-[300px] bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out">
           <div className="p-4">
             <div className="flex justify-between items-center mb-5">
-              <h6 className="font-semibold text-xl text-primary">你好教育</h6>
+              <h6 className="font-semibold text-xl text-primary">NiHao Education</h6>
               <button 
                 onClick={closeMenu}
                 className="p-2 rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none"
@@ -328,7 +324,7 @@ const Header: React.FC = () => {
                     </div>
                   </div>
                     <Link 
-                    to="/my-classes" 
+                    to="/learning-room" 
                     className="block w-full px-4 py-2 text-center border border-primary text-primary rounded-md hover:bg-gray-50 transition-colors"
                     onClick={closeMenu}
                   >
@@ -364,18 +360,17 @@ const Header: React.FC = () => {
                       <span>Đăng xuất</span>
                     </div>
                   </button>
-                </>
-              ) : (
+                </>              ) : (
                 <>
                   <Link 
-                    to="/auth" 
+                    to="/auth?mode=login" 
                     className="block w-full px-4 py-2 text-center border border-primary text-primary rounded-md hover:bg-gray-50 transition-colors"
                     onClick={closeMenu}
                   >
                     Đăng nhập
                   </Link>
                   <Link 
-                    to="/auth" 
+                    to="/auth?mode=register" 
                     className="block w-full px-4 py-2 text-center bg-primary hover:bg-primary-dark text-white rounded-md transition-colors"
                     onClick={closeMenu}
                   >

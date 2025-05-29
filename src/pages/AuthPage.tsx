@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Header from '../components/Header';
 
-const AuthPage: React.FC = () => {  const [isLogin, setIsLogin] = useState(true);
+const AuthPage: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get('mode');
+  const [isLogin, setIsLogin] = useState(mode !== 'register');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -16,14 +19,19 @@ const AuthPage: React.FC = () => {  const [isLogin, setIsLogin] = useState(true)
   const [isLoading, setIsLoading] = useState(false);
 
   const { login, register, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-  useEffect(() => {
+  const navigate = useNavigate();  useEffect(() => {
     // Redirect if already authenticated
     if (isAuthenticated) {
       navigate('/learning-room');
-    }  }, [isAuthenticated, navigate]);
-  
-  const toggleAuthMode = () => {
+    }
+  }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    // Update login state when URL changes
+    const mode = searchParams.get('mode');
+    setIsLogin(mode !== 'register');
+  }, [searchParams]);
+    const toggleAuthMode = () => {
     setIsLogin(!isLogin);
     setError('');
     setFormData({
@@ -71,12 +79,20 @@ const AuthPage: React.FC = () => {  const [isLogin, setIsLogin] = useState(true)
       <div className="flex-1 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-7xl flex flex-col md:flex-row bg-white rounded-xl shadow-lg overflow-hidden">
           {/* Form Section */}
-          <div className="flex-1 p-6 md:p-8 max-w-full md:max-w-[600px]">
-            {/* Tabs */}
+          <div className="flex-1 p-6 md:p-8 max-w-full md:max-w-[600px]">            {/* Tabs */}
             <div className="mb-6 border-b border-gray-200">
               <div className="flex -mb-px">
                 <button
-                  onClick={() => setIsLogin(true)}
+                  onClick={() => {
+                    setIsLogin(true);
+                    setError('');
+                    setFormData({
+                      name: '',
+                      email: '',
+                      password: '',
+                      confirmPassword: '',
+                    });
+                  }}
                   className={`mr-8 py-2 px-1 font-semibold ${
                     isLogin
                       ? 'text-red-600 border-b-2 border-red-600'
@@ -86,7 +102,16 @@ const AuthPage: React.FC = () => {  const [isLogin, setIsLogin] = useState(true)
                   Đăng nhập
                 </button>
                 <button
-                  onClick={() => setIsLogin(false)}
+                  onClick={() => {
+                    setIsLogin(false);
+                    setError('');
+                    setFormData({
+                      name: '',
+                      email: '',
+                      password: '',
+                      confirmPassword: '',
+                    });
+                  }}
                   className={`py-2 px-1 font-semibold ${
                     !isLogin
                       ? 'text-red-600 border-b-2 border-red-600'
