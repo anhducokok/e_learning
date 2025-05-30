@@ -1,72 +1,105 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
   return (
     <footer className="bg-[#A82828] text-white">
       <div className="max-w-7xl mx-auto">
-        {/* Main footer */}
-        <div className="pt-16 pb-10 px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Logo and description */}
-          <div className="col-span-1">
-            <h3 className="font-bold text-2xl mb-4">Tieng Trung Ni Hao</h3>
-            <p className="text-base opacity-90 mb-4">
-              Bangun dan wujudkan cita bersama edufree
-            </p>
-          </div>
-
-          {/* Program links */}
-          <div className="col-span-1">
-            <h4 className="font-medium text-xl mb-4">Program</h4>
-            <ul className="space-y-3">
-              <li><Link to="/" className="text-base hover:underline">Merdeka Belajar</Link></li>
-              <li><Link to="/" className="text-base hover:underline">Finterpreneur</Link></li>
-            </ul>
-          </div>
-
-          {/* Social media links */}
-          <div className="col-span-1">
-            <h4 className="font-medium text-xl mb-4">Sosial Media</h4>
-            <ul className="space-y-3">
-              <li><a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-base hover:underline">Instagram</a></li>
-              <li><a href="https://twitter.com" target="_blank" rel="noreferrer" className="text-base hover:underline">Twitter</a></li>
-              <li><a href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-base hover:underline">LinkedIn</a></li>
-            </ul>
-          </div>
-
-          {/* Support links */}
-          <div className="col-span-1">
-            <h4 className="font-medium text-xl mb-4">DUKUNGAN</h4>
-            <ul className="space-y-3">
-              <li><Link to="/about" className="text-base hover:underline">Tentang Kami</Link></li>
-              <li><Link to="/terms" className="text-base hover:underline">Ketentuan</Link></li>
-              <li><Link to="/privacy" className="text-base hover:underline">Kebijakan Privasi</Link></li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Contact info box */}
-        <div className="px-4 pb-10">
-          <div className="bg-[#FCD980] p-6 rounded-t-md">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-medium text-[#282938]">Email</h4>
-                <p className="text-[#282938] opacity-80">contact@website.com</p>
+        {/* Main Footer */}
+        <div className="pt-16 pb-10 px-4 grid grid-cols-1 md:grid-cols-2 gap-1">
+          <div>
+            {/* Logo + description */}
+            <div>
+              <h3 className="font-bold text-2xl mb-4">Tieng Trung Ni Hao</h3>
+              <p className="opacity-90">
+                Bangun dan wujudkan cita bersama edufree
+              </p>
+            </div>
+            {/* Contact info box */}
+            <div className="px-4 pb-10">
+              <div className="bg-[#FCD980] p-6 rounded-lg max-w-lg mx-auto mt-8 shadow-md">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-[#282938]">
+                  <div>
+                    <p className="font-medium">Email</p>
+                    <p className="opacity-80">contact@website.com</p>
+                  </div>
+                  <div>
+                    <p className="font-medium">Telephone</p>
+                    <p className="opacity-80">+6288 999 222 333</p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <h4 className="font-medium text-[#282938]">Telephone</h4>
-                <p className="text-[#282938] opacity-80">+6288 999 222 333</p>
-              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Social Media */}
+            <div>
+              <h4 className="text-xl font-semibold mb-4">Sosial Media</h4>
+              <ul className="space-y-2">
+                <li>
+                  <a href="#" className="hover:underline">
+                    Instagram
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:underline">
+                    Twitter
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:underline">
+                    LinkedIn
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Program */}
+            <div>
+              <h4 className="text-xl font-semibold mb-4">Program</h4>
+              <ul className="space-y-2">
+                <li>
+                  <Link to="/" className="hover:underline">
+                    Merdeka Belajar
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/" className="hover:underline">
+                    Finterpreneur
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Dukungan */}
+            <div>
+              <h4 className="text-xl font-semibold mb-4">DUKUNGAN</h4>
+              <ul className="space-y-2">
+                <li>
+                  <Link to="/about" className="hover:underline">
+                    Tentang Kami
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/terms" className="hover:underline">
+                    Ketentuan
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/privacy" className="hover:underline">
+                    Kebijakan Privasi
+                  </Link>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Copyright bar */}
-      <div className="bg-[#282938] py-6 px-4">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-center md:text-left text-sm">© Copyright TiengTrungNiHao 2025</p>
-        </div>
+      {/* Copyright */}
+      <div className="bg-white  text-black py-6 px-4  text-sm">
+        © Copyright TiengTrungNiHao 2025
       </div>
     </footer>
   );

@@ -8,19 +8,28 @@ import TestimonialsSection from "../../components/TestimonialsSection";
 import FeedbackSection from "../../components/FeedbackSection";
 import ContactSection from "../../components/ContactSection";
 import Footer from "../../components/Footer";
+import ChatWidget from "../../components/ChatWidgetSection";
+import MyChatWidget from "../../components/MyChatWidgetSection";
+import ChatDropdown from "../../components/ChatDropdownSection";
+import { ChatProvider } from "../../contexts/ChatContext";
 
 const HomePage: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-      <HeroSection />
-      <FeedbackSection />
-      <CoursesSection />
-      <TestimonialsSection />
-      <ContactSection />
-      <BlogSection />
-      <Footer />
-    </div>
+    <ChatProvider>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <HeroSection />
+        <FeedbackSection />
+        <CoursesSection />
+        <TestimonialsSection />
+        <ContactSection />
+        <BlogSection />
+        <Footer />
+        <ChatWidget />
+        <MyChatWidget />
+        <ChatDropdown />
+      </div>
+    </ChatProvider>
   );
 };
 

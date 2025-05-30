@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import logoImage from "../images/d1fe66745c26de30ce87421d08acff5f22ef002b.jpg";
+import ChatList from "../components/MyChatWidgetSection";
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -331,6 +332,7 @@ const Header: React.FC = () => {
           </div>
         </div>
       )}
+      <ChatList/>
     </header>
   );
 };
