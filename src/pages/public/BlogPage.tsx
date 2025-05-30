@@ -119,7 +119,7 @@ const BlogPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+
       
       {/* Hero Section */}
       <div className="relative bg-cover bg-center py-20 text-white" style={{ backgroundImage: 'linear-gradient(rgba(29, 53, 87, 0.85), rgba(29, 53, 87, 0.85)), url("/images/blog-hero-bg.jpg")' }}>
@@ -328,8 +328,7 @@ const BlogPage: React.FC = () => {
           </button>
         </div>
       </div>
-      
-      <Footer />
+
     </div>
   );
 };

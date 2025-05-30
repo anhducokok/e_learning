@@ -14,7 +14,7 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+ 
       <div className="flex-grow">
         <div className="max-w-2xl max-h-max mx-auto mt-10 p-8 bg-white border border-gray-300 rounded-2xl shadow-md mb-5">
           <h2 className="text-2xl font-semibold text-red-600 mb-5">
@@ -52,7 +52,7 @@ const ForgotPassword: React.FC = () => {
         </div>
       </div>
 
-      <Footer />
+
     </div>
   );
 };

@@ -89,13 +89,13 @@ const CourseListPage: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50">
-        <Header />
+
         <main className="flex-grow max-w-7xl mx-auto px-4 py-12 w-full">
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
           </div>
         </main>
-        <Footer />
+   
       </div>
     );
   }
@@ -103,21 +103,21 @@ const CourseListPage: React.FC = () => {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50">
-        <Header />
+
         <main className="flex-grow max-w-7xl mx-auto px-4 py-12 w-full">
           <div className="text-center">
             <div className="text-red-600 text-lg mb-4">Có lỗi xảy ra khi tải khóa học</div>
             <div className="text-gray-600">{error}</div>
           </div>
         </main>
-        <Footer />
+  
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header />
+
 
       <main className="flex-grow max-w-7xl mx-auto px-4 py-12 w-full">
         <h1 className="text-4xl font-bold mb-6 text-gray-800">
@@ -273,7 +273,7 @@ const CourseListPage: React.FC = () => {
         </div>
       </main>
 
-      <Footer />
+
     </div>
   );
 };

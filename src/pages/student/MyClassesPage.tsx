@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
-import { FiClock, FiUsers } from 'react-icons/fi';
-import { FaStar } from 'react-icons/fa';
-import { courseService } from '../../services';
-import type { Course } from '../../types/api';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import { FiClock, FiUsers } from "react-icons/fi";
+import { FaStar } from "react-icons/fa";
+import { courseService } from "../../services";
+import type { Course } from "../../types/api";
 
 const MyClassesPage: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,7 +21,7 @@ const MyClassesPage: React.FC = () => {
         const myCourses = await courseService.getMyCourses();
         setCourses(myCourses);
       } catch (err: any) {
-        setError(err.message || 'Failed to fetch your courses');
+        setError(err.message || "Failed to fetch your courses");
       } finally {
         setLoading(false);
       }
@@ -31,7 +31,7 @@ const MyClassesPage: React.FC = () => {
   }, []);
 
   // Filter courses based on search query
-  const filteredCourses = courses.filter(course =>
+  const filteredCourses = courses.filter((course) =>
     course.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -50,23 +50,27 @@ const MyClassesPage: React.FC = () => {
   // Format level display
   const getLevelDisplay = (level: string) => {
     switch (level) {
-      case 'beginner': return 'Cơ bản';
-      case 'intermediate': return 'Trung cấp';
-      case 'advanced': return 'Nâng cao';
-      case 'exam': return 'Luyện thi';
-      case 'communication': return 'Giao tiếp';
-      default: return level;
+      case "beginner":
+        return "Cơ bản";
+      case "intermediate":
+        return "Trung cấp";
+      case "advanced":
+        return "Nâng cao";
+      case "exam":
+        return "Luyện thi";
+      case "communication":
+        return "Giao tiếp";
+      default:
+        return level;
     }
   };
 
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
         <main className="flex-grow flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A82828]"></div>
         </main>
-        <Footer />
       </div>
     );
   }
@@ -74,7 +78,6 @@ const MyClassesPage: React.FC = () => {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center">
             <p className="text-xl text-red-500 mb-4">{error}</p>
@@ -86,19 +89,20 @@ const MyClassesPage: React.FC = () => {
             </Link>
           </div>
         </main>
-        <Footer />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
-      <Header />
-
       <main className="flex-grow max-w-7xl mx-auto px-4 py-10">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Khóa học của tôi</h1>
-          <p className="text-gray-600">Quản lý và tiếp tục học các khóa học bạn đã đăng ký</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Khóa học của tôi
+          </h1>
+          <p className="text-gray-600">
+            Quản lý và tiếp tục học các khóa học bạn đã đăng ký
+          </p>
         </div>
 
         {/* Search */}
@@ -171,7 +175,9 @@ const MyClassesPage: React.FC = () => {
                       {course.rating && (
                         <div className="flex items-center gap-1">
                           <FaStar className="text-yellow-400" />
-                          <span className="text-sm font-medium">{course.rating}</span>
+                          <span className="text-sm font-medium">
+                            {course.rating}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -206,21 +212,21 @@ const MyClassesPage: React.FC = () => {
                   >
                     Trước
                   </button>
-                  
+
                   {Array.from({ length: totalPages }, (_, i) => (
                     <button
                       key={i + 1}
                       onClick={() => handlePageChange(i + 1)}
                       className={`px-3 py-2 rounded-md ${
                         currentPage === i + 1
-                          ? 'bg-[#A82828] text-white'
-                          : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                          ? "bg-[#A82828] text-white"
+                          : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
                       }`}
                     >
                       {i + 1}
                     </button>
                   ))}
-                  
+
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
@@ -234,8 +240,6 @@ const MyClassesPage: React.FC = () => {
           </>
         )}
       </main>
-
-      <Footer />
     </div>
   );
 };

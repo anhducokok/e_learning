@@ -31,11 +31,11 @@ const CourseDetailPage: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+
         <main className="flex-grow flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A82828]"></div>
         </main>
-        <Footer />
+  
       </div>
     );
   }
@@ -43,7 +43,7 @@ const CourseDetailPage: React.FC = () => {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center">
             <p className="text-xl text-red-500 mb-4">{error}</p>
@@ -55,7 +55,7 @@ const CourseDetailPage: React.FC = () => {
             </Link>
           </div>
         </main>
-        <Footer />
+
       </div>
     );
   }
@@ -63,7 +63,7 @@ const CourseDetailPage: React.FC = () => {
   if (!course) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header />
+
         <main className="flex-grow flex items-center justify-center">
           <div className="text-center">
             <p className="text-xl text-red-500 mb-4">Khóa học không tồn tại.</p>
@@ -75,7 +75,7 @@ const CourseDetailPage: React.FC = () => {
             </Link>
           </div>
         </main>
-        <Footer />
+
       </div>
     );
   }
@@ -94,7 +94,7 @@ const CourseDetailPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
-      <Header />
+
 
       <main className="flex-grow max-w-6xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -167,7 +167,7 @@ const CourseDetailPage: React.FC = () => {
         </div>
       </main>
 
-      <Footer />
+
     </div>
   );
 };

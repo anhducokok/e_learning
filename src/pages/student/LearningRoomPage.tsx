@@ -113,7 +113,7 @@ const LearningRoomPage: React.FC = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <Header />
+
 
       <div className="flex max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 gap-6">
         <div className="w-72 bg-white rounded-lg shadow-md flex flex-col">
@@ -479,7 +479,7 @@ const LearningRoomPage: React.FC = () => {
         </div>
       </div>
 
-      <Footer />
+
     </div>
   );
 };

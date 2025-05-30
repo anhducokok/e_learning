@@ -62,7 +62,7 @@ const InsideClassPage: React.FC = () => {
   if (loading) {
     return (
       <div className="bg-white min-h-screen font-sans">
-        <Header />
+
         <div className="flex justify-center py-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
         </div>
@@ -73,7 +73,7 @@ const InsideClassPage: React.FC = () => {
   if (error || !course) {
     return (
       <div className="bg-white min-h-screen font-sans">
-        <Header />
+
         <div className="text-center py-8">
           <p className="text-red-500 mb-4">{error || 'Course not found'}</p>
         </div>
@@ -82,7 +82,7 @@ const InsideClassPage: React.FC = () => {
   }
   return (
     <div className="bg-white min-h-screen font-sans">
-      <Header />      <div className="bg-[#A82828] flex justify-between items-center p-6 rounded-b-xl shadow">
+      <div className="bg-[#A82828] flex justify-between items-center p-6 rounded-b-xl shadow">
         <div>
           <h1 className="text-2xl text-white font-bold">{course.title}</h1>
           <p className="text-sm text-white">Giáo Viên: {course.instructor?.name || 'Chưa có thông tin'}</p>
@@ -137,7 +137,7 @@ const InsideClassPage: React.FC = () => {
           )}
         </div>
       </div>
-      <Footer />
+
     </div>
   );
 };

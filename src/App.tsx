@@ -17,6 +17,7 @@ import ForgotPassword from "./pages/public/ForgotPasswordPage";
 import CourseListPage from "./pages/public/CourseListPage";
 import ProfilePage from "./pages/public/ProfilePage";
 import { ChatProvider } from "./contexts/ChatContext";
+import MainLayout from "./components/MainLayout";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Router>
           {" "}
           <Routes>
+            <Route path="/" element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/home" element={<HomePage />} />
             <Route path="/auth" element={<AuthPage />} />
@@ -48,6 +50,8 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/courses" element={<CourseListPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            </Route>
+            
           </Routes>
         </Router>
       </ChatProvider>

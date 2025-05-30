@@ -74,7 +74,7 @@ const AuthPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Header />
+
       
       <div className="flex-1 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-7xl flex flex-col md:flex-row bg-white rounded-xl shadow-lg overflow-hidden">
@@ -490,7 +490,6 @@ const AuthPage: React.FC = () => {
         </div>
       </div>
       
-      {/* <Footer /> */}
     </div>
   );
 };
