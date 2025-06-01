@@ -1,6 +1,7 @@
 import React from "react";
 import { Bar, Doughnut } from "react-chartjs-2";
 import logoImage from "../../images/d1fe66745c26de30ce87421d08acff5f22ef002b.jpg";
+import DashboardHeader from "../../components/DashboardHeader";
 
 import {
   Chart as ChartJS,
@@ -60,9 +61,35 @@ const TeacherDashboard: React.FC = () => {
         label: "Kỹ năng yếu nhất",
         backgroundColor: ["#f87171", "#fb923c", "#facc15", "#34d399"],
         data: [10, 8, 6, 5],
-      },
-    ],
+      },    ],
   };
+  // Sample notifications for teacher
+  const teacherNotifications = [
+    {
+      id: '1',
+      title: 'Bài tập mới',
+      message: '8 bài tập cần chấm điểm',
+      time: '5 phút trước',
+      type: 'warning' as const,
+      read: false
+    },
+    {
+      id: '2',
+      title: 'Học viên mới',
+      message: '2 học viên mới tham gia lớp HSK 2',
+      time: '30 phút trước',
+      type: 'info' as const,
+      read: false
+    },
+    {
+      id: '3',
+      title: 'Lịch dạy',
+      message: 'Lớp HSK 3 bắt đầu lúc 14:00 hôm nay',
+      time: '2 giờ trước',
+      type: 'success' as const,
+      read: true
+    }
+  ];
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -99,22 +126,15 @@ const TeacherDashboard: React.FC = () => {
             </li>
           </ul>
         </nav>
-      </aside>
-
-      {/* Main content */}
-      <main className="flex-1 p-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-800">Giáo viên Dashboard</h1>
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-gray-300 rounded-full flex items-center justify-center text-white">
-              GV
-            </div>
-            <span className="font-medium">Cô Hà</span>
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      </aside>      {/* Main content */}      <main className="flex-1 flex flex-col">
+        <DashboardHeader 
+          title="Giáo viên Dashboard" 
+          notifications={teacherNotifications}
+        />
+        
+        <div className="flex-1 p-8">
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {stats.map((stat, i) => (
             <a key={i} href={stat.href} className="transform hover:scale-105 transition">
               <div className="rounded-xl shadow-md overflow-hidden">
@@ -128,8 +148,7 @@ const TeacherDashboard: React.FC = () => {
                 </div>
               </div>
             </a>
-          ))}
-        </div>
+          ))}        </div>
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -142,9 +161,9 @@ const TeacherDashboard: React.FC = () => {
           <div className="bg-white rounded-xl p-6 shadow-lg">
             <h2 className="text-lg font-semibold text-gray-700 mb-4 text-center">
               Kỹ năng học viên yếu
-            </h2>
-            <Doughnut data={doughnutData} options={{ responsive: true }} />
+            </h2>            <Doughnut data={doughnutData} options={{ responsive: true }} />
           </div>
+        </div>
         </div>
       </main>
     </div>

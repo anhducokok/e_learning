@@ -11,7 +11,7 @@ const Header: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, getRoleBasedRoute } = useAuth();
 
   useEffect(() => {
     const checkIfMobile = () => {
@@ -59,6 +59,7 @@ const Header: React.FC = () => {
     { text: "Blog", path: "/blog" },
     { text: "Khóa học", path: "/courses" },
     { text: "Liên hệ", path: "/#contact" },
+    {text: "Lịch Khai Giảng",path: "/schedule" },
   ];
 
   const isActive = (path: string) =>
@@ -153,22 +154,25 @@ const Header: React.FC = () => {
                           </p>
                           <p className="text-sm text-gray-500 truncate">
                             {user?.email}
-                          </p>
-                        </div>
+                          </p>                        </div>
                         <Link
-                          to="/learning-room"
+                          to={getRoleBasedRoute()}
                           onClick={() => setIsUserDropdownOpen(false)}
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                         >
-                          Lớp học của tôi
+                          {user?.role === 'admin' ? 'Admin Dashboard' : 
+                           user?.role === 'teacher' ? 'Teacher Dashboard' : 
+                           'Lớp học của tôi'}
                         </Link>
-                        <Link
-                          to="/learning-room"
-                          onClick={() => setIsUserDropdownOpen(false)}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                        >
-                          Phòng học
-                        </Link>
+                        {user?.role === 'student' && (
+                          <Link
+                            to="/learning-room"
+                            onClick={() => setIsUserDropdownOpen(false)}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            Phòng học
+                          </Link>
+                        )}
                         <div className="border-t my-1"></div>
                         <button
                           onClick={handleLogout}
@@ -292,17 +296,27 @@ const Header: React.FC = () => {
                   </Link>
                 )
               )}
-            </nav>
-            <div className="mt-5 space-y-2">
+            </nav>            <div className="mt-5 space-y-2">
               {isAuthenticated ? (
                 <>
                   <Link
-                    to="/learning-room"
+                    to={getRoleBasedRoute()}
                     onClick={closeMenu}
                     className="block w-full px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100"
                   >
-                    Lớp học của tôi
+                    {user?.role === 'admin' ? 'Admin Dashboard' : 
+                     user?.role === 'teacher' ? 'Teacher Dashboard' : 
+                     'Lớp học của tôi'}
                   </Link>
+                  {user?.role === 'student' && (
+                    <Link
+                      to="/learning-room"
+                      onClick={closeMenu}
+                      className="block w-full px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100"
+                    >
+                      Phòng học
+                    </Link>
+                  )}
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-4 py-2 rounded-md text-red-600 hover:bg-red-50"

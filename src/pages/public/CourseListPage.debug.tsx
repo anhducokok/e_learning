@@ -3,7 +3,10 @@ import { Link } from "react-router-dom";
 import type { Course, Class } from "../../types/api";
 import { useAuth } from "../../contexts/AuthContext";
 import { API_BASE_URL } from "../../config/api";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
+// Debug version of CourseListPage with direct fetch calls
 const CourseListPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [classes, setClasses] = useState<Class[]>([]);
@@ -13,7 +16,7 @@ const CourseListPage: React.FC = () => {
   const [enrollmentStatus, setEnrollmentStatus] = useState<Record<string, boolean>>({});
   const [enrollingCourses, setEnrollingCourses] = useState<Set<string>>(new Set());
   const { isAuthenticated } = useAuth();
-
+  
   // Log configuration
   useEffect(() => {
     console.log('CourseListPage mounted');
@@ -64,12 +67,9 @@ const CourseListPage: React.FC = () => {
             }
           })
         );
-          console.log('Classes with courses:', classesWithCourses);
+        
+        console.log('Classes with courses:', classesWithCourses);
         setClasses(classesWithCourses);
-
-        // Expand all classes by default
-        const allClassIds = new Set(classesWithCourses.map(classItem => classItem.id));
-        setExpandedClasses(allClassIds);
 
         // If user is authenticated, fetch enrollment status for all courses
         if (isAuthenticated) {
@@ -109,12 +109,15 @@ const CourseListPage: React.FC = () => {
     };
 
     fetchClassesWithCourses();
-  }, [isAuthenticated]);const categories = [
+  }, [isAuthenticated]);
+
+  const categories = [
     { id: "all", name: "Tất cả" },
     { id: "beginner", name: "Căn bản" },
     { id: "intermediate", name: "Trung cấp" },
     { id: "advanced", name: "Nâng cao" },
   ];
+
   // Filter courses within classes based on category
   const getFilteredClasses = () => {
     return classes.map(classItem => ({
@@ -136,6 +139,7 @@ const CourseListPage: React.FC = () => {
       return newSet;
     });
   };
+
   const handleEnrollment = async (courseId: string, isCurrentlyEnrolled: boolean) => {
     if (!isAuthenticated) {
       alert('Please log in to enroll in courses');
@@ -191,16 +195,15 @@ const CourseListPage: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50">
-
         <main className="flex-grow max-w-7xl mx-auto px-4 py-12 w-full">
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
           </div>
         </main>
-   
       </div>
     );
   }
+
   if (error) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50">
@@ -219,6 +222,7 @@ const CourseListPage: React.FC = () => {
       </div>
     );
   }
+
   const filteredClasses = getFilteredClasses();
 
   return (
@@ -301,11 +305,11 @@ const CourseListPage: React.FC = () => {
                             <Link to={`/courses/${course.id}`} className="block">
                               <div className="h-36">
                                 <img
-                                  src={course.thumbnail || 'https://images.unsplash.com/photo-1522134939204-9b9957145632?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'}
+                                  src={course.thumbnail || '/images/default-course.jpg'}
                                   alt={course.title}
                                   className="w-full h-full object-cover"
                                   onError={(e) => {
-                                    e.currentTarget.src = 'https://images.unsplash.com/photo-1522134939204-9b9957145632?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+                                    e.currentTarget.src = '/images/default-course.jpg';
                                   }}
                                 />
                               </div>
@@ -325,31 +329,12 @@ const CourseListPage: React.FC = () => {
                                 <span className="px-2 py-1 bg-gray-100 rounded-full capitalize">
                                   {course.level}
                                 </span>
-                                {course.duration && <span>{course.duration}</span>}
-                                {course.price && (
-                                  <span className="font-semibold text-red-600">
-                                    {course.price.toLocaleString()} VND
+                                {Array.isArray(course.tags) && course.tags.length > 0 && (
+                                  <span className="px-2 py-1 bg-gray-100 rounded-full">
+                                    {course.tags[0]}
                                   </span>
                                 )}
                               </div>
-
-                              {course.instructor && (
-                                <div className="text-xs text-gray-500 mb-2">
-                                  Giảng viên: {course.instructor.name}
-                                </div>
-                              )}
-                              
-                              {course.rating && (
-                                <div className="flex items-center mb-3">
-                                  <div className="flex text-yellow-400">
-                                    {'★'.repeat(Math.floor(course.rating))}
-                                    {'☆'.repeat(5 - Math.floor(course.rating))}
-                                  </div>
-                                  <span className="text-xs text-gray-500 ml-1">
-                                    {course.rating.toFixed(1)}
-                                  </span>
-                                </div>
-                              )}
                               
                               {/* Enrollment Button */}
                               {isAuthenticated && (
@@ -403,7 +388,8 @@ const CourseListPage: React.FC = () => {
             );
           })}
         </div>
-          {filteredClasses.length === 0 && (
+        
+        {filteredClasses.length === 0 && (
           <div className="text-center text-gray-500 py-12">
             <div className="text-lg mb-2">Không tìm thấy khóa học nào</div>
             <div className="text-sm">Thử thay đổi bộ lọc hoặc quay lại sau</div>

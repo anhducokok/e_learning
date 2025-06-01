@@ -10,6 +10,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  getRoleBasedRoute: () => string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -57,10 +58,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(false);
     }
   };
-
   const logout = () => {
     authService.logout();
     setUser(null);
+  };
+
+  const getRoleBasedRoute = (): string => {
+    if (!user?.role) {
+      return '/learning-room'; // default route for users without role
+    }
+
+    switch (user.role.toLowerCase()) {
+      case 'student':
+        return '/learning-room';
+      case 'teacher':
+        return '/teacher-dashboard';
+      case 'admin':
+        return '/admin-dashboard';
+      default:
+        return '/learning-room';
+    }
   };
 
   const value: AuthContextType = {
@@ -70,6 +87,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     register,
     logout,
+    getRoleBasedRoute,
   };
 
   return (

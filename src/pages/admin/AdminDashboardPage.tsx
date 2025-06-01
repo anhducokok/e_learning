@@ -1,6 +1,7 @@
 import React from "react";
 import { Bar, Doughnut } from "react-chartjs-2";
 import logoImage from "../../images/d1fe66745c26de30ce87421d08acff5f22ef002b.jpg"; // Adjust path if needed
+import DashboardHeader from "../../components/DashboardHeader";
 
 import {
   Chart as ChartJS,
@@ -42,6 +43,33 @@ const ChineseCourseDashboard: React.FC = () => {
       },
     ],
   };
+  // Sample notifications for admin
+  const adminNotifications = [
+    {
+      id: '1',
+      title: 'Đăng ký khóa học mới',
+      message: '5 học viên mới đăng ký khóa HSK 1',
+      time: '2 phút trước',
+      type: 'info' as const,
+      read: false
+    },
+    {
+      id: '2',
+      title: 'Phản hồi học viên',
+      message: 'Có 3 phản hồi mới cần xem xét',
+      time: '15 phút trước',
+      type: 'warning' as const,
+      read: false
+    },
+    {
+      id: '3',
+      title: 'Khóa học sắp khai giảng',
+      message: 'HSK 2 sẽ khai giảng vào ngày mai',
+      time: '1 giờ trước',
+      type: 'success' as const,
+      read: true
+    }
+  ];
 
   // Danh sách menu sidebar đơn giản
   const sidebarItems = [
@@ -81,42 +109,15 @@ const ChineseCourseDashboard: React.FC = () => {
             ))}
           </ul>
         </nav>
-      </aside>
-
-      {/* Main content */}
-      <main className="flex-1 p-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-800">Trang quản trị</h1>
-          <div className="flex items-center gap-4">
-            <a href="#" className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              Hỏi đáp
-            </a>
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 bg-gray-300 rounded-full flex items-center justify-center text-white">
-                AD
-              </div>
-              <span className="font-medium">Đức</span>
-              <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        {/* Stats & Charts */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      </aside>      {/* Main content */}
+      <main className="flex-1 flex flex-col">        <DashboardHeader 
+          title="Trang quản trị" 
+          notifications={adminNotifications}
+        />
+        
+        <div className="flex-1 p-8">
+          {/* Stats & Charts */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {stats.map((stat, i) => (
             <a href={stat.href} key={i} className="transform hover:scale-105 transition">
               <div className="rounded-xl shadow-md overflow-hidden">
@@ -143,9 +144,9 @@ const ChineseCourseDashboard: React.FC = () => {
           <div className="bg-white rounded-xl p-6 shadow-lg">
             <h2 className="text-lg font-semibold text-gray-700 mb-4 text-center">
               Thống kê học viên theo kỹ năng
-            </h2>
-            <Doughnut data={doughnutData} options={{ responsive: true }} />
+            </h2>            <Doughnut data={doughnutData} options={{ responsive: true }} />
           </div>
+        </div>
         </div>
       </main>
     </div>

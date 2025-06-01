@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
-
+import learnChineseImage from '../../images/image.png';
+import TeaBreakImage from '../../images/download.jpg';
+import RoadMapImage from '../../images/download(1).png';
+import conversationImage from '../../images/download (1).jpg';
 const BlogPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('all');
 
@@ -12,7 +15,7 @@ const BlogPage: React.FC = () => {
       id: 1,
       title: 'Cách học chữ Hán hiệu quả cho người mới bắt đầu',
       excerpt: 'Khám phá những phương pháp đơn giản giúp bạn ghi nhớ và viết chữ Hán dễ dàng, phù hợp cho những người mới bắt đầu học tiếng Trung.',
-      image: './images/tralela.jpg',
+      image: learnChineseImage,
       category: 'tips',
       author: 'Nguyễn Thị Minh',
       date: '20/05/2023',
@@ -23,7 +26,7 @@ const BlogPage: React.FC = () => {
       id: 2,
       title: 'Văn hóa trà đạo Trung Quốc: Nghệ thuật và lịch sử',
       excerpt: 'Tìm hiểu về văn hóa trà đạo Trung Quốc từ góc độ lịch sử, nghệ thuật thưởng trà và ý nghĩa văn hóa sâu sắc trong đời sống người Trung Quốc.',
-      image: '/images/tralela.jpg',
+      image: TeaBreakImage,
       category: 'culture',
       author: 'Trần Văn Bình',
       date: '15/04/2023',
@@ -34,7 +37,7 @@ const BlogPage: React.FC = () => {
       id: 3,
       title: 'Lộ trình học tiếng Trung từ mới bắt đầu đến HSK 4',
       excerpt: 'Hướng dẫn chi tiết về lộ trình học tiếng Trung từ cơ bản đến trình độ trung cấp (HSK 4) dành cho người Việt, kèm theo các tài liệu học tập hữu ích.',
-      image: '/images/tralela.jpg',
+      image: RoadMapImage,
       category: 'learning',
       author: 'Lê Thanh Hoa',
       date: '03/05/2023',
@@ -45,7 +48,7 @@ const BlogPage: React.FC = () => {
       id: 4,
       title: 'Tổng hợp 50 câu giao tiếp tiếng Trung thông dụng nhất',
       excerpt: 'Bộ sưu tập 50 câu tiếng Trung thông dụng nhất trong giao tiếp hàng ngày, kèm theo phiên âm pinyin và cách sử dụng phù hợp.',
-      image: '/images/tralela.jpg',
+      image: conversationImage,
       category: 'vocabulary',
       author: 'Nguyễn Văn Tùng',
       date: '12/04/2023',
@@ -56,7 +59,7 @@ const BlogPage: React.FC = () => {
       id: 5,
       title: 'Sự khác biệt giữa tiếng Trung giản thể và phồn thể',
       excerpt: 'Phân tích chi tiết về sự khác biệt giữa tiếng Trung giản thể và phồn thể, lịch sử và ứng dụng của hai hệ thống chữ viết này trong đời sống.',
-      image: '/images/tralela.jpg',
+      image: RoadMapImage,
       category: 'language',
       author: 'Phạm Minh Tuấn',
       date: '25/03/2023',

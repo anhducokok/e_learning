@@ -9,23 +9,40 @@ import tralelaImage from '../../images/tralela.jpg';
 import tungtungImage from '../../images/tungtung.jpg';
 
 const LearningRoomPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('courses');
-  const [myCourses, setMyCourses] = useState<Course[]>([]);
+  const [activeTab, setActiveTab] = useState('courses');  const [myCourses, setMyCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();  useEffect(() => {
+  const { user } = useAuth();
+
+  // Debug logging for render state
+  console.log('🎭 LearningRoomPage render - Current state:', {
+    user: user ? { id: user.id, name: user.name, email: user.email } : null,
+    myCoursesLength: myCourses?.length || 0,
+    myCourses: myCourses,
+    loading,
+    error
+  });useEffect(() => {
     const fetchMyCourses = async () => {
-      if (!user) return;
+      console.log('🔍 LearningRoomPage: fetchMyCourses called, user:', user);
+      if (!user) {
+        console.log('❌ LearningRoomPage: No user found, skipping course fetch');
+        return;
+      }
       
       try {
         setLoading(true);
+        console.log('📞 LearningRoomPage: Calling courseService.getMyCourses()...');
         const courses = await courseService.getMyCourses();
+        console.log('✅ LearningRoomPage: Received courses from API:', courses);
+        console.log('📊 LearningRoomPage: Courses array length:', courses?.length || 0);
         setMyCourses(courses);
+        console.log('✅ LearningRoomPage: State updated with courses');
       } catch (err: any) {
-        console.error('Error fetching courses:', err);
+        console.error('❌ LearningRoomPage: Error fetching courses:', err);
         setError(err.message || 'Failed to fetch your courses');
       } finally {
         setLoading(false);
+        console.log('✅ LearningRoomPage: Loading set to false');
       }
     };
 
@@ -249,7 +266,7 @@ const LearningRoomPage: React.FC = () => {
                     <div className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col md:flex-row" key={course.id}>
                       <div className="relative md:w-1/3">
                         <img 
-                          src={course.image || tralelaImage} 
+                          src={course.thumbnail || tralelaImage} 
                           alt={course.title} 
                           className="h-full w-full object-cover"
                           onError={(e) => {
@@ -257,7 +274,7 @@ const LearningRoomPage: React.FC = () => {
                           }}
                         />
                         <div className="absolute top-4 right-4">
-                          <svg className="w-16 h-16" viewBox="0 0 36 36">
+                          {/* <svg className="w-16 h-16" viewBox="0 0 36 36">
                             <path
                               className="stroke-gray-300 fill-none stroke-2"
                               d="M18 2.0845
@@ -272,7 +289,7 @@ const LearningRoomPage: React.FC = () => {
                                 a 15.9155 15.9155 0 0 1 0 -31.831"
                             />
                             <text x="18" y="20.35" className="text-sm font-medium fill-red-600 text-center" textAnchor="middle">50%</text>
-                          </svg>
+                          </svg> */}
                         </div>
                       </div>
                       <div className="p-6 md:w-2/3 flex flex-col justify-between">

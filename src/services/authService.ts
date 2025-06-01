@@ -15,7 +15,7 @@ export const authService = {  async login(credentials: LoginRequest): Promise<Au
       );
       
       // Extract data from backend response format
-      const authData = response.data;
+      const authData = response.data.data; // Backend nests auth data under 'data'
       
       // Store token and user data
       if (authData.access_token) {
@@ -29,8 +29,7 @@ export const authService = {  async login(credentials: LoginRequest): Promise<Au
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Login failed');
     }
-  },
-  async register(userData: RegisterRequest): Promise<AuthResponse> {
+  },  async register(userData: RegisterRequest): Promise<AuthResponse> {
     try {
       const response = await apiClient.post<any>(
         API_ENDPOINTS.AUTH.REGISTER,
@@ -38,7 +37,7 @@ export const authService = {  async login(credentials: LoginRequest): Promise<Au
       );
       
       // Extract data from backend response format
-      const authData = response.data;
+      const authData = response.data.data; // Backend nests auth data under 'data'
       
       // Store token and user data
       if (authData.access_token) {

@@ -8,21 +8,37 @@ export interface User {
   updatedAt?: string;
 }
 
+export interface Class {
+  id: string;
+  name: string;
+  description: string;
+  thumbnail?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  courses?: Course[];
+}
+
 export interface Course {
   id: string;
   title: string;
   description: string;
   level: 'beginner' | 'intermediate' | 'advanced';
-  duration: string;
+  duration?: string;
   image?: string;
+  thumbnail?: string;
   price?: number;
   instructor?: User;
   enrollmentCount?: number;
   rating?: number;
   isPublished?: boolean;
+  classId?: string;
+  class?: Class;
+  tags?: string[];
   createdAt?: string;
   updatedAt?: string;
   lessons?: Lesson[];
+  teacherID?: string;
+  teacher?: User;
 }
 
 export interface Lesson {
@@ -130,4 +146,37 @@ export interface CreateQuizRequest {
 
 export interface SubmitQuizRequest {
   answers: number[];
+}
+
+// Schedule related types
+export interface ClassSession {
+  id: string;
+  title: string;
+  description?: string;
+  courseId: string;
+  course: Course;
+  instructorId: string;
+  instructor: User;
+  startTime: string; // ISO date string
+  endTime: string; // ISO date string
+  status: 'upcoming' | 'active' | 'completed' | 'cancelled';
+  meetingLink?: string;
+  maxStudents?: number;
+  currentStudents?: number;
+  enrolledStudents?: User[];
+  location?: string;
+  price?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ScheduleDay {
+  date: string; // YYYY-MM-DD format
+  sessions: ClassSession[];
+}
+
+export interface WeeklySchedule {
+  weekStart: string; // ISO date string
+  weekEnd: string; // ISO date string
+  days: ScheduleDay[];
 }

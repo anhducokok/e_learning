@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import Header from '../../components/Header';
 
 const AuthPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -17,14 +16,17 @@ const AuthPage: React.FC = () => {
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { login, register, isAuthenticated, getRoleBasedRoute } = useAuth();
+  const navigate = useNavigate();
 
-  const { login, register, isAuthenticated } = useAuth();
-  const navigate = useNavigate();  useEffect(() => {
+  useEffect(() => {
     // Redirect if already authenticated
     if (isAuthenticated) {
-      navigate('/learning-room');
+      const targetRoute = getRoleBasedRoute();
+      console.log(`🔀 User already authenticated, redirecting to: ${targetRoute}`);
+      navigate(targetRoute);
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, getRoleBasedRoute]);
 
   useEffect(() => {
     // Update login state when URL changes
@@ -49,21 +51,26 @@ const AuthPage: React.FC = () => {
       [name]: value
     }));
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);    try {
+    setIsLoading(true);
+
+    try {
       if (isLogin) {
         await login(formData.email, formData.password);
-        navigate('/learning-room');
+        const targetRoute = getRoleBasedRoute();
+        console.log(`🔀 Login successful, redirecting to: ${targetRoute}`);
+        navigate(targetRoute);
       } else {
         if (formData.password !== formData.confirmPassword) {
           setError('Mật khẩu xác nhận không khớp');
           return;
         }
         await register(formData.name, formData.email, formData.password);
-        navigate('/learning-room');
+        const targetRoute = getRoleBasedRoute();
+        console.log(`🔀 Registration successful, redirecting to: ${targetRoute}`);
+        navigate(targetRoute);
       }
     } catch (err: any) {
       setError(err.message || 'Đã xảy ra lỗi. Vui lòng thử lại.');

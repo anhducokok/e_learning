@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 const dummyConversations = [
-  { id: 1, name: "Việt Hà Nguyễn", lastMessage: "Học xong chưa?", unread: true },
-  { id: 2, name: "Thầy Đức", lastMessage: "Tài liệu đây em", unread: false },
+  { id: 1, name: "Alice", lastMessage: "Học xong chưa?", unread: true },
+  { id: 2, name: "Thầy ABC", lastMessage: "Tài liệu đây em", unread: false },
   { id: 3, name: "Nhóm lớp HSK", lastMessage: "Cuối tuần họp nhé", unread: true },
 ];
 

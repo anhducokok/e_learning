@@ -2,26 +2,24 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 const LearningSessionPage: React.FC = () => {
-  const [videoOpen, setVideoOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState<string>('Installasi Tools');
+  const [activeItem, setActiveItem] = useState<string>('Day 1 Learning Chinese');
   const navigate = useNavigate();
 
   const handleBack = () => {
     navigate('/learning-room');
   };
-
   // Sidebar data
   const sidebarSections = [
-    { title: "Startups", items: ["Introduction to Startups", "A bit of basic theory"], complete: 25 },
-    { title: "HTML", items: ["Introduction to HTML"], complete: 10 },
+    { title: "Introduction", items: ["Getting Started", "Basic Pronunciation"], complete: 25 },
+    { title: "Day 1", items: ["Day 1 Learning Chinese"], complete: 10 },
     {
-      title: "Installation",
-      items: ["Download tools", "Installasi Tools", "Basic Programming Tools"],
+      title: "Basic Chinese",
+      items: ["Greetings", "Numbers", "Common Phrases"],
       complete: 50,
     },
     {
-      title: "Deeper HTML",
-      items: ["Formatting HTML", "Links", "Tables", "Lists"],
+      title: "Grammar Basics",
+      items: ["Sentence Structure", "Pronouns", "Basic Verbs", "Question Forms"],
     },
   ];
 
@@ -29,17 +27,16 @@ const LearningSessionPage: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-100 to-white text-gray-900">
       {/* Breadcrumb & Back Button */}
       <div className="border-b bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center text-sm font-medium tracking-wide text-gray-600">
-          <nav className="flex items-center space-x-2">
+        <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center text-sm font-medium tracking-wide text-gray-600">          <nav className="flex items-center space-x-2">
             <Link to="/learning-room" className="hover:text-blue-600 transition-colors duration-200">
               Learning Room
             </Link>
             <span>/</span>
             <Link to="/learning-room" className="hover:text-blue-600 transition-colors duration-200">
-              Web Development
+              Chinese Language
             </Link>
             <span>/</span>
-            <span className="text-gray-900 font-semibold">Installasi Tools</span>
+            <span className="text-gray-900 font-semibold">Day 1 Learning Chinese</span>
           </nav>
           <button
             onClick={handleBack}
@@ -97,83 +94,53 @@ const LearningSessionPage: React.FC = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 bg-white rounded-3xl shadow-2xl px-10 py-8 flex flex-col">
-          <h1 className="text-3xl font-extrabold mb-6 text-gray-900 select-none">
-            Installasi Tools
+        <main className="flex-1 bg-white rounded-3xl shadow-2xl px-10 py-8 flex flex-col">          <h1 className="text-3xl font-extrabold mb-6 text-gray-900 select-none">
+            Day 1 Learning Chinese for Vietnamese
           </h1>
 
-          {/* Video Thumbnail */}
-          <div className="mb-10 relative cursor-pointer group rounded-xl overflow-hidden shadow-xl">
-            <img
-              src="/images/video-thumbnail.jpg"
-              alt="Installation video"
-              className="w-full h-auto object-cover brightness-90 transition-transform duration-300 group-hover:scale-105"
-              onClick={() => setVideoOpen(true)}
-            />
-            <div
-              onClick={() => setVideoOpen(true)}
-              className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              role="button"
-              aria-label="Play video"
-            >
-              <div className="w-20 h-20 bg-red-400 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
-                <div className="w-0 h-0 border-t-10 border-t-transparent border-l-16 border-l-white border-b-10 border-b-transparent ml-1" />
-              </div>
+          {/* Video Player */}
+          <div className="mb-10 relative rounded-xl overflow-hidden shadow-xl bg-black">
+            <div className="aspect-video">
+              <iframe
+                src="https://www.youtube.com/embed/gjy0bGkrYOY"
+                title="Day 1 Learning Chinese for Vietnamese"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="w-full h-full"
+                frameBorder="0"
+              />
             </div>
-          </div>
-
-          {/* Video Modal */}
-          {videoOpen && (
-            <div
-              className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
-              onClick={() => setVideoOpen(false)}
-              aria-modal="true"
-              role="dialog"
-            >
-              <div className="relative w-[90vw] max-w-4xl aspect-video bg-black rounded-xl overflow-hidden shadow-2xl">
-                <iframe
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                  title="Installation Video Tutorial"
-                  allow="autoplay; fullscreen"
-                  allowFullScreen
-                  className="w-full h-full"
-                  frameBorder="0"
-                />
-                <button
-                  onClick={() => setVideoOpen(false)}
-                  className="absolute top-4 right-4 text-white text-3xl hover:text-red-400 transition"
-                  aria-label="Close video"
-                >
-                  &times;
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Course Content */}
+          </div>          {/* Course Content */}
           <article className="prose prose-yellow max-w-none text-gray-800 mb-12">
             <p>
-              In this section, you will learn how to install all the necessary tools for web development.
-              We'll cover installation of code editors, browsers, and other essential utilities.
+              Welcome to Day 1 of learning Chinese for Vietnamese speakers! In this lesson, you will learn 
+              the fundamentals of Chinese pronunciation, basic greetings, and essential phrases that will 
+              help you start your Chinese learning journey.
             </p>
-            <p>Make sure to follow along with the video tutorial above for step-by-step guidance.</p>
+            <p>Watch the video above carefully and practice along with the instructor.</p>
 
-            <h2>Required Tools</h2>
+            <h2>What You'll Learn Today</h2>
             <ul>
-              <li>Visual Studio Code or another code editor</li>
-              <li>Node.js and npm</li>
-              <li>Git for version control</li>
-              <li>Chrome or Firefox for testing</li>
+              <li>Basic Chinese pronunciation and tones</li>
+              <li>Common greetings and polite expressions</li>
+              <li>Numbers 1-10 in Chinese</li>
+              <li>Self-introduction phrases</li>
             </ul>
 
-            <h2>Installation Steps</h2>
+            <h2>Key Phrases Covered</h2>
             <ol>
-              <li>Download Visual Studio Code from the official website</li>
-              <li>Install Node.js LTS version</li>
-              <li>Check installation with <code>node -v</code> and <code>npm -v</code></li>
-              <li>Download and install Git</li>
-              <li>Configure Git with your credentials</li>
+              <li><strong>你好 (Nǐ hǎo)</strong> - Hello</li>
+              <li><strong>我叫... (Wǒ jiào...)</strong> - My name is...</li>
+              <li><strong>很高兴认识你 (Hěn gāoxìng rènshi nǐ)</strong> - Nice to meet you</li>
+              <li><strong>谢谢 (Xiè xiè)</strong> - Thank you</li>
+              <li><strong>再见 (Zàijiàn)</strong> - Goodbye</li>
             </ol>
+
+            <h2>Practice Tips</h2>
+            <p>
+              Remember to practice the tones carefully as they are crucial in Chinese. 
+              Repeat each phrase several times and try to mimic the instructor's pronunciation.
+            </p>
           </article>
 
           {/* Navigation Buttons */}
