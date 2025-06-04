@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import type { Course, Class } from "../../types/api";
 import { useAuth } from "../../contexts/AuthContext";
 import { API_BASE_URL } from "../../config/api";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 // Debug version of CourseListPage with direct fetch calls
 const CourseListPage: React.FC = () => {
@@ -112,10 +110,10 @@ const CourseListPage: React.FC = () => {
   }, [isAuthenticated]);
 
   const categories = [
-    { id: "all", name: "Tất cả" },
-    { id: "beginner", name: "Căn bản" },
-    { id: "intermediate", name: "Trung cấp" },
-    { id: "advanced", name: "Nâng cao" },
+    { id: "ALL", name: "Tất cả" },
+    { id: "BEGINNER", name: "Căn bản" },
+    { id: "INTERMEDIATE", name: "Trung cấp" },
+    { id: "ADVANCED", name: "Nâng cao" },
   ];
 
   // Filter courses within classes based on category

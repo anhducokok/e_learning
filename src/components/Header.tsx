@@ -114,7 +114,7 @@ const Header: React.FC = () => {
                   <div className="relative" ref={dropdownRef}>
                     <button
                       onClick={toggleUserDropdown}
-                      className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-50"
+                      className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-600"
                     >
                       {user?.avatar ? (
                         <img

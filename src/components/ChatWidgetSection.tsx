@@ -5,44 +5,55 @@ const ChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-20 right-6 z-50">
+    <div className="fixed bottom-24 right-8 z-50 flex flex-col items-end space-y-5">
       {/* Chat box */}
       {isOpen && (
-        <div className="bg-white w-80 h-96 rounded-lg shadow-lg flex flex-col justify-between border border-gray-200">
+        <div className="bg-white w-[400px] h-[520px] rounded-3xl shadow-3xl flex flex-col border border-red-500 overflow-hidden">
           {/* Header */}
-          <div className="bg-[#A82828] text-white p-4 flex justify-between items-center rounded-t-lg">
-            <span className="font-semibold">Hỗ trợ trực tuyến</span>
-            <button onClick={() => setIsOpen(false)}>
-              <X className="w-5 h-5" />
+          <div className="bg-red-800 text-white p-6 flex justify-between items-center font-bold text-xl tracking-wide rounded-t-3xl shadow-lg">
+            <span>Hỗ trợ trực tuyến</span>
+            <button
+              onClick={() => setIsOpen(false)}
+              aria-label="Đóng khung chat"
+              className="hover:text-red-300 transition"
+            >
+              <X className="w-6 h-6" />
             </button>
           </div>
 
           {/* Chat content area */}
-          <div className="flex-1 p-4 overflow-y-auto text-sm text-gray-700">
-            <p className="text-gray-500">Xin chào! Bạn cần hỗ trợ gì?</p>
+          <div className="flex-1 p-6 overflow-y-auto text-red-900 text-base leading-relaxed bg-red-50">
+            <p className="italic text-red-500">Xin chào! Bạn cần hỗ trợ gì?</p>
           </div>
 
           {/* Input area */}
-          <div className="p-4 border-t flex gap-2">
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            className="p-6 border-t border-red-300 flex gap-4 bg-white"
+          >
             <input
               type="text"
               placeholder="Nhập tin nhắn..."
-              className="flex-1 border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#A82828]"
+              className="flex-1 border border-red-400 rounded-2xl px-5 py-3 text-base text-red-900 placeholder-red-400 focus:outline-none focus:ring-4 focus:ring-red-700 transition"
             />
-            <button className="bg-[#FCD980] px-4 py-2 rounded text-[#282938] text-sm font-medium hover:bg-yellow-400 transition">
+            <button
+              type="submit"
+              className="bg-red-700 hover:bg-red-800 text-white px-7 py-3 rounded-2xl font-semibold transition shadow-lg"
+            >
               Gửi
             </button>
-          </div>
+          </form>
         </div>
       )}
 
       {/* Floating chat icon */}
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-red-600  text-white px-4 py-2 rounded-full shadow-lg hover:bg-red-700 transition"
+          className="bg-red-700 text-white px-7 py-5 rounded-full shadow-xl hover:bg-red-800 transition font-semibold flex items-center gap-4 text-xl"
         aria-label="Mở khung chat"
       >
-        <MessageCircle className="w-6 h-6 inline-block" /> Hỏi đáp
+        <MessageCircle  />
+        Hỏi đáp
       </button>
     </div>
   );
