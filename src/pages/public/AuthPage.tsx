@@ -485,7 +485,7 @@ const AuthPage: React.FC = () => {
           {/* Image Section */}
           <div className="hidden md:block flex-1 relative">
             <img 
-              src="/images/auth-image.jpg" 
+              src="https://plus.unsplash.com/premium_photo-1661600619578-2d9e2593bbfc?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmFzaWMlMjBjaGluZXNlfGVufDB8fDB8fHww"
               alt="Learn Chinese"
               className="w-full h-full object-cover"
             />

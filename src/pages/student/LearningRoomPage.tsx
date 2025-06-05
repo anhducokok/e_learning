@@ -7,7 +7,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import type { Course } from '../../types/api';
 import tralelaImage from '../../images/tralela.jpg';
 import tungtungImage from '../../images/tungtung.jpg';
-
+import HSK3Image from '../../images/HSK3.jpg';
+import tieImage from "../../images/download.jpg";
 const LearningRoomPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('courses');  const [myCourses, setMyCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +58,7 @@ const LearningRoomPage: React.FC = () => {
       steps: 30,
       completedSteps: 10,
       description: 'Lộ trình học tiếng Trung từ con số 0 đến HSK 3, giúp bạn đạt trình độ giao tiếp trung cấp',
-      image: tralelaImage,
+      image: HSK3Image,
     },
     {
       id: 2,
@@ -65,7 +66,7 @@ const LearningRoomPage: React.FC = () => {
       steps: 24,
       completedSteps: 5,
       description: 'Tiếng Trung chuyên ngành về kinh doanh và thương mại, giúp bạn tự tin trong môi trường làm việc',
-      image: tralelaImage,
+      image: tieImage,
     },
   ];
 
@@ -77,7 +78,7 @@ const LearningRoomPage: React.FC = () => {
       cards: 150,
       mastered: 75,
       lastPracticed: '2 ngày trước',
-      image: tralelaImage,
+      image: HSK3Image,
     },
     {
       id: 2,
@@ -85,7 +86,7 @@ const LearningRoomPage: React.FC = () => {
       cards: 100,
       mastered: 40,
       lastPracticed: '1 tuần trước',
-      image: tralelaImage,
+      image: tieImage,
     },
     {
       id: 3,
@@ -93,7 +94,7 @@ const LearningRoomPage: React.FC = () => {
       cards: 120,
       mastered: 50,
       lastPracticed: '3 ngày trước',
-      image: tralelaImage,
+      image: "https://images.unsplash.com/photo-1695702273667-bbd3af94d45f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8QnVzc2luZXNzJTIw",
     },
   ];
 
@@ -106,7 +107,7 @@ const LearningRoomPage: React.FC = () => {
       questions: 25,
       duration: '20 phút',
       difficulty: 'Cơ bản',
-      image: tralelaImage,
+      image: "https://images.unsplash.com/photo-1695702273667-bbd3af94d45f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8QnVzc2luZXNzJTIw",
     },
     {
       id: 2,
@@ -115,7 +116,7 @@ const LearningRoomPage: React.FC = () => {
       questions: 20,
       duration: '15 phút',
       difficulty: 'Cơ bản',
-      image: tralelaImage,
+      image: "https://plus.unsplash.com/premium_photo-1661411124435-5de83a96be24?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2hpbmVzZSUyMGV4YW18ZW58MHx8MHx8fDA%3D",
     },
     {
       id: 3,
@@ -124,7 +125,7 @@ const LearningRoomPage: React.FC = () => {
       questions: 30,
       duration: '25 phút',
       difficulty: 'Trung cấp',
-      image: tralelaImage,
+      image: "https://plus.unsplash.com/premium_photo-1661600619578-2d9e2593bbfc?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmFzaWMlMjBjaGluZXNlfGVufDB8fDB8fHww",
     },
   ];
 

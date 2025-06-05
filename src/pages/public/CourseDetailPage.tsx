@@ -82,10 +82,9 @@ const CourseDetailPage: React.FC = () => {
 
   // Format level display
   const getLevelDisplay = (level: string) => {
-    switch (level) {
-      case 'beginner': return 'Cơ bản';
-      case 'intermediate': return 'Trung cấp';
-      case 'advanced': return 'Nâng cao';
+    switch (level) {      case 'BEGINNER': return 'Cơ bản';
+      case 'INTERMEDIATE': return 'Trung cấp';
+      case 'ADVANCED': return 'Nâng cao';
       case 'exam': return 'Luyện thi';
       case 'communication': return 'Giao tiếp';
       default: return level;

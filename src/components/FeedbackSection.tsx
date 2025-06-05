@@ -10,43 +10,45 @@ interface feedback {
 
 const FeedbackSection: React.FC = () => {
   const feedback: feedback[] = [
-    {
-      id: 1,
-      name: 'Đỗ Anh Quân',
-      image: '/images/feedback-1.jpg',
-      text: 'Trang web này thực sự là một nền tảng học tiếng Trung rất thân thiện và tiện lợi. Giao diện dễ sử dụng, giúp người học dễ dàng tìm kiếm các bài học phù hợp.',
-    },
-    {
-      id: 2,
-      name: 'Đỗ Anh Quân',
-      image: '/images/feedback-2.jpg',
-      text: 'Trang web này thực sự là một nền tảng học tiếng Trung rất thân thiện và tiện lợi. Giao diện dễ sử dụng, giúp người học dễ dàng tìm kiếm các bài học phù hợp.',
-    },
-    {
-      id: 3,
-      name: 'Đỗ Anh Quân',
-      image: '/images/feedback-3.jpg',
-      text: 'Trang web này thực sự là một nền tảng học tiếng Trung rất thân thiện và tiện lợi. Giao diện dễ sử dụng, giúp người học dễ dàng tìm kiếm các bài học phù hợp.',
-    },
-    {
-      id: 4,
-      name: 'Đỗ Anh Quân',
-      image: '/images/feedback-1.jpg',
-      text: 'Trang web này thực sự là một nền tảng học tiếng Trung rất thân thiện và tiện lợi. Giao diện dễ sử dụng, giúp người học dễ dàng tìm kiếm các bài học phù hợp.',
-    },
-    {
-      id: 5,
-      name: 'Đỗ Anh Quân',
-      image: '/images/feedback-2.jpg',
-      text: 'Trang web này thực sự là một nền tảng học tiếng Trung rất thân thiện và tiện lợi. Giao diện dễ sử dụng, giúp người học dễ dàng tìm kiếm các bài học phù hợp.',
-    },
-    {
-      id: 6,
-      name: 'Đỗ Anh Quân',
-      image: '/images/feedback-3.jpg',
-      text: 'Trang web này thực sự là một nền tảng học tiếng Trung rất thân thiện và tiện lợi. Giao diện dễ sử dụng, giúp người học dễ dàng tìm kiếm các bài học phù hợp.',
-    },
-  ];
+  {
+    id: 1,
+    name: 'Nguyễn Thị Minh Châu',
+    image: '/images/feedback-2.jpg',
+    text: 'Tôi rất thích cách các bài học được sắp xếp hợp lý và dễ hiểu. Trang web giúp tôi cải thiện tiếng Trung mỗi ngày một chút.',
+  },
+  {
+    id: 2,
+    name: 'Lê Văn Hùng',
+    image: '/images/feedback-2.jpg',
+    text: 'Chức năng luyện phát âm rất hữu ích. Nhờ có nó mà tôi tự tin hơn khi giao tiếp bằng tiếng Trung.',
+  },
+  {
+    id: 3,
+    name: 'Trần Mỹ Linh',
+    image: '/images/feedback-2.jpg',
+    text: 'Trang web có thiết kế hiện đại, màu sắc dễ chịu. Tôi thích việc có thể học mọi lúc mọi nơi trên điện thoại.',
+  },
+  {
+    id: 4,
+    name: 'Phạm Quốc Khánh',
+    image: '/images/feedback-2.jpg',
+    text: 'Kho từ vựng đa dạng và bài tập tương tác rất thú vị. Mỗi bài học đều mang lại cảm giác mới mẻ.',
+  },
+  {
+    id: 5,
+    name: 'Hoàng Thị Thanh Hương',
+    image: '/images/feedback-2.jpg',
+    text: 'Tôi đã thử nhiều nền tảng học tiếng Trung và đây là nền tảng phù hợp nhất với lộ trình học của tôi.',
+  },
+  {
+    id: 6,
+    name: 'Đinh Gia Bảo',
+    image: '/images/feedback-2.jpg',
+    text: 'Trang web không chỉ hỗ trợ người mới bắt đầu mà còn có nội dung nâng cao rất chất lượng.',
+  },
+];
+
+
 
   return (
     <section className="bg-white py-16 px-4">
@@ -54,7 +56,7 @@ const FeedbackSection: React.FC = () => {
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-2">
           Các đánh giá của học sinh dành
           <br />
-          cho Tieng Trung Ni Hao
+          cho NiHao Education
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">

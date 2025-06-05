@@ -15,10 +15,9 @@ const SchedulePage: React.FC = () => {
       description: 'Perfect for complete beginners. Learn basic greetings, numbers, and essential daily vocabulary.',
       courseId: 'course-1',
       course: {
-        id: 'course-1',
-        title: 'HSK 1 Complete Course',
+        id: 'course-1',        title: 'HSK 1 Complete Course',
         description: 'Complete beginner course for HSK 1',
-        level: 'beginner',
+        level: 'BEGINNER',
         duration: '8 weeks',
         image: '/images/hsk1.jpg',
         price: 150000
@@ -44,10 +43,9 @@ const SchedulePage: React.FC = () => {
       description: 'Expand your Chinese vocabulary and grammar understanding with practical conversations.',
       courseId: 'course-2',
       course: {
-        id: 'course-2',
-        title: 'HSK 2 Intermediate Course',
+        id: 'course-2',        title: 'HSK 2 Intermediate Course',
         description: 'Intermediate course for HSK 2',
-        level: 'beginner',
+        level: 'INTERMEDIATE',
         duration: '10 weeks',
         image: '/images/hsk2.jpg',
         price: 200000
@@ -73,10 +71,9 @@ const SchedulePage: React.FC = () => {
       description: 'Learn professional Chinese for workplace communication, meetings, and business correspondence.',
       courseId: 'course-3',
       course: {
-        id: 'course-3',
-        title: 'Business Chinese Complete',
+        id: 'course-3',        title: 'Business Chinese Complete',
         description: 'Professional Chinese for business',
-        level: 'intermediate',
+        level: 'INTERMEDIATE',
         duration: '12 weeks',
         image: '/images/business-chinese.jpg',
         price: 350000
@@ -102,10 +99,9 @@ const SchedulePage: React.FC = () => {
       description: 'Develop intermediate speaking skills and tackle more complex grammar structures.',
       courseId: 'course-4',
       course: {
-        id: 'course-4',
-        title: 'HSK 3 Advanced Intermediate',
+        id: 'course-4',        title: 'HSK 3 Advanced Intermediate',
         description: 'Advanced intermediate Chinese course',
-        level: 'intermediate',
+        level: 'INTERMEDIATE',
         duration: '12 weeks',
         image: '/images/hsk3.jpg',
         price: 280000
@@ -131,10 +127,9 @@ const SchedulePage: React.FC = () => {
       description: 'Fun and interactive Chinese learning designed specifically for young learners.',
       courseId: 'course-5',
       course: {
-        id: 'course-5',
-        title: 'Kids Chinese Adventure',
+        id: 'course-5',        title: 'Kids Chinese Adventure',
         description: 'Chinese course for children',
-        level: 'beginner',
+        level: 'BEGINNER',
         duration: '16 weeks',
         image: '/images/kids-chinese.jpg',
         price: 180000
@@ -160,10 +155,9 @@ const SchedulePage: React.FC = () => {
       description: 'Master advanced Chinese communication skills and prepare for HSK 4 examination.',
       courseId: 'course-6',
       course: {
-        id: 'course-6',
-        title: 'HSK 4 Mastery Course',
+        id: 'course-6',        title: 'HSK 4 Mastery Course',
         description: 'Advanced Chinese communication course',
-        level: 'advanced',
+        level: 'ADVANCED',
         duration: '14 weeks',
         image: '/images/hsk4.jpg',
         price: 320000
@@ -211,16 +205,15 @@ const SchedulePage: React.FC = () => {
     }).format(price);
   };
 
-  const getLevelBadge = (level: string) => {
-    const levelColors = {
-      'beginner': 'bg-green-100 text-green-800',
-      'intermediate': 'bg-yellow-100 text-yellow-800',
-      'advanced': 'bg-red-100 text-red-800'
+  const getLevelBadge = (level: string) => {    const levelColors = {
+      'BEGINNER': 'bg-green-100 text-green-800',
+      'INTERMEDIATE': 'bg-yellow-100 text-yellow-800',
+      'ADVANCED': 'bg-red-100 text-red-800'
     };
     const levelNames = {
-      'beginner': 'Cơ bản',
-      'intermediate': 'Trung cấp',
-      'advanced': 'Nâng cao'
+      'BEGINNER': 'Cơ bản',
+      'INTERMEDIATE': 'Trung cấp',
+      'ADVANCED': 'Nâng cao'
     };
     return {
       color: levelColors[level as keyof typeof levelColors] || 'bg-gray-100 text-gray-800',

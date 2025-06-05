@@ -57,9 +57,10 @@ const Header: React.FC = () => {
   const navItems = [
     { text: "Trang chủ", path: "/home" },
     { text: "Blog", path: "/blog" },
-    { text: "Khóa học", path: "/courses" },
+    // { text: "Khóa học", path: "/courses" },
+     {text: "Lịch Khai Giảng",path: "/schedule" },
     { text: "Liên hệ", path: "/#contact" },
-    {text: "Lịch Khai Giảng",path: "/schedule" },
+   
   ];
 
   const isActive = (path: string) =>

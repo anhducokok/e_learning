@@ -15,6 +15,15 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const { isAuthenticated, user, isLoading, getRoleBasedRoute } = useAuth();
 
+  // Temporary bypass for development - remove in production
+  const isDevelopment = import.meta.env.DEV;
+  const bypassAuth = isDevelopment && window.location.search.includes('bypass=true');
+  
+  if (bypassAuth) {
+    console.log('🔓 Auth bypassed for development');
+    return <>{children}</>;
+  }
+
   // Show loading while checking authentication
   if (isLoading) {
     return (

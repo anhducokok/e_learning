@@ -1,5 +1,6 @@
 import React from "react";
 import { Bar, Doughnut } from "react-chartjs-2";
+import { Link } from "react-router-dom";
 import logoImage from "../../images/d1fe66745c26de30ce87421d08acff5f22ef002b.jpg";
 import DashboardHeader from "../../components/DashboardHeader";
 
@@ -15,8 +16,13 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
-const TeacherDashboard: React.FC = () => {
-  const stats = [
+const TeacherDashboard: React.FC = () => {  const stats = [
+    {
+      title: "Khóa học của tôi",
+      count: 12,
+      color: "bg-purple-600",
+      href: "/teacher/courses",
+    },
     {
       title: "Học viên của tôi",
       count: 120,
@@ -34,12 +40,6 @@ const TeacherDashboard: React.FC = () => {
       count: 8,
       color: "bg-yellow-500",
       href: "/teacher/assignments",
-    },
-    {
-      title: "Phản hồi mới",
-      count: 5,
-      color: "bg-red-500",
-      href: "/teacher/feedback",
     },
   ];
 
@@ -101,9 +101,13 @@ const TeacherDashboard: React.FC = () => {
             <span className="font-bold text-lg text-blue-600">NiHao</span>
             <span className="text-xs text-gray-500"> Teacher</span>
           </div>
-        </div>
-        <nav className="flex-1 py-4 px-3 overflow-y-auto">
+        </div>        <nav className="flex-1 py-4 px-3 overflow-y-auto">
           <ul className="space-y-1">
+            <li>
+              <Link to="/teacher/courses" className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
+                Quản lý khóa học
+              </Link>
+            </li>
             <li>
               <a href="/teacher/classes" className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
                 Lớp học của tôi
@@ -132,22 +136,20 @@ const TeacherDashboard: React.FC = () => {
           notifications={teacherNotifications}
         />
         
-        <div className="flex-1 p-8">
-          {/* Stats */}
+        <div className="flex-1 p-8">          {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           {stats.map((stat, i) => (
-            <a key={i} href={stat.href} className="transform hover:scale-105 transition">
+            <Link key={i} to={stat.href} className="transform hover:scale-105 transition">
               <div className="rounded-xl shadow-md overflow-hidden">
                 <div className={`p-5 text-white text-center ${stat.color}`}>
                   <h3 className="text-lg font-semibold">{stat.title}</h3>
-                </div>
-                <div className="bg-white py-4 text-center">
-                  <p className={`text-3xl font-bold text-${stat.color.replace("bg-", "")}`}>
+                </div>                <div className="bg-white py-4 text-center">
+                  <p className="text-3xl font-bold text-gray-800">
                     {stat.count}
                   </p>
                 </div>
               </div>
-            </a>
+            </Link>
           ))}        </div>
 
         {/* Charts */}

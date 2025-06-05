@@ -8,7 +8,7 @@ import BlogPage from "./pages/public/BlogPage";
 import MyClassesPage from "./pages/student/MyClassesPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import TeacherDashboardPage from "./pages/teacher/TeacherDashboardPage";
-import LearningSessionPage from "./pages/student/LearningSessionPage";
+// import LearningSessionPage from "./pages/student/LearningSessionPage";
 import CourseDetailPage from "./pages/public/CourseDetailPage";
 import "./index.css";
 import NotFoundPage from "./pages/public/404Page";
@@ -21,6 +21,8 @@ import TestPage from "./pages/public/TestPage";
 import { ChatProvider } from "./contexts/ChatContext";
 import MainLayout from "./components/MainLayout";
 import SchedulePage from "./pages/public/SchedulePage";
+import CourseManagementPage from "./pages/teacher/CourseManagementPage";
+import CourseDetailManagePage from "./pages/teacher/CourseDetailManagePage";
 
 function App() {
   return (
@@ -36,14 +38,35 @@ function App() {
                   <AdminDashboardPage />
                 </ProtectedRoute>
               } 
-            />
-            
-            {/* Teacher Routes - No Layout */}
+            />              {/* Teacher Routes - No Layout */}
             <Route
-              path="/teacher-dashboard"
+              path="/teacher/dashboard"
               element={
                 <ProtectedRoute allowedRoles={['teacher']}>
                   <TeacherDashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/teacher/courses"
+              element={
+                <ProtectedRoute allowedRoles={['teacher']}>
+                  <CourseManagementPage />
+                </ProtectedRoute>
+              }
+            />            <Route
+              path="/teacher/courses/:courseId"
+              element={
+                <ProtectedRoute allowedRoles={['teacher']}>
+                  <CourseDetailManagePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/teacher/courses/:courseId/manage"
+              element={
+                <ProtectedRoute allowedRoles={['teacher']}>
+                  <CourseDetailManagePage />
                 </ProtectedRoute>
               }
             />
@@ -62,15 +85,14 @@ function App() {
                     <LearningRoomPage />
                   </ProtectedRoute>
                 } 
-              />
-              <Route
-                path="learning-session/:id"
+              />              {/* <Route
+                path="learning-session/:courseId"
                 element={
                   <ProtectedRoute allowedRoles={['student']}>
                     <LearningSessionPage />
                   </ProtectedRoute>
                 }
-              />
+              /> */}
               <Route 
                 path="my-classes" 
                 element={

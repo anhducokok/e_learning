@@ -22,7 +22,7 @@ export interface Course {
   id: string;
   title: string;
   description: string;
-  level: 'beginner' | 'intermediate' | 'advanced';
+  level: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   duration?: string;
   image?: string;
   thumbnail?: string;
@@ -114,7 +114,7 @@ export interface RegisterRequest {
 export interface CreateCourseRequest {
   title: string;
   description: string;
-  level: 'beginner' | 'intermediate' | 'advanced';
+  level: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
   duration: string;
   image?: string;
   price?: number;

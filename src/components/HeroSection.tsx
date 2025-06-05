@@ -16,7 +16,7 @@ const HeroSection: React.FC = () => {
             </p>
             <div className="flex flex-wrap gap-2">
               <Link 
-                to="/courses" 
+                to="/auth" 
                 className="px-5 py-3 bg-yellow-300 hover:bg-yellow-500 text-black font-semibold rounded-md text-base transition-colors duration-200"
               >
                 Bắt đầu học
