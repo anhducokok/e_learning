@@ -145,7 +145,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                         <div
                           key={notification.id}
                           className={`px-4 py-3 hover:bg-gray-50 border-b border-gray-100 ${
-                            !notification.read ? 'bg-blue-50' : ''
+                            !notification.read ? 'bg-red-50' : ''
                           }`}
                         >
                           <div className="flex items-start space-x-3">
@@ -169,7 +169,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                     </div>
                   )}
                   <div className="px-4 py-2 border-t">
-                    <button className="text-sm text-blue-600 hover:text-blue-800">
+                    <button className="text-sm text-red-600 hover:text-red-800">
                       Xem tất cả thông báo
                     </button>
                   </div>
@@ -183,7 +183,7 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                 className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
                   {getUserInitials(user?.name || 'User')}
                 </div>
                 <div className="hidden md:block text-left">

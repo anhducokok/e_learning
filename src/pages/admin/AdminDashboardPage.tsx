@@ -2,6 +2,7 @@ import React from "react";
 import { Bar, Doughnut } from "react-chartjs-2";
 import logoImage from "../../images/d1fe66745c26de30ce87421d08acff5f22ef002b.jpg"; // Adjust path if needed
 import DashboardHeader from "../../components/DashboardHeader";
+import AdminLayout from "../../components/admin/AdminLayout";
 
 import {
   Chart as ChartJS,
@@ -27,7 +28,7 @@ const ChineseCourseDashboard: React.FC = () => {
     {
       title: "Học viên đang học",
       count: 850,
-      color: "bg-blue-600",
+      color: "bg-red-600",
       href: "/admin/students",
     },
     {
@@ -127,88 +128,61 @@ const ChineseCourseDashboard: React.FC = () => {
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white border-r flex flex-col sticky top-0 h-screen">
-        <div className="flex items-center gap-2 px-6 py-5 border-b">
-          <img src={logoImage} alt="Nihao" className="h-8" />
-          <div>
-            <span className="font-bold text-lg text-blue-600">NiHao</span>
-            <span className="text-xs text-gray-500"> Education</span>
-          </div>
-        </div>
-        <nav className="flex-1 py-4 px-3 overflow-y-auto">
-          <ul className="space-y-1">
-            {sidebarItems.map((item) => (
-              <li key={item.id}>
+    <AdminLayout logoImage={logoImage} activePath="/admin-dashboard/dashboard">
+      <div className="flex min-h-screen bg-gray-50">
+        {/* Main content */}
+        <main className="flex-1 flex flex-col">
+          {" "}
+          <DashboardHeader
+            title="Trang quản trị"
+            notifications={adminNotifications}
+          />
+          <div className="flex-1 p-8">
+            {/* Stats & Charts */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+              {stats.map((stat, i) => (
                 <a
-                  href={item.href}
-                  className="flex items-center w-full px-3 py-2 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-100"
+                  href={stat.href}
+                  key={i}
+                  className="transform hover:scale-105 transition"
                 >
-                  <span>{item.label}</span>
-                  {item.notificationCount > 0 && (
-                    <span className="ml-auto rounded-full px-2 text-xs text-white bg-blue-500">
-                      {item.notificationCount}
-                    </span>
-                  )}
+                  <div className="rounded-xl shadow-md overflow-hidden">
+                    <div className={`p-5 text-white text-center ${stat.color}`}>
+                      <h3 className="text-lg font-semibold">{stat.title}</h3>
+                    </div>
+                    <div className="bg-white py-4 text-center">
+                      <p
+                        className={`text-3xl font-bold text-${stat.color.replace(
+                          "bg-",
+                          ""
+                        )}`}
+                      >
+                        {stat.count}
+                      </p>
+                    </div>
+                  </div>
                 </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </aside>{" "}
-      {/* Main content */}
-      <main className="flex-1 flex flex-col">
-        {" "}
-        <DashboardHeader
-          title="Trang quản trị"
-          notifications={adminNotifications}
-        />
-        <div className="flex-1 p-8">
-          {/* Stats & Charts */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            {stats.map((stat, i) => (
-              <a
-                href={stat.href}
-                key={i}
-                className="transform hover:scale-105 transition"
-              >
-                <div className="rounded-xl shadow-md overflow-hidden">
-                  <div className={`p-5 text-white text-center ${stat.color}`}>
-                    <h3 className="text-lg font-semibold">{stat.title}</h3>
-                  </div>
-                  <div className="bg-white py-4 text-center">
-                    <p
-                      className={`text-3xl font-bold text-${stat.color.replace(
-                        "bg-",
-                        ""
-                      )}`}
-                    >
-                      {stat.count}
-                    </p>
-                  </div>
-                </div>
-              </a>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h2 className="text-lg font-semibold text-gray-700 mb-4">
-                Thống kê học viên theo cấp độ HSK
-              </h2>
-              <Bar data={barData} options={{ responsive: true }} />
-            </div>
-            <div className="bg-white rounded-xl p-6 shadow-lg">
-              <h2 className="text-lg font-semibold text-gray-700 mb-4 text-center">
-                Thống kê học viên theo kỹ năng
-              </h2>{" "}
-              <Doughnut data={doughnutData} options={{ responsive: true }} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+              <div className="bg-white rounded-xl p-6 shadow-lg">
+                <h2 className="text-lg font-semibold text-gray-700 mb-4">
+                  Thống kê học viên theo cấp độ HSK
+                </h2>
+                <Bar data={barData} options={{ responsive: true }} />
+              </div>
+              <div className="bg-white rounded-xl p-6 shadow-lg">
+                <h2 className="text-lg font-semibold text-gray-700 mb-4 text-center">
+                  Thống kê học viên theo kỹ năng
+                </h2>{" "}
+                <Doughnut data={doughnutData} options={{ responsive: true }} />
+              </div>
             </div>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </AdminLayout>
   );
 };
 

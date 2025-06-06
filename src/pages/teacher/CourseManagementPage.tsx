@@ -398,7 +398,7 @@ const CourseManagementPage: React.FC = () => {
                         <button
                           onClick={() =>
                             window.open(
-                              `/learning-session/${course.id}`,
+                              `/courses/${course.id}`,
                               "_blank"
                             )
                           }

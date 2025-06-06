@@ -15,7 +15,7 @@ const TeacherSidebar: React.FC<TeacherSidebarProps> = ({ logoImage }) => {
       <div className="flex items-center gap-2 px-6 py-5 border-b">
         <img src={logoImage} alt="Nihao" className="h-8" />
         <div>
-          <span className="font-bold text-lg text-yellow-600">NiHao</span>
+          <span className="font-bold text-lg text-red-600">NiHao</span>
           <span className="text-xs text-gray-500"> Teacher</span>
         </div>
       </div>
@@ -24,9 +24,9 @@ const TeacherSidebar: React.FC<TeacherSidebarProps> = ({ logoImage }) => {
           <li>
             <Link
               to="/teacher/dashboard"
-              className={`block px-3 py-2 rounded-lg hover:bg-yellow-100 text-gray-700 ${
+              className={`block px-3 py-2 rounded-lg hover:bg-red-100 text-gray-700 ${
                 currentPath === "/teacher/dashboard"
-                  ? "bg-yellow-100 text-yellow-800 font-medium"
+                  ? "bg-red-100 text-red-800 font-medium"
                   : ""
               }`}
             >
@@ -36,9 +36,9 @@ const TeacherSidebar: React.FC<TeacherSidebarProps> = ({ logoImage }) => {
           <li>
             <Link
               to="/teacher/courses"
-              className={`block px-3 py-2 rounded-lg hover:bg-yellow-100 ${
+              className={`block px-3 py-2 rounded-lg hover:bg-red-100 ${
                 activePath.includes("/teacher/courses")
-                  ? "bg-yellow-100 text-yellow-800 font-medium"
+                  ? "bg-red-100 text-red-800 font-medium"
                   : "text-gray-700"
               }`}
             >
@@ -47,14 +47,14 @@ const TeacherSidebar: React.FC<TeacherSidebarProps> = ({ logoImage }) => {
           </li>
           <li>
             <Link to="/teacher/students"
-              className="block px-3 py-2 rounded-lg hover:bg-yellow-100 text-gray-700"
+              className="block px-3 py-2 rounded-lg hover:bg-red-100 text-gray-700"
             >
               Học viên
             </Link>
           </li>
           <li>
             <Link to="/teacher/assignments"
-              className="block px-3 py-2 rounded-lg hover:bg-yellow-100 text-gray-700"
+              className="block px-3 py-2 rounded-lg hover:bg-red-100 text-gray-700"
             >
               Bài tập
             </Link>

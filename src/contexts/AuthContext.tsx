@@ -79,7 +79,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       case 'teacher':
         return '/teacher/dashboard';
       case 'admin':
-        return '/admin-dashboard';
+        return '/admin-dashboard/dashboard';
       default:
         return '/learning-room';
     }

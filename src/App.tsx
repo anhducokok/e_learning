@@ -24,7 +24,7 @@ import SchedulePage from "./pages/public/SchedulePage";
 import CourseManagementPage from "./pages/teacher/CourseManagementPage";
 import CourseDetailManagePage from "./pages/teacher/CourseDetailManagePage";
 import CheckoutPage from "./pages/student/CheckoutPage";
-import QR from "./images/mb.jpg";
+import AdminPaymentPage from "./pages/admin/AdminPaymentApprovalPage";
 
 function App() {
   return (
@@ -34,13 +34,22 @@ function App() {
           <Routes>
             {/* Admin Routes - No Layout */}
             <Route
-              path="/admin-dashboard"
+              path="/admin-dashboard/dashboard"
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminDashboardPage />
                 </ProtectedRoute>
               }
-            />{" "}
+            />
+            <Route
+              path="/admin-dashboard/payment"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminPaymentPage />
+                </ProtectedRoute>
+              }
+            />
+            {" "}
             {/* Teacher Routes - No Layout */}
             <Route
               path="/teacher/dashboard"
