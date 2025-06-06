@@ -14,9 +14,7 @@ const Header: React.FC = () => {
   const { isAuthenticated, user, logout, getRoleBasedRoute } = useAuth();
 
   useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
+    const checkIfMobile = () => setIsMobile(window.innerWidth < 768);
     checkIfMobile();
     window.addEventListener("resize", checkIfMobile);
     return () => window.removeEventListener("resize", checkIfMobile);
@@ -38,6 +36,7 @@ const Header: React.FC = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleUserDropdown = () => setIsUserDropdownOpen(!isUserDropdownOpen);
   const closeMenu = () => setIsMenuOpen(false);
+
   const handleLogout = async () => {
     await logout();
     setIsUserDropdownOpen(false);
@@ -45,22 +44,20 @@ const Header: React.FC = () => {
     closeMenu();
   };
 
-  const getUserInitials = (name: string) => {
-    return name
+  const getUserInitials = (name: string) =>
+    name
       .split(" ")
       .map((w) => w.charAt(0))
       .join("")
       .toUpperCase()
       .slice(0, 2);
-  };
 
   const navItems = [
     { text: "Trang chủ", path: "/home" },
     { text: "Blog", path: "/blog" },
-    // { text: "Khóa học", path: "/courses" },
-     {text: "Lịch Khai Giảng",path: "/schedule" },
+    { text: "Khóa học", path: "/courses" },
+    { text: "Lịch Khai Giảng", path: "/schedule" },
     { text: "Liên hệ", path: "/#contact" },
-   
   ];
 
   const isActive = (path: string) =>
@@ -71,11 +68,7 @@ const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center py-3">
           <Link to="/" className="flex items-center">
-            <img
-              src={logoImage}
-              alt="Nihao Education"
-              className="h-[3rem] mr-1"
-            />
+            <img src={logoImage} alt="Nihao Education" className="h-12 mr-1" />
             <span className="hidden sm:block font-bold text-xl text-white">
               Nihao Education
             </span>
@@ -89,118 +82,118 @@ const Header: React.FC = () => {
                     <a
                       key={item.text}
                       href={item.path}
-                      className={`mx-1 px-3 py-2 font-medium relative text-white hover:text-white`}
+                      className={`mx-1 px-3 py-2 font-medium text-white hover:text-white relative`}
                     >
                       {item.text}
                       {isActive(item.path) && (
-                        <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white"></span>
+                        <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white" />
                       )}
                     </a>
                   ) : (
                     <Link
                       key={item.text}
                       to={item.path}
-                      className={`mx-1 px-3 py-2 font-medium relative text-white hover:text-white`}
+                      className={`mx-1 px-3 py-2 font-medium text-white hover:text-white relative`}
                     >
                       {item.text}
                       {isActive(item.path) && (
-                        <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white"></span>
+                        <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white" />
                       )}
                     </Link>
                   )
                 )}
               </nav>
-              <div>
-                {isAuthenticated ? (
-                  <div className="relative" ref={dropdownRef}>
-                    <button
-                      onClick={toggleUserDropdown}
-                      className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-600"
+              {isAuthenticated ? (
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    onClick={toggleUserDropdown}
+                    className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-600"
+                  >
+                    {user?.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt={user.name || user.email}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 bg-white text-white rounded-full flex items-center justify-center text-sm font-medium">
+                        {getUserInitials(user?.name || user?.email || "U")}
+                      </div>
+                    )}
+                    <span className="hidden md:block text-white text-sm">
+                      {user?.name || user?.email}
+                    </span>
+                    <svg
+                      className={`w-4 h-4 text-gray-300 ${
+                        isUserDropdownOpen ? "rotate-180" : ""
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
                     >
-                      {user?.avatar ? (
-                        <img
-                          src={user.avatar}
-                          alt={user.name || user.email}
-                          className="w-8 h-8 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-8 h-8 bg-white text-white rounded-full flex items-center justify-center text-sm font-medium">
-                          {getUserInitials(user?.name || user?.email || "U")}
-                        </div>
-                      )}
-                      <span className="hidden md:block text-white text-sm">
-                        {user?.name || user?.email}
-                      </span>
-                      <svg
-                        className={`w-4 h-4 text-gray-300 ${
-                          isUserDropdownOpen ? "rotate-180" : ""
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+                  {isUserDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border py-1 z-50">
+                      <div className="px-4 py-2 border-b">
+                        <p className="text-sm font-medium text-gray-900">
+                          {user?.name || "Người dùng"}
+                        </p>
+                        <p className="text-sm text-gray-500 truncate">
+                          {user?.email}
+                        </p>
+                      </div>
+                      <Link
+                        to={getRoleBasedRoute()}
+                        onClick={() => setIsUserDropdownOpen(false)}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </button>
-                    {isUserDropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border py-1 z-50">
-                        <div className="px-4 py-2 border-b">
-                          <p className="text-sm font-medium text-gray-900">
-                            {user?.name || "Người dùng"}
-                          </p>
-                          <p className="text-sm text-gray-500 truncate">
-                            {user?.email}
-                          </p>                        </div>
+                        {user?.role === "ADMIN"
+                          ? "Admin Dashboard"
+                          : user?.role === "TEACHER"
+                          ? "Teacher Dashboard"
+                          : "Lớp học của tôi"}
+                      </Link>
+                      {user?.role === "STUDENT" && (
                         <Link
-                          to={getRoleBasedRoute()}
+                          to="/learning-room"
                           onClick={() => setIsUserDropdownOpen(false)}
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                         >
-                          {user?.role === 'admin' ? 'Admin Dashboard' : 
-                           user?.role === 'teacher' ? 'Teacher Dashboard' : 
-                           'Lớp học của tôi'}
+                          Phòng học
                         </Link>
-                        {user?.role === 'student' && (
-                          <Link
-                            to="/learning-room"
-                            onClick={() => setIsUserDropdownOpen(false)}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                          >
-                            Phòng học
-                          </Link>
-                        )}
-                        <div className="border-t my-1"></div>
-                        <button
-                          onClick={handleLogout}
-                          className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                        >
-                          Đăng xuất
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <>
-                    <Link
-                      to="/auth?mode=login"
-                      className="mr-2 px-4 py-2 bg-white text-gray-800 rounded-md hover:bg-gray-50"
-                    >
-                      Đăng nhập
-                    </Link>
-                    <Link
-                      to="/auth?mode=register"
-                      className="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700"
-                    >
-                      Đăng ký
-                    </Link>
-                  </>
-                )}
-              </div>
+                      )}
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        Đăng xuất
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <Link
+                    to="/auth?mode=login"
+                    className="mr-2 px-4 py-2 bg-white text-gray-800 rounded-md hover:bg-gray-50"
+                  >
+                    Đăng nhập
+                  </Link>
+                  <Link
+                    to="/auth?mode=register"
+                    className="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700"
+                  >
+                    Đăng ký
+                  </Link>
+                </>
+              )}
             </div>
           )}
 
@@ -209,42 +202,30 @@ const Header: React.FC = () => {
               onClick={toggleMenu}
               className="p-2 rounded-md text-white hover:bg-red-700"
             >
-              {isMenuOpen ? (
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              )}
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d={
+                    isMenuOpen
+                      ? "M6 18L18 6M6 6l12 12"
+                      : "M4 6h16M4 12h16M4 18h16"
+                  }
+                />
+              </svg>
             </button>
           )}
         </div>
       </div>
 
       {isMobile && isMenuOpen && (
-        <div className="fixed right-0 top-0 h-full w-4/5 max-w-[300px] bg-white shadow-lg z-50 transform transition-transform duration-300 ease-in-out">
+        <div className="fixed right-0 top-0 h-full w-4/5 max-w-[300px] bg-white shadow-lg z-50">
           <div className="p-4">
             <div className="flex justify-between items-center mb-5">
               <h6 className="font-semibold text-xl">NiHao Education</h6>
@@ -297,7 +278,8 @@ const Header: React.FC = () => {
                   </Link>
                 )
               )}
-            </nav>            <div className="mt-5 space-y-2">
+            </nav>
+            <div className="mt-5 space-y-2">
               {isAuthenticated ? (
                 <>
                   <Link
@@ -305,11 +287,13 @@ const Header: React.FC = () => {
                     onClick={closeMenu}
                     className="block w-full px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100"
                   >
-                    {user?.role === 'admin' ? 'Admin Dashboard' : 
-                     user?.role === 'teacher' ? 'Teacher Dashboard' : 
-                     'Lớp học của tôi'}
+                    {user?.role === "ADMIN"
+                      ? "Admin Dashboard"
+                      : user?.role === "TEACHER"
+                      ? "Teacher Dashboard"
+                      : "Lớp học của tôi"}
                   </Link>
-                  {user?.role === 'student' && (
+                  {user?.role === "STUDENT" && (
                     <Link
                       to="/learning-room"
                       onClick={closeMenu}
@@ -347,7 +331,7 @@ const Header: React.FC = () => {
           </div>
         </div>
       )}
-      <ChatList/>
+      <ChatList />
     </header>
   );
 };
