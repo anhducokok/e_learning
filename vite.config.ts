@@ -5,7 +5,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    hmr: false, // Disable Hot Module Replacement (WebSocket)
-    port: 5173,
-  },
+    hmr: true, 
+    host: true,
+    port: 5173
+  }
 })

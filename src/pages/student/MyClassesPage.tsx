@@ -36,7 +36,7 @@ const MyClassesPage: React.FC = () => {
   );
 
   // Pagination
-  const coursesPerPage = 6;
+  const coursesPerPage = 2;
   const totalPages = Math.ceil(filteredCourses.length / coursesPerPage);
   const currentCourses = filteredCourses.slice(
     (currentPage - 1) * coursesPerPage,

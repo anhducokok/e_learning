@@ -152,7 +152,8 @@ const CourseDetailPage: React.FC = () => {
             </div>
 
             <Link
-              to="/course-success"
+              to={`/checkout/${course.id}`}
+              state={{ course }}
               className="block text-center w-full bg-[#A82828] text-white px-4 py-3 rounded-md font-semibold hover:bg-red-700 transition mb-3"
             >
               Đăng ký khóa học            </Link>

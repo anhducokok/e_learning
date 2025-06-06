@@ -1,51 +1,57 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  PlusIcon, 
-  PencilIcon, 
-  TrashIcon, 
-  BookOpenIcon, 
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  PlusIcon,
+  PencilIcon,
+  TrashIcon,
+  BookOpenIcon,
   QuestionMarkCircleIcon,
   ChevronLeftIcon,
-  PlayIcon
-} from '@heroicons/react/24/outline';
-import { courseService, lessonService, quizService } from '../../services';
-import type { Course, Lesson, Quiz, CreateLessonRequest, CreateQuizRequest } from '../../types/api';
-import DashboardHeader from '../../components/DashboardHeader';
+  PlayIcon,
+} from "@heroicons/react/24/outline";
+import { courseService, lessonService, quizService } from "../../services";
+import type {
+  Course,
+  Lesson,
+  Quiz,
+  CreateLessonRequest,
+  CreateQuizRequest,
+} from "../../types/api";
+import DashboardHeader from "../../components/DashboardHeader";
 import logoImage from "../../images/d1fe66745c26de30ce87421d08acff5f22ef002b.jpg";
 
 const CourseDetailManagePage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-  
+
   const [course, setCourse] = useState<Course | null>(null);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);  // Modal states
+  const [error, setError] = useState<string | null>(null); // Modal states
   const [showLessonForm, setShowLessonForm] = useState(false);
   const [showQuizForm, setShowQuizForm] = useState(false);
   const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
   // Form states
   const [lessonForm, setLessonForm] = useState<CreateLessonRequest>({
-    title: '',
-    textContent: '',
+    title: "",
+    textContent: "",
     orderIndex: 1,
-    videoUrl: ''
+    videoUrl: "",
   });
   const [quizForm, setQuizForm] = useState<CreateQuizRequest>({
-    title: '',
-    description: '',
-    courseId: courseId || '',
+    title: "",
+    description: "",
+    courseId: courseId || "",
     questions: [
       {
-        questionText: '',
-        type: 'MCQ' as const,
-        choices: ['', '', '', ''],
-        correctAnswer: '',
-        orderIndex: 1
-      }
-    ]
+        questionText: "",
+        type: "MCQ" as const,
+        choices: ["", "", "", ""],
+        correctAnswer: "",
+        orderIndex: 1,
+      },
+    ],
   });
 
   useEffect(() => {
@@ -55,29 +61,41 @@ const CourseDetailManagePage: React.FC = () => {
   }, [courseId]);
   const fetchCourseData = async () => {
     if (!courseId) return;
-    
+
     try {
       setLoading(true);
-      console.log('🔍 Fetching course data for courseId:', courseId);
-      
+      console.log("🔍 Fetching course data for courseId:", courseId);
+
       const [courseData, lessonsData, quizzesData] = await Promise.all([
         courseService.getCourseById(courseId),
         lessonService.getLessonsByCourse(courseId),
-        quizService.getQuizzesByCourse(courseId)
+        quizService.getQuizzesByCourse(courseId),
       ]);
-      
-      console.log('📚 Course data:', courseData);
-      console.log('📖 Lessons data:', lessonsData, 'Type:', typeof lessonsData, 'Is Array:', Array.isArray(lessonsData));
-      console.log('🧪 Quizzes data:', quizzesData);
-        setCourse(courseData);      // Ensure lessonsData is an array before sorting
+
+      console.log("📚 Course data:", courseData);
+      console.log(
+        "📖 Lessons data:",
+        lessonsData,
+        "Type:",
+        typeof lessonsData,
+        "Is Array:",
+        Array.isArray(lessonsData)
+      );
+      console.log("🧪 Quizzes data:", quizzesData);
+      setCourse(courseData); // Ensure lessonsData is an array before sorting
       const lessonsArray = Array.isArray(lessonsData) ? lessonsData : [];
-      setLessons(lessonsArray.sort((a, b) => (a.orderIndex || a.order || 0) - (b.orderIndex || b.order || 0)));
-      
+      setLessons(
+        lessonsArray.sort(
+          (a, b) =>
+            (a.orderIndex || a.order || 0) - (b.orderIndex || b.order || 0)
+        )
+      );
+
       // Ensure quizzesData is an array before setting
       const quizzesArray = Array.isArray(quizzesData) ? quizzesData : [];
       setQuizzes(quizzesArray);
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch course data');
+      setError(err.message || "Failed to fetch course data");
     } finally {
       setLoading(false);
     }
@@ -85,52 +103,55 @@ const CourseDetailManagePage: React.FC = () => {
   // Lesson management
   const handleCreateLesson = async () => {
     if (!courseId) return;
-    
+
     try {
-      console.log('🔍 Creating lesson for courseId:', courseId);
-      console.log('📝 Lesson form data:', lessonForm);
-      console.log('🔑 Current auth token:', localStorage.getItem('auth_token') ? 'Present' : 'Missing');
-      console.log('👤 Current user data:', localStorage.getItem('user_data'));      // Debug course ownership
-      console.log('📚 Current course details:', {
+      console.log("🔍 Creating lesson for courseId:", courseId);
+      console.log("📝 Lesson form data:", lessonForm);
+      console.log(
+        "🔑 Current auth token:",
+        localStorage.getItem("auth_token") ? "Present" : "Missing"
+      );
+      console.log("👤 Current user data:", localStorage.getItem("user_data")); // Debug course ownership
+      console.log("📚 Current course details:", {
         id: course?.id,
         title: course?.title,
         teacherID: course?.teacherID,
         createdBy: course?.createdBy,
-        teacher: course?.teacher
+        teacher: course?.teacher,
       });
-      
+
       // Parse and log user data for comparison
-      const userData = localStorage.getItem('user_data');
+      const userData = localStorage.getItem("user_data");
       if (userData) {
         try {
           const user = JSON.parse(userData);
-          console.log('👤 Parsed user data:', {
+          console.log("👤 Parsed user data:", {
             id: user.id,
             email: user.email,
             name: user.name,
-            role: user.role
+            role: user.role,
           });
         } catch (e) {
-          console.error('Failed to parse user data:', e);
+          console.error("Failed to parse user data:", e);
         }
       }
-      
+
       await lessonService.createLesson(courseId, lessonForm);
-      console.log('✅ Lesson created successfully');
-      
+      console.log("✅ Lesson created successfully");
+
       setShowLessonForm(false);
       resetLessonForm();
       fetchCourseData();
     } catch (err: any) {
-      console.error('❌ Failed to create lesson:', err);
-      console.error('Error details:', err.response?.data);
-      setError(err.message || 'Failed to create lesson');
+      console.error("❌ Failed to create lesson:", err);
+      console.error("Error details:", err.response?.data);
+      setError(err.message || "Failed to create lesson");
     }
   };
 
   const handleUpdateLesson = async () => {
     if (!editingLesson) return;
-    
+
     try {
       await lessonService.updateLesson(editingLesson.id, lessonForm);
       setEditingLesson(null);
@@ -138,18 +159,18 @@ const CourseDetailManagePage: React.FC = () => {
       resetLessonForm();
       fetchCourseData();
     } catch (err: any) {
-      setError(err.message || 'Failed to update lesson');
+      setError(err.message || "Failed to update lesson");
     }
   };
 
   const handleDeleteLesson = async (lessonId: string) => {
-    if (!confirm('Are you sure you want to delete this lesson?')) return;
-    
+    if (!confirm("Are you sure you want to delete this lesson?")) return;
+
     try {
       await lessonService.deleteLesson(lessonId);
       fetchCourseData();
     } catch (err: any) {
-      setError(err.message || 'Failed to delete lesson');
+      setError(err.message || "Failed to delete lesson");
     }
   };
 
@@ -161,39 +182,40 @@ const CourseDetailManagePage: React.FC = () => {
       resetQuizForm();
       fetchCourseData();
     } catch (err: any) {
-      setError(err.message || 'Failed to create quiz');
+      setError(err.message || "Failed to create quiz");
     }
   };
   const resetLessonForm = () => {
     setLessonForm({
-      title: '',
-      textContent: '',
+      title: "",
+      textContent: "",
       orderIndex: lessons.length + 1,
-      videoUrl: ''
+      videoUrl: "",
     });
   };
   const resetQuizForm = () => {
     setQuizForm({
-      title: '',
-      description: '',
-      courseId: courseId || '',
+      title: "",
+      description: "",
+      courseId: courseId || "",
       questions: [
         {
-          questionText: '',
-          type: 'MCQ' as const,
-          choices: ['', '', '', ''],
-          correctAnswer: '',
-          orderIndex: 1
-        }
-      ]
+          questionText: "",
+          type: "MCQ" as const,
+          choices: ["", "", "", ""],
+          correctAnswer: "",
+          orderIndex: 1,
+        },
+      ],
     });
-  };const openLessonEditForm = (lesson: Lesson) => {
+  };
+  const openLessonEditForm = (lesson: Lesson) => {
     setEditingLesson(lesson);
     setLessonForm({
       title: lesson.title,
-      textContent: lesson.textContent || lesson.content || '',
+      textContent: lesson.textContent || lesson.content || "",
       orderIndex: lesson.orderIndex || lesson.order || 1,
-      videoUrl: lesson.videoUrl || ''
+      videoUrl: lesson.videoUrl || "",
     });
     setShowLessonForm(true);
   };
@@ -203,13 +225,13 @@ const CourseDetailManagePage: React.FC = () => {
       questions: [
         ...quizForm.questions,
         {
-          questionText: '',
-          type: 'MCQ' as const,
-          choices: ['', '', '', ''],
-          correctAnswer: '',
-          orderIndex: quizForm.questions.length + 1
-        }
-      ]
+          questionText: "",
+          type: "MCQ" as const,
+          choices: ["", "", "", ""],
+          correctAnswer: "",
+          orderIndex: quizForm.questions.length + 1,
+        },
+      ],
     });
   };
 
@@ -218,7 +240,11 @@ const CourseDetailManagePage: React.FC = () => {
     newQuestions[index] = { ...newQuestions[index], [field]: value };
     setQuizForm({ ...quizForm, questions: newQuestions });
   };
-  const updateQuizOption = (questionIndex: number, optionIndex: number, value: string) => {
+  const updateQuizOption = (
+    questionIndex: number,
+    optionIndex: number,
+    value: string
+  ) => {
     const newQuestions = [...quizForm.questions];
     newQuestions[questionIndex].choices[optionIndex] = value;
     setQuizForm({ ...quizForm, questions: newQuestions });
@@ -234,13 +260,13 @@ const CourseDetailManagePage: React.FC = () => {
   // Teacher notifications
   const teacherNotifications = [
     {
-      id: '1',
-      title: 'Course Management',
+      id: "1",
+      title: "Course Management",
       message: `Managing course: ${course?.title}`,
-      time: 'Now',
-      type: 'info' as const,
-      read: false
-    }
+      time: "Now",
+      type: "info" as const,
+      read: false,
+    },
   ];
 
   if (loading) {
@@ -255,9 +281,11 @@ const CourseDetailManagePage: React.FC = () => {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900">Không tìm thấy khóa học</h2>
+          <h2 className="text-xl font-semibold text-gray-900">
+            Không tìm thấy khóa học
+          </h2>
           <button
-            onClick={() => navigate('/teacher/courses')}
+            onClick={() => navigate("/teacher/courses")}
             className="mt-4 text-blue-600 hover:underline"
           >
             Quay lại danh sách khóa học
@@ -281,17 +309,26 @@ const CourseDetailManagePage: React.FC = () => {
         <nav className="flex-1 py-4 px-3 overflow-y-auto">
           <ul className="space-y-1">
             <li>
-              <a href="/teacher/dashboard" className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
+              <a
+                href="/teacher/dashboard"
+                className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700"
+              >
                 Dashboard
               </a>
             </li>
             <li>
-              <a href="/teacher/courses" className="block px-3 py-2 rounded-lg bg-blue-100 text-blue-700 font-medium">
+              <a
+                href="/teacher/courses"
+                className="block px-3 py-2 rounded-lg bg-blue-100 text-blue-700 font-medium"
+              >
                 Quản lý khóa học
               </a>
             </li>
             <li>
-              <a href="/teacher/students" className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700">
+              <a
+                href="/teacher/students"
+                className="block px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700"
+              >
                 Học viên
               </a>
             </li>
@@ -301,11 +338,11 @@ const CourseDetailManagePage: React.FC = () => {
 
       {/* Main content */}
       <main className="flex-1 flex flex-col">
-        <DashboardHeader 
-          title={`Quản lý: ${course.title}`} 
+        <DashboardHeader
+          title={`Quản lý: ${course.title}`}
           notifications={teacherNotifications}
         />
-        
+
         <div className="flex-1 p-8">
           {error && (
             <div className="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -317,18 +354,22 @@ const CourseDetailManagePage: React.FC = () => {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               <button
-                onClick={() => navigate('/teacher/courses')}
+                onClick={() => navigate("/teacher/courses")}
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
               >
                 <ChevronLeftIcon className="h-5 w-5" />
                 Quay lại
               </button>
-              <h1 className="text-2xl font-bold text-gray-900">{course.title}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {course.title}
+              </h1>
             </div>
-            
+
             <div className="flex gap-2">
               <button
-                onClick={() => window.open(`/learning-session/${course.id}`, '_blank')}
+                onClick={() =>
+                  window.open(`/learning-session/${course.id}`, "_blank")
+                }
                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2"
               >
                 <PlayIcon className="h-4 w-4" />
@@ -346,12 +387,16 @@ const CourseDetailManagePage: React.FC = () => {
               </div>
               <div>
                 <span className="text-sm text-gray-500">Thời lượng</span>
-                <p className="font-semibold">{course.duration || 'Chưa thiết lập'}</p>
+                <p className="font-semibold">
+                  {course.duration || "Chưa thiết lập"}
+                </p>
               </div>
               <div>
                 <span className="text-sm text-gray-500">Giá</span>
                 <p className="font-semibold">
-                  {course.price && course.price > 0 ? `${course.price.toLocaleString()} VNĐ` : 'Miễn phí'}
+                  {course.price && course.price > 0
+                    ? `${course.price.toLocaleString()} VNĐ`
+                    : "Miễn phí"}
                 </p>
               </div>
             </div>
@@ -380,7 +425,7 @@ const CourseDetailManagePage: React.FC = () => {
                 Thêm bài học
               </button>
             </div>
-            
+
             <div className="p-6">
               {lessons.length === 0 ? (
                 <div className="text-center py-8">
@@ -390,17 +435,26 @@ const CourseDetailManagePage: React.FC = () => {
               ) : (
                 <div className="space-y-4">
                   {lessons.map((lesson) => (
-                    <div key={lesson.id} className="border rounded-lg p-4 hover:bg-gray-50">
+                    <div
+                      key={lesson.id}
+                      className="border rounded-lg p-4 hover:bg-gray-50"
+                    >
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">                            <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
+                          <div className="flex items-center gap-2 mb-2">
+                            {" "}
+                            <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
                               Bài {lesson.orderIndex || lesson.order}
                             </span>
                             <h3 className="font-semibold">{lesson.title}</h3>
                           </div>
-                          <p className="text-gray-600 mb-2 line-clamp-2">{lesson.textContent || lesson.content}</p>
+                          <p className="text-gray-600 mb-2 line-clamp-2">
+                            {lesson.textContent || lesson.content}
+                          </p>
                           <div className="flex items-center gap-4 text-sm text-gray-500">
-                            {lesson.duration && <span>⏱️ {lesson.duration}</span>}
+                            {lesson.duration && (
+                              <span>⏱️ {lesson.duration}</span>
+                            )}
                             {lesson.videoUrl && <span>🎥 Video có sẵn</span>}
                           </div>
                         </div>
@@ -434,7 +488,8 @@ const CourseDetailManagePage: React.FC = () => {
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <QuestionMarkCircleIcon className="h-6 w-6" />
                 Bài kiểm tra ({quizzes.length})
-              </h2>              <button
+              </h2>{" "}
+              <button
                 onClick={() => {
                   setShowQuizForm(true);
                   resetQuizForm();
@@ -445,7 +500,7 @@ const CourseDetailManagePage: React.FC = () => {
                 Thêm bài kiểm tra
               </button>
             </div>
-            
+
             <div className="p-6">
               {quizzes.length === 0 ? (
                 <div className="text-center py-8">
@@ -455,11 +510,16 @@ const CourseDetailManagePage: React.FC = () => {
               ) : (
                 <div className="space-y-4">
                   {quizzes.map((quiz) => (
-                    <div key={quiz.id} className="border rounded-lg p-4 hover:bg-gray-50">
+                    <div
+                      key={quiz.id}
+                      className="border rounded-lg p-4 hover:bg-gray-50"
+                    >
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
                           <h3 className="font-semibold mb-2">{quiz.title}</h3>
-                          <p className="text-gray-600 mb-2">{quiz.description}</p>
+                          <p className="text-gray-600 mb-2">
+                            {quiz.description}
+                          </p>
                           <div className="text-sm text-gray-500">
                             📝 {quiz.questions?.length || 0} câu hỏi
                           </div>
@@ -491,9 +551,9 @@ const CourseDetailManagePage: React.FC = () => {
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
                 <h2 className="text-xl font-bold mb-4">
-                  {editingLesson ? 'Chỉnh sửa bài học' : 'Thêm bài học mới'}
+                  {editingLesson ? "Chỉnh sửa bài học" : "Thêm bài học mới"}
                 </h2>
-                
+
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -503,7 +563,12 @@ const CourseDetailManagePage: React.FC = () => {
                       <input
                         type="text"
                         value={lessonForm.title}
-                        onChange={(e) => setLessonForm({...lessonForm, title: e.target.value})}
+                        onChange={(e) =>
+                          setLessonForm({
+                            ...lessonForm,
+                            title: e.target.value,
+                          })
+                        }
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                         placeholder="Nhập tiêu đề bài học"
                       />
@@ -511,34 +576,51 @@ const CourseDetailManagePage: React.FC = () => {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Thứ tự
-                      </label>                      <input
+                      </label>{" "}
+                      <input
                         type="number"
                         value={lessonForm.orderIndex}
-                        onChange={(e) => setLessonForm({...lessonForm, orderIndex: Number(e.target.value)})}
+                        onChange={(e) =>
+                          setLessonForm({
+                            ...lessonForm,
+                            orderIndex: Number(e.target.value),
+                          })
+                        }
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                         min="1"
                       />
                     </div>
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Nội dung bài học
-                    </label>                    <textarea
+                    </label>{" "}
+                    <textarea
                       value={lessonForm.textContent}
-                      onChange={(e) => setLessonForm({...lessonForm, textContent: e.target.value})}
+                      onChange={(e) =>
+                        setLessonForm({
+                          ...lessonForm,
+                          textContent: e.target.value,
+                        })
+                      }
                       rows={6}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                       placeholder="Nhập nội dung bài học"
                     />
-                  </div>                  <div>
+                  </div>{" "}
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Video URL
                     </label>
                     <input
                       type="url"
                       value={lessonForm.videoUrl}
-                      onChange={(e) => setLessonForm({...lessonForm, videoUrl: e.target.value})}
+                      onChange={(e) =>
+                        setLessonForm({
+                          ...lessonForm,
+                          videoUrl: e.target.value,
+                        })
+                      }
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                       placeholder="https://..."
                     />
@@ -557,10 +639,12 @@ const CourseDetailManagePage: React.FC = () => {
                     Hủy
                   </button>
                   <button
-                    onClick={editingLesson ? handleUpdateLesson : handleCreateLesson}
+                    onClick={
+                      editingLesson ? handleUpdateLesson : handleCreateLesson
+                    }
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                   >
-                    {editingLesson ? 'Cập nhật' : 'Thêm bài học'}
+                    {editingLesson ? "Cập nhật" : "Thêm bài học"}
                   </button>
                 </div>
               </div>
@@ -571,8 +655,10 @@ const CourseDetailManagePage: React.FC = () => {
           {showQuizForm && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white rounded-lg p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
-                <h2 className="text-xl font-bold mb-4">Thêm bài kiểm tra mới</h2>
-                
+                <h2 className="text-xl font-bold mb-4">
+                  Thêm bài kiểm tra mới
+                </h2>
+
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 gap-4">
                     <div>
@@ -582,7 +668,9 @@ const CourseDetailManagePage: React.FC = () => {
                       <input
                         type="text"
                         value={quizForm.title}
-                        onChange={(e) => setQuizForm({...quizForm, title: e.target.value})}
+                        onChange={(e) =>
+                          setQuizForm({ ...quizForm, title: e.target.value })
+                        }
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                         placeholder="Nhập tên bài kiểm tra"
                       />
@@ -593,7 +681,12 @@ const CourseDetailManagePage: React.FC = () => {
                       </label>
                       <textarea
                         value={quizForm.description}
-                        onChange={(e) => setQuizForm({...quizForm, description: e.target.value})}
+                        onChange={(e) =>
+                          setQuizForm({
+                            ...quizForm,
+                            description: e.target.value,
+                          })
+                        }
                         rows={2}
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                         placeholder="Nhập mô tả bài kiểm tra"
@@ -612,12 +705,14 @@ const CourseDetailManagePage: React.FC = () => {
                         Thêm câu hỏi
                       </button>
                     </div>
-                    
+
                     <div className="space-y-6">
                       {quizForm.questions.map((question, qIndex) => (
                         <div key={qIndex} className="border rounded-lg p-4">
                           <div className="flex justify-between items-start mb-3">
-                            <h4 className="font-medium">Câu hỏi {qIndex + 1}</h4>
+                            <h4 className="font-medium">
+                              Câu hỏi {qIndex + 1}
+                            </h4>
                             {quizForm.questions.length > 1 && (
                               <button
                                 onClick={() => removeQuizQuestion(qIndex)}
@@ -627,34 +722,60 @@ const CourseDetailManagePage: React.FC = () => {
                               </button>
                             )}
                           </div>
-                          
-                          <div className="space-y-3">                            <input
+
+                          <div className="space-y-3">
+                            {" "}
+                            <input
                               type="text"
                               value={question.questionText}
-                              onChange={(e) => updateQuizQuestion(qIndex, 'questionText', e.target.value)}
+                              onChange={(e) =>
+                                updateQuizQuestion(
+                                  qIndex,
+                                  "questionText",
+                                  e.target.value
+                                )
+                              }
                               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                               placeholder="Nhập câu hỏi"
                             />
-                            
                             <div className="grid grid-cols-2 gap-2">
-                              {question.choices.map((option: string, oIndex: number) => (
-                                <div key={oIndex} className="flex items-center gap-2">
-                                  <input
-                                    type="radio"
-                                    name={`question-${qIndex}`}
-                                    checked={question.correctAnswer === option}
-                                    onChange={() => updateQuizQuestion(qIndex, 'correctAnswer', option)}
-                                    className="text-blue-600"
-                                  />
-                                  <input
-                                    type="text"
-                                    value={option}
-                                    onChange={(e) => updateQuizOption(qIndex, oIndex, e.target.value)}
-                                    className="flex-1 border border-gray-300 rounded px-2 py-1 text-sm"
-                                    placeholder={`Phương án ${oIndex + 1}`}
-                                  />
-                                </div>
-                              ))}
+                              {question.choices.map(
+                                (option: string, oIndex: number) => (
+                                  <div
+                                    key={oIndex}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <input
+                                      type="radio"
+                                      name={`question-${qIndex}`}
+                                      checked={
+                                        question.correctAnswer === option
+                                      }
+                                      onChange={() =>
+                                        updateQuizQuestion(
+                                          qIndex,
+                                          "correctAnswer",
+                                          option
+                                        )
+                                      }
+                                      className="text-blue-600"
+                                    />
+                                    <input
+                                      type="text"
+                                      value={option}
+                                      onChange={(e) =>
+                                        updateQuizOption(
+                                          qIndex,
+                                          oIndex,
+                                          e.target.value
+                                        )
+                                      }
+                                      className="flex-1 border border-gray-300 rounded px-2 py-1 text-sm"
+                                      placeholder={`Phương án ${oIndex + 1}`}
+                                    />
+                                  </div>
+                                )
+                              )}
                             </div>
                           </div>
                         </div>
@@ -663,7 +784,9 @@ const CourseDetailManagePage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-2 mt-6">                  <button
+                <div className="flex justify-end gap-2 mt-6">
+                  {" "}
+                  <button
                     onClick={() => {
                       setShowQuizForm(false);
                       resetQuizForm();

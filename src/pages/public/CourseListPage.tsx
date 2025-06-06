@@ -135,12 +135,14 @@ const CourseListPage: React.FC = () => {
 
     fetchClassesWithCourses();
   }, [isAuthenticated]);
+
   const categories = [
     { id: "all", name: "Tất cả" },
     { id: "beginner", name: "Căn bản" },
     { id: "intermediate", name: "Trung cấp" },
     { id: "advanced", name: "Nâng cao" },
   ];
+
   // Filter courses within classes based on category
   const getFilteredClasses = () => {
     return classes
@@ -167,6 +169,7 @@ const CourseListPage: React.FC = () => {
       return newSet;
     });
   };
+
   const handleEnrollment = async (
     courseId: string,
     isCurrentlyEnrolled: boolean
@@ -230,27 +233,28 @@ const CourseListPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col bg-gray-50">
-        <main className="flex-grow max-w-7xl mx-auto px-4 py-12 w-full">
+      <div className="min-h-screen flex flex-col bg-gray-100">
+        <main className="flex-grow max-w-6xl mx-auto px-4 py-8 w-full">
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-[#A82828]"></div>
           </div>
         </main>
       </div>
     );
   }
+
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col bg-gray-50">
-        <main className="flex-grow max-w-7xl mx-auto px-4 py-12 w-full">
-          <div className="text-center">
-            <div className="text-red-600 text-lg mb-4">
+      <div className="min-h-screen flex flex-col bg-gray-100">
+        <main className="flex-grow max-w-6xl mx-auto px-4 py-8 w-full">
+          <div className="text-center bg-white p-6 rounded-lg shadow-md">
+            <div className="text-red-600 text-lg mb-4 font-medium">
               Có lỗi xảy ra khi tải khóa học
             </div>
-            <div className="text-gray-600">{error}</div>
+            <div className="text-gray-600 mb-4">{error}</div>
             <button
               onClick={() => window.location.reload()}
-              className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              className="px-4 py-2 bg-[#A82828] text-white rounded-md hover:bg-red-700 transition"
             >
               Tải lại trang
             </button>
@@ -259,76 +263,69 @@ const CourseListPage: React.FC = () => {
       </div>
     );
   }
+
   const filteredClasses = getFilteredClasses();
 
   return (
-    <div className="min-h-screen bg-white text-white font-sans">
-      <main className="max-w-7xl mx-auto px-8 py-16">
-        <h1 className="text-5xl font-extrabold mb-12 tracking-wide drop-shadow-lg select-none text-red-500">
-          Khóa học tương lai
+    <div className="min-h-screen flex flex-col bg-gray-100">
+      <main className="flex-grow max-w-6xl mx-auto px-4 py-8 w-full">
+        <h1 className="text-3xl font-semibold text-gray-800 mb-6">
+          Danh sách khóa học
         </h1>
 
-        {/* Category Pills */}
-        <div className="flex flex-wrap gap-4 mb-12">
+        {/* Category Filters */}
+        <div className="flex flex-wrap gap-2 mb-6">
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
               className={`
-              relative px-7 py-2 rounded-full font-semibold transition-all duration-500 
-              cursor-pointer 
-              ${
-                activeCategory === cat.id
-                  ? "bg-gradient-to-r from-red-600 via-red-500 to-red-400 text-white shadow-[0_0_20px_#dc2626] scale-110"
-                  : "bg-transparent border border-red-600 text-red-300 hover:text-white hover:border-red-500"
-              }
-              hover:scale-105
-              focus:outline-none focus:ring-4 focus:ring-red-400/60
-            `}
+                px-4 py-2 rounded-md font-medium text-sm transition
+                ${
+                  activeCategory === cat.id
+                    ? "bg-[#A82828] text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }
+              `}
             >
               {cat.name}
-              {activeCategory === cat.id && (
-                <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-red-500 via-red-400 to-red-500 blur opacity-70 animate-pulse"></span>
-              )}
             </button>
           ))}
         </div>
 
-        {/* Classes list */}
-        <div className="space-y-12">
+        {/* Classes List */}
+        <div className="space-y-6">
           {filteredClasses.map((classItem) => {
             const isExpanded = expandedClasses.has(classItem.id);
 
             return (
               <section
                 key={classItem.id}
-                className="backdrop-blur-lg bg-white/10 border border-red-700 rounded-3xl shadow-lg overflow-hidden"
+                className="bg-white rounded-lg shadow-md border border-gray-200"
               >
-                {/* Class header */}
+                {/* Class Header */}
                 <header
                   onClick={() => toggleClassExpansion(classItem.id)}
-                  className="flex items-center justify-between cursor-pointer select-none p-8 hover:bg-white/20 transition-colors duration-800"
+                  className="flex items-center justify-between cursor-pointer p-4 hover:bg-gray-50 transition"
                   aria-expanded={isExpanded}
                 >
                   <div>
-                    <h2 className="text-4xl font-extrabold tracking-tight drop-shadow-md text-red-400">
+                    <h2 className="text-xl font-semibold text-gray-800">
                       {classItem.name}
                     </h2>
                     {classItem.description && (
-                      <p className="mt-2 max-w-3xl text-lg text-red-200 line-clamp-2 tracking-wide">
+                      <p className="mt-1 text-gray-600 text-sm">
                         {classItem.description}
                       </p>
                     )}
-                    <p className="mt-4 text-sm font-semibold text-red-400">
+                    <p className="mt-2 text-sm text-gray-500">
                       {classItem.courses?.length || 0} khóa học
                     </p>
                   </div>
                   <button
                     aria-label={isExpanded ? "Thu gọn lớp" : "Mở rộng lớp"}
-                    className={`w-14 h-14 rounded-full border border-red-500 flex items-center justify-center
-                    text-red-400 hover:text-white hover:bg-red-600 transition-transform duration-300
-                    ${isExpanded ? "rotate-180" : ""}
-                  `}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-200 transition
+                      ${isExpanded ? "rotate-180" : ""}`}
                   >
                     <svg
                       fill="none"
@@ -337,17 +334,17 @@ const CourseListPage: React.FC = () => {
                       strokeWidth={2}
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="w-8 h-8"
+                      className="w-5 h-5"
                     >
                       <path d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
                 </header>
 
-                {/* Courses grid */}
+                {/* Courses List */}
                 {isExpanded && (
-                  <div className="p-8 bg-gradient-to-br from-red-900/70 via-red-800/70 to-red-700/70 rounded-b-3xl">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                  <div className="p-4 bg-gray-50">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {classItem.courses?.map((course) => {
                         const isEnrolled = enrollmentStatus[course.id] || false;
                         const isEnrolling = enrollingCourses.has(course.id);
@@ -355,108 +352,99 @@ const CourseListPage: React.FC = () => {
                         return (
                           <article
                             key={course.id}
-                            className="relative flex flex-col bg-white/10 rounded-2xl shadow-lg backdrop-blur-md border border-red-700 overflow-hidden cursor-pointer
-                            transition-transform duration-400 hover:scale-[1.05] hover:shadow-[0_0_40px_#b91c1c] hover:border-red-600"
-                            tabIndex={0}
+                            className="bg-white rounded-md shadow-sm border border-gray-200 p-4"
                           >
                             <Link
                               to={`/courses/${course.id}`}
-                              className="block h-56 overflow-hidden rounded-t-2xl"
+                              className="block mb-3"
                             >
                               <img
                                 src={
                                   course.thumbnail ||
-                                  "https://images.unsplash.com/photo-1522134939204-9b9957145632?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0"
+                                  "https://via.placeholder.com/150"
                                 }
                                 alt={course.title}
-                                className="w-full h-full object-cover transform transition-transform duration-700 hover:scale-110 hover:brightness-110"
+                                className="w-full h-40 object-cover rounded-md"
                                 loading="lazy"
                                 onError={(e) => {
                                   e.currentTarget.src =
-                                    "https://images.unsplash.com/photo-1522134939204-9b9957145632?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0";
+                                    "https://via.placeholder.com/150";
                                 }}
-                              />
-                              <div
-                                className="absolute inset-0 rounded-t-2xl pointer-events-none opacity-0 hover:opacity-100 transition-opacity duration-500
-                              bg-gradient-to-tr from-red-600 via-red-500 to-red-600 blur-[30px]"
                               />
                             </Link>
 
-                            <div className="flex flex-col flex-grow p-6 space-y-3">
+                            <div className="space-y-2">
                               <Link
                                 to={`/courses/${course.id}`}
-                                className="hover:text-red-400"
+                                className="hover:text-[#A82828]"
                               >
-                                <h3 className="text-2xl font-extrabold leading-snug line-clamp-2">
+                                <h3 className="text-lg font-medium text-gray-800">
                                   {course.title}
                                 </h3>
                               </Link>
 
-                              <p className="text-red-200 text-base line-clamp-3 tracking-wide">
+                              <p className="text-gray-600 text-sm line-clamp-2">
                                 {course.description}
                               </p>
 
-                              <div className="flex items-center justify-between text-sm text-red-300 font-medium">
-                                <span className="capitalize bg-red-700/50 rounded-full px-3 py-1">
+                              <div className="flex items-center justify-between text-sm text-gray-500">
+                                <span className="capitalize bg-gray-200 rounded px-2 py-1">
                                   {course.level}
                                 </span>
                                 {course.duration && (
                                   <span>{course.duration}</span>
-                                )}                                {course.price !== null && course.price !== undefined && course.price > 0 && (
-                                  <span className="text-red-400 font-semibold">
-                                    {course.price.toLocaleString()} VND
-                                  </span>
                                 )}
+                                {course.price !== null &&
+                                  course.price !== undefined &&
+                                  course.price > 0 && (
+                                    <span className="font-medium text-gray-700">
+                                      {course.price.toLocaleString()} VND
+                                    </span>
+                                  )}
                               </div>
 
                               {course.instructor && (
-                                <div className="text-red-300 text-sm">
-                                  Giảng viên:{" "}
-                                  <span className="font-semibold">
-                                    {course.instructor.name}
-                                  </span>
+                                <div className="text-sm text-gray-500">
+                                  Giảng viên: {course.instructor.name}
                                 </div>
                               )}
 
-                              {/* Enrollment Button */}
+                              {/* Action Button */}
                               {isAuthenticated ? (
-                                <button
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    handleEnrollment(course.id, isEnrolled);
-                                  }}
-                                  disabled={isEnrolling}
-                                  className={`
-                                  relative w-full py-3 rounded-xl font-bold text-lg tracking-wide text-white 
-                                  overflow-hidden
-                                  transition-colors duration-500
-                                  ${
-                                    isEnrolled
-                                      ? "bg-red-700 hover:bg-red-600"
-                                      : "bg-gradient-to-r from-red-600 via-red-500 to-red-400 hover:brightness-110"
-                                  }
-                                  ${
-                                    isEnrolling
-                                      ? "cursor-wait opacity-70"
-                                      : "cursor-pointer"
-                                  }
-                                `}
-                                >
-                                  <span className="absolute inset-0 rounded-xl bg-white opacity-10 animate-pulse"></span>
-                                  <span className="relative z-10">
+                                isEnrolled ? (
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      handleEnrollment(course.id, isEnrolled);
+                                    }}
+                                    disabled={isEnrolling}
+                                    className={`
+                                      w-full py-2 rounded-md font-medium text-sm transition
+                                      ${
+                                        isEnrolling
+                                          ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                                          : "bg-red-100 text-red-600 hover:bg-red-200"
+                                      }
+                                    `}
+                                  >
                                     {isEnrolling
                                       ? "Đang xử lý..."
-                                      : isEnrolled
-                                      ? "Hủy ghi danh"
-                                      : "Đăng ký ngay"}
-                                  </span>
-                                </button>
+                                      : "Hủy ghi danh"}
+                                  </button>
+                                ) : (
+                                  <Link
+                                    to={`/checkout/${course.id}`}
+                                    className="block w-full text-center py-2 rounded-md font-medium text-sm bg-[#A82828] text-white hover:bg-red-700 transition"
+                                  >
+                                    Thanh toán
+                                  </Link>
+                                )
                               ) : (
                                 <Link
                                   to="/auth"
-                                  className="block w-full text-center py-3 rounded-xl font-semibold text-lg bg-gradient-to-r from-red-600 via-red-500 to-red-400 hover:brightness-110"
+                                  className="block w-full text-center py-2 rounded-md font-medium text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
                                 >
-                                  Đăng nhập để đăng ký
+                                  Đăng nhập để thanh toán
                                 </Link>
                               )}
                             </div>
@@ -466,7 +454,7 @@ const CourseListPage: React.FC = () => {
                     </div>
 
                     {(!classItem.courses || classItem.courses.length === 0) && (
-                      <p className="text-center text-red-300 py-16 text-xl font-semibold">
+                      <p className="text-center text-gray-500 py-4">
                         Không có khóa học nào trong lớp này
                       </p>
                     )}
@@ -477,10 +465,10 @@ const CourseListPage: React.FC = () => {
           })}
         </div>
 
-        {/* No courses found fallback */}
+        {/* No Courses Fallback */}
         {filteredClasses.length === 0 && (
-          <p className="text-center text-red-300 text-lg mt-24">
-            Không tìm thấy lớp học phù hợp.
+          <p className="text-center text-gray-500 text-sm mt-8">
+            Không tìm thấy khóa học phù hợp.
           </p>
         )}
       </main>

@@ -23,6 +23,8 @@ import MainLayout from "./components/MainLayout";
 import SchedulePage from "./pages/public/SchedulePage";
 import CourseManagementPage from "./pages/teacher/CourseManagementPage";
 import CourseDetailManagePage from "./pages/teacher/CourseDetailManagePage";
+import CheckoutPage from "./pages/student/CheckoutPage";
+import QR from "./images/mb.jpg";
 
 function App() {
   return (
@@ -31,18 +33,19 @@ function App() {
         <Router>
           <Routes>
             {/* Admin Routes - No Layout */}
-            <Route 
-              path="/admin-dashboard" 
+            <Route
+              path="/admin-dashboard"
               element={
-                <ProtectedRoute allowedRoles={['admin']}>
+                <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminDashboardPage />
                 </ProtectedRoute>
-              } 
-            />              {/* Teacher Routes - No Layout */}
+              }
+            />{" "}
+            {/* Teacher Routes - No Layout */}
             <Route
               path="/teacher/dashboard"
               element={
-                <ProtectedRoute allowedRoles={['teacher']}>
+                <ProtectedRoute allowedRoles={["teacher"]}>
                   <TeacherDashboardPage />
                 </ProtectedRoute>
               }
@@ -50,14 +53,15 @@ function App() {
             <Route
               path="/teacher/courses"
               element={
-                <ProtectedRoute allowedRoles={['teacher']}>
+                <ProtectedRoute allowedRoles={["teacher"]}>
                   <CourseManagementPage />
                 </ProtectedRoute>
               }
-            />            <Route
+            />{" "}
+            <Route
               path="/teacher/courses/:courseId"
               element={
-                <ProtectedRoute allowedRoles={['teacher']}>
+                <ProtectedRoute allowedRoles={["teacher"]}>
                   <CourseDetailManagePage />
                 </ProtectedRoute>
               }
@@ -65,58 +69,59 @@ function App() {
             <Route
               path="/teacher/courses/:courseId/manage"
               element={
-                <ProtectedRoute allowedRoles={['teacher']}>
+                <ProtectedRoute allowedRoles={["teacher"]}>
                   <CourseDetailManagePage />
                 </ProtectedRoute>
               }
             />
-            
             {/* Public and Student Routes - With Layout */}
             <Route path="/" element={<MainLayout />}>
               <Route index element={<HomePage />} />
               <Route path="home" element={<HomePage />} />
               <Route path="auth" element={<AuthPage />} />
-            
-              {/* Student Routes */}              <Route 
-                path="learning-room" 
+              {/* Student Routes */}{" "}
+              <Route
+                path="learning-room"
                 element={
-                  <ProtectedRoute allowedRoles={['student']}>
+                  <ProtectedRoute allowedRoles={["student"]}>
                     <LearningRoomPage />
                   </ProtectedRoute>
-                } 
+                }
               />
               <Route
                 path="learning-session/:courseId"
                 element={
-                  <ProtectedRoute allowedRoles={['student']}>
+                  <ProtectedRoute allowedRoles={["student"]}>
                     <LearningSessionPage />
                   </ProtectedRoute>
                 }
-              />    
-              <Route 
-                path="my-classes" 
+              />
+              <Route
+                path="my-classes"
                 element={
-                  <ProtectedRoute allowedRoles={['student']}>
+                  <ProtectedRoute allowedRoles={["student"]}>
                     <MyClassesPage />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="course-success" 
+              <Route
+                path="course-success"
                 element={
-                  <ProtectedRoute allowedRoles={['student']}>
+                  <ProtectedRoute allowedRoles={["student"]}>
                     <CourseSuccess />
                   </ProtectedRoute>
-                } 
-              />              <Route 
-                path="inside-class" 
+                }
+              />{" "}
+              <Route
+                path="inside-class"
                 element={
-                  <ProtectedRoute allowedRoles={['student']}>
+                  <ProtectedRoute allowedRoles={["student"]}>
                     <InsideClass />
                   </ProtectedRoute>
-                } 
+                }
               />
-                {/* Public Routes */}
+              <Route path="/checkout/:id" element={<CheckoutPage />} />
+              {/* Public Routes */}
               <Route path="schedule" element={<SchedulePage />} />
               <Route path="courses/:id" element={<CourseDetailPage />} />
               <Route path="blog" element={<BlogPage />} />
