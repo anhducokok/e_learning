@@ -121,8 +121,7 @@ const CourseListSection: React.FC = () => {
                         <Video className="w-4 h-4" />
                         {course.lessons.length} Bài học
                       </div>
-                    )}
-                    {course.enrollmentCount && (
+                    )}                    {course.enrollmentCount !== undefined && course.enrollmentCount !== null && course.enrollmentCount > 0 && (
                       <div className="flex items-center gap-1">
                         <Users className="w-4 h-4" />
                         {course.enrollmentCount.toLocaleString()} Học viên
@@ -137,10 +136,8 @@ const CourseListSection: React.FC = () => {
                         Giảng viên: <span className="font-medium">{course.instructor.name}</span>
                       </p>
                     </div>
-                  )}
-
-                  {/* Price */}
-                  {course.price !== undefined && (
+                  )}                  {/* Price */}
+                  {course.price !== undefined && course.price !== null && (
                     <div className="mt-3">
                       <p className="text-lg font-bold text-yellow-600">
                         {course.price === 0 ? 'Miễn phí' : `${course.price.toLocaleString()} VNĐ`}

@@ -402,8 +402,7 @@ const CourseListPage: React.FC = () => {
                                 </span>
                                 {course.duration && (
                                   <span>{course.duration}</span>
-                                )}
-                                {course.price && (
+                                )}                                {course.price !== null && course.price !== undefined && course.price > 0 && (
                                   <span className="text-red-400 font-semibold">
                                     {course.price.toLocaleString()} VND
                                   </span>

@@ -97,7 +97,7 @@ const InsideClassPage: React.FC = () => {
           <div className="bg-gray-100 p-4 rounded-xl shadow">
             <h2 className="font-semibold text-lg mb-2">Thông tin khóa học</h2>
             <p className="text-sm mb-2"><strong>Tổng số bài học:</strong> {lessons.length}</p>
-            <p className="text-sm mb-2"><strong>Giá:</strong> {course.price ? `${course.price.toLocaleString('vi-VN')} VND` : 'Miễn phí'}</p>
+            <p className="text-sm mb-2"><strong>Giá:</strong> {course.price && course.price > 0 ? `${course.price.toLocaleString('vi-VN')} VND` : 'Miễn phí'}</p>
             <p className="text-sm mb-2"><strong>Đánh giá:</strong> {course.rating ? `${course.rating}/5` : 'Chưa có đánh giá'}</p>
             <p className="text-sm"><strong>Mô tả:</strong> {course.description}</p>
           </div>

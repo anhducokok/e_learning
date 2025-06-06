@@ -8,7 +8,7 @@ import BlogPage from "./pages/public/BlogPage";
 import MyClassesPage from "./pages/student/MyClassesPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import TeacherDashboardPage from "./pages/teacher/TeacherDashboardPage";
-// import LearningSessionPage from "./pages/student/LearningSessionPage";
+import LearningSessionPage from "./pages/student/LearningSessionPage";
 import CourseDetailPage from "./pages/public/CourseDetailPage";
 import "./index.css";
 import NotFoundPage from "./pages/public/404Page";
@@ -77,22 +77,22 @@ function App() {
               <Route path="home" element={<HomePage />} />
               <Route path="auth" element={<AuthPage />} />
             
-              {/* Student Routes */}
-              <Route 
+              {/* Student Routes */}              <Route 
                 path="learning-room" 
                 element={
                   <ProtectedRoute allowedRoles={['student']}>
                     <LearningRoomPage />
                   </ProtectedRoute>
                 } 
-              />              {/* <Route
+              />
+              <Route
                 path="learning-session/:courseId"
                 element={
                   <ProtectedRoute allowedRoles={['student']}>
                     <LearningSessionPage />
                   </ProtectedRoute>
                 }
-              /> */}
+              />    
               <Route 
                 path="my-classes" 
                 element={

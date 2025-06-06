@@ -6,37 +6,38 @@ import type {
   UpdateLessonRequest,
 } from '../types/api';
 
-export const lessonService = {
-  async getLessonsByCourse(courseId: string): Promise<Lesson[]> {
+export const lessonService = {  async getLessonsByCourse(courseId: string): Promise<Lesson[]> {
     try {
-      return await apiClient.get<Lesson[]>(API_ENDPOINTS.LESSONS.BY_COURSE(courseId));
+      const response = await apiClient.get<any>(API_ENDPOINTS.LESSONS.BY_COURSE(courseId));
+      // Backend wraps data in ApiSuccessResponse, so we need to extract the data
+      return response.data?.data || [];
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to fetch lessons');
     }
   },
-
   async getLessonById(id: string): Promise<Lesson> {
     try {
-      return await apiClient.get<Lesson>(API_ENDPOINTS.LESSONS.BY_ID(id));
+      const response = await apiClient.get<any>(API_ENDPOINTS.LESSONS.BY_ID(id));
+      return response.data?.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to fetch lesson');
     }
-  },
-
-  async createLesson(courseId: string, lessonData: CreateLessonRequest): Promise<Lesson> {
+  },async createLesson(courseId: string, lessonData: CreateLessonRequest): Promise<Lesson> {
     try {
-      return await apiClient.post<Lesson>(
+      const response = await apiClient.post<any>(
         API_ENDPOINTS.LESSONS.BY_COURSE(courseId),
         lessonData
       );
+      // Backend wraps data in ApiSuccessResponse, so we need to extract the data
+      return response.data?.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to create lesson');
     }
   },
-
   async updateLesson(id: string, lessonData: UpdateLessonRequest): Promise<Lesson> {
     try {
-      return await apiClient.patch<Lesson>(API_ENDPOINTS.LESSONS.BY_ID(id), lessonData);
+      const response = await apiClient.patch<any>(API_ENDPOINTS.LESSONS.BY_ID(id), lessonData);
+      return response.data?.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to update lesson');
     }

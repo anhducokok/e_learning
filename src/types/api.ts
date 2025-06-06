@@ -39,13 +39,16 @@ export interface Course {
   lessons?: Lesson[];
   teacherID?: string;
   teacher?: User;
+  createdBy?: string; // Add the createdBy field for ownership
 }
 
 export interface Lesson {
   id: string;
   title: string;
-  content: string;
-  order: number;
+  content: string; // Keep for backward compatibility
+  textContent?: string; // Add new field
+  order: number; // Keep for backward compatibility  
+  orderIndex?: number; // Add new field
   duration?: string;
   videoUrl?: string;
   courseId: string;
@@ -124,9 +127,8 @@ export interface UpdateCourseRequest extends Partial<CreateCourseRequest> {}
 
 export interface CreateLessonRequest {
   title: string;
-  content: string;
-  order: number;
-  duration?: string;
+  textContent?: string;
+  orderIndex: number;
   videoUrl?: string;
 }
 
@@ -135,17 +137,25 @@ export interface UpdateLessonRequest extends Partial<CreateLessonRequest> {}
 export interface CreateQuizRequest {
   title: string;
   description?: string;
+  timeLimit?: number;
   courseId?: string;
   lessonId?: string;
   questions: {
-    question: string;
-    options: string[];
-    correctAnswer: number;
+    questionText: string;
+    type: 'MCQ' | 'TRUE_FALSE';
+    choices: string[];
+    correctAnswer: string;
+    explanation?: string;
+    points?: number;
+    orderIndex: number;
   }[];
 }
 
 export interface SubmitQuizRequest {
-  answers: number[];
+  answers: {
+    questionId: string;
+    selectedAnswer: string;
+  }[];
 }
 
 // Schedule related types

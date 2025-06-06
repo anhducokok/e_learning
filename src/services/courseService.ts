@@ -6,15 +6,14 @@ import type {
   UpdateCourseRequest,
 } from '../types/api';
 
-export const courseService = {
-  async getAllCourses(): Promise<Course[]> {
+export const courseService = {  async getAllCourses(): Promise<Course[]> {
     try {
       console.log('🔍 Calling getAllCourses API...');
       const response = await apiClient.get<any>(API_ENDPOINTS.COURSES.BASE);
       console.log('✅ getAllCourses API Response:', response);
       
-      // Handle the backend response format which wraps data
-      const courses = response.data?.data || [];
+      // After API client fix, response should be the direct data
+      const courses = response.data || response || [];
       console.log('📚 All courses data:', courses);
       
       return courses;
@@ -22,39 +21,68 @@ export const courseService = {
       console.error('❌ getAllCourses error:', error);
       throw new Error(error.response?.data?.message || 'Failed to fetch courses');
     }
-  },
-
-  async getCourseById(id: string): Promise<Course> {
+  },  async getCourseById(id: string): Promise<Course> {
     try {
       console.log('🔍 Calling getCourseById API for ID:', id);
       const response = await apiClient.get<any>(API_ENDPOINTS.COURSES.BY_ID(id));
       console.log('✅ getCourseById API Response:', response);
       
-      // Handle the backend response format which wraps data
-      if (!response.data?.data) {
+      // After API client fix, response should be the direct data
+      const courseData = response.data || response;
+      if (!courseData) {
         throw new Error('Course data is missing or invalid');
       }
-      return response.data.data;
+      
+      // Debug course ownership fields
+      console.log('📚 Course ownership debug:', {
+        id: courseData.id,
+        title: courseData.title,
+        createdBy: courseData.createdBy,
+        teacherID: courseData.teacherID,
+        teacher: courseData.teacher,
+        creator: courseData.creator
+      });
+      
+      return courseData;
     } catch (error: any) {
       console.error('❌ getCourseById error:', error);
       throw new Error(error.response?.data?.message || 'Failed to fetch course');
     }
-  },  async getMyCourses(): Promise<Course[]> {
+  },async getMyCourses(): Promise<Course[]> {
     try {
       console.log('🔍 Calling getMyCourses API...');
       const response = await apiClient.get<any>(API_ENDPOINTS.COURSES.ENROLLED);
-      console.log('✅ getMyCourses API Response:', response);
+      console.log('✅ getMyCourses API Response structure:', {
+        hasData: !!response.data,
+        hasNestedData: !!response.data?.data,
+        isDataArray: Array.isArray(response.data),
+        isNestedDataArray: Array.isArray(response.data?.data)
+      });
       
-      // The backend returns the courses directly in response.data.data (not nested under courses property)
-      const data = response.data?.data;
-      if (Array.isArray(data)) {
-        console.log('📚 My enrolled courses data (array):', data);
-        return data;
+      // The backend response structure should be:
+      // { success: true, statusCode: 200, message: "...", data: [...courses], timestamp: "..." }
+      
+      // First try to get courses from data.data array (most likely path)
+      if (response.data?.data && Array.isArray(response.data.data)) {
+        console.log('📚 Found courses in response.data.data array:', response.data.data.length);
+        return response.data.data;
       }
-      // Fallback for potential object structure with courses property
-      const courses = data?.courses || [];
-      console.log('📚 My enrolled courses data (object):', courses);
-      return courses;
+      
+      // Then try response.data.data.courses
+      if (response.data?.data?.courses && Array.isArray(response.data.data.courses)) {
+        console.log('📚 Found courses in response.data.data.courses:', response.data.data.courses.length);
+        return response.data.data.courses;
+      }
+      
+      // Finally try response.data (if it's already the courses array)
+      if (Array.isArray(response.data)) {
+        console.log('📚 Found courses directly in response.data array:', response.data.length);
+        return response.data;
+      }
+      
+      // Fallback to empty array if nothing found
+      console.log('⚠️ No courses found in response structure');
+      return [];
     } catch (error: any) {
       console.error('❌ getMyCourses error:', error);
       if (error.response) {

@@ -26,25 +26,24 @@ const CourseDetailManagePage: React.FC = () => {
   const [showLessonForm, setShowLessonForm] = useState(false);
   const [showQuizForm, setShowQuizForm] = useState(false);
   const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
-
   // Form states
   const [lessonForm, setLessonForm] = useState<CreateLessonRequest>({
     title: '',
-    content: '',
-    order: 1,
-    duration: '',
+    textContent: '',
+    orderIndex: 1,
     videoUrl: ''
   });
-
   const [quizForm, setQuizForm] = useState<CreateQuizRequest>({
     title: '',
     description: '',
     courseId: courseId || '',
     questions: [
       {
-        question: '',
-        options: ['', '', '', ''],
-        correctAnswer: 0
+        questionText: '',
+        type: 'MCQ' as const,
+        choices: ['', '', '', ''],
+        correctAnswer: '',
+        orderIndex: 1
       }
     ]
   });
@@ -54,38 +53,77 @@ const CourseDetailManagePage: React.FC = () => {
       fetchCourseData();
     }
   }, [courseId]);
-
   const fetchCourseData = async () => {
     if (!courseId) return;
     
     try {
       setLoading(true);
+      console.log('🔍 Fetching course data for courseId:', courseId);
+      
       const [courseData, lessonsData, quizzesData] = await Promise.all([
         courseService.getCourseById(courseId),
         lessonService.getLessonsByCourse(courseId),
         quizService.getQuizzesByCourse(courseId)
       ]);
       
-      setCourse(courseData);
-      setLessons(lessonsData.sort((a, b) => a.order - b.order));
-      setQuizzes(quizzesData);
+      console.log('📚 Course data:', courseData);
+      console.log('📖 Lessons data:', lessonsData, 'Type:', typeof lessonsData, 'Is Array:', Array.isArray(lessonsData));
+      console.log('🧪 Quizzes data:', quizzesData);
+        setCourse(courseData);      // Ensure lessonsData is an array before sorting
+      const lessonsArray = Array.isArray(lessonsData) ? lessonsData : [];
+      setLessons(lessonsArray.sort((a, b) => (a.orderIndex || a.order || 0) - (b.orderIndex || b.order || 0)));
+      
+      // Ensure quizzesData is an array before setting
+      const quizzesArray = Array.isArray(quizzesData) ? quizzesData : [];
+      setQuizzes(quizzesArray);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch course data');
     } finally {
       setLoading(false);
     }
   };
-
   // Lesson management
   const handleCreateLesson = async () => {
     if (!courseId) return;
     
     try {
+      console.log('🔍 Creating lesson for courseId:', courseId);
+      console.log('📝 Lesson form data:', lessonForm);
+      console.log('🔑 Current auth token:', localStorage.getItem('auth_token') ? 'Present' : 'Missing');
+      console.log('👤 Current user data:', localStorage.getItem('user_data'));      // Debug course ownership
+      console.log('📚 Current course details:', {
+        id: course?.id,
+        title: course?.title,
+        teacherID: course?.teacherID,
+        createdBy: course?.createdBy,
+        teacher: course?.teacher
+      });
+      
+      // Parse and log user data for comparison
+      const userData = localStorage.getItem('user_data');
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          console.log('👤 Parsed user data:', {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role
+          });
+        } catch (e) {
+          console.error('Failed to parse user data:', e);
+        }
+      }
+      
       await lessonService.createLesson(courseId, lessonForm);
+      console.log('✅ Lesson created successfully');
+      
       setShowLessonForm(false);
       resetLessonForm();
       fetchCourseData();
     } catch (err: any) {
+      console.error('❌ Failed to create lesson:', err);
+      console.error('Error details:', err.response?.data);
       setError(err.message || 'Failed to create lesson');
     }
   };
@@ -126,17 +164,14 @@ const CourseDetailManagePage: React.FC = () => {
       setError(err.message || 'Failed to create quiz');
     }
   };
-
   const resetLessonForm = () => {
     setLessonForm({
       title: '',
-      content: '',
-      order: lessons.length + 1,
-      duration: '',
+      textContent: '',
+      orderIndex: lessons.length + 1,
       videoUrl: ''
     });
   };
-
   const resetQuizForm = () => {
     setQuizForm({
       title: '',
@@ -144,35 +179,35 @@ const CourseDetailManagePage: React.FC = () => {
       courseId: courseId || '',
       questions: [
         {
-          question: '',
-          options: ['', '', '', ''],
-          correctAnswer: 0
+          questionText: '',
+          type: 'MCQ' as const,
+          choices: ['', '', '', ''],
+          correctAnswer: '',
+          orderIndex: 1
         }
       ]
     });
-  };
-
-  const openLessonEditForm = (lesson: Lesson) => {
+  };const openLessonEditForm = (lesson: Lesson) => {
     setEditingLesson(lesson);
     setLessonForm({
       title: lesson.title,
-      content: lesson.content,
-      order: lesson.order,
-      duration: lesson.duration || '',
+      textContent: lesson.textContent || lesson.content || '',
+      orderIndex: lesson.orderIndex || lesson.order || 1,
       videoUrl: lesson.videoUrl || ''
     });
     setShowLessonForm(true);
   };
-
   const addQuizQuestion = () => {
     setQuizForm({
       ...quizForm,
       questions: [
         ...quizForm.questions,
         {
-          question: '',
-          options: ['', '', '', ''],
-          correctAnswer: 0
+          questionText: '',
+          type: 'MCQ' as const,
+          choices: ['', '', '', ''],
+          correctAnswer: '',
+          orderIndex: quizForm.questions.length + 1
         }
       ]
     });
@@ -183,10 +218,9 @@ const CourseDetailManagePage: React.FC = () => {
     newQuestions[index] = { ...newQuestions[index], [field]: value };
     setQuizForm({ ...quizForm, questions: newQuestions });
   };
-
   const updateQuizOption = (questionIndex: number, optionIndex: number, value: string) => {
     const newQuestions = [...quizForm.questions];
-    newQuestions[questionIndex].options[optionIndex] = value;
+    newQuestions[questionIndex].choices[optionIndex] = value;
     setQuizForm({ ...quizForm, questions: newQuestions });
   };
 
@@ -317,7 +351,7 @@ const CourseDetailManagePage: React.FC = () => {
               <div>
                 <span className="text-sm text-gray-500">Giá</span>
                 <p className="font-semibold">
-                  {course.price ? `${course.price.toLocaleString()} VNĐ` : 'Miễn phí'}
+                  {course.price && course.price > 0 ? `${course.price.toLocaleString()} VNĐ` : 'Miễn phí'}
                 </p>
               </div>
             </div>
@@ -359,13 +393,12 @@ const CourseDetailManagePage: React.FC = () => {
                     <div key={lesson.id} className="border rounded-lg p-4 hover:bg-gray-50">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
-                              Bài {lesson.order}
+                          <div className="flex items-center gap-2 mb-2">                            <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
+                              Bài {lesson.orderIndex || lesson.order}
                             </span>
                             <h3 className="font-semibold">{lesson.title}</h3>
                           </div>
-                          <p className="text-gray-600 mb-2 line-clamp-2">{lesson.content}</p>
+                          <p className="text-gray-600 mb-2 line-clamp-2">{lesson.textContent || lesson.content}</p>
                           <div className="flex items-center gap-4 text-sm text-gray-500">
                             {lesson.duration && <span>⏱️ {lesson.duration}</span>}
                             {lesson.videoUrl && <span>🎥 Video có sẵn</span>}
@@ -478,11 +511,10 @@ const CourseDetailManagePage: React.FC = () => {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Thứ tự
-                      </label>
-                      <input
+                      </label>                      <input
                         type="number"
-                        value={lessonForm.order}
-                        onChange={(e) => setLessonForm({...lessonForm, order: Number(e.target.value)})}
+                        value={lessonForm.orderIndex}
+                        onChange={(e) => setLessonForm({...lessonForm, orderIndex: Number(e.target.value)})}
                         className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                         min="1"
                       />
@@ -492,41 +524,24 @@ const CourseDetailManagePage: React.FC = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Nội dung bài học
-                    </label>
-                    <textarea
-                      value={lessonForm.content}
-                      onChange={(e) => setLessonForm({...lessonForm, content: e.target.value})}
+                    </label>                    <textarea
+                      value={lessonForm.textContent}
+                      onChange={(e) => setLessonForm({...lessonForm, textContent: e.target.value})}
                       rows={6}
                       className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                       placeholder="Nhập nội dung bài học"
                     />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Thời lượng
-                      </label>
-                      <input
-                        type="text"
-                        value={lessonForm.duration}
-                        onChange={(e) => setLessonForm({...lessonForm, duration: e.target.value})}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
-                        placeholder="Ví dụ: 30 phút"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Video URL
-                      </label>
-                      <input
-                        type="url"
-                        value={lessonForm.videoUrl}
-                        onChange={(e) => setLessonForm({...lessonForm, videoUrl: e.target.value})}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
-                        placeholder="https://..."
-                      />
-                    </div>
+                  </div>                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Video URL
+                    </label>
+                    <input
+                      type="url"
+                      value={lessonForm.videoUrl}
+                      onChange={(e) => setLessonForm({...lessonForm, videoUrl: e.target.value})}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                      placeholder="https://..."
+                    />
                   </div>
                 </div>
 
@@ -613,23 +628,22 @@ const CourseDetailManagePage: React.FC = () => {
                             )}
                           </div>
                           
-                          <div className="space-y-3">
-                            <input
+                          <div className="space-y-3">                            <input
                               type="text"
-                              value={question.question}
-                              onChange={(e) => updateQuizQuestion(qIndex, 'question', e.target.value)}
+                              value={question.questionText}
+                              onChange={(e) => updateQuizQuestion(qIndex, 'questionText', e.target.value)}
                               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
                               placeholder="Nhập câu hỏi"
                             />
                             
                             <div className="grid grid-cols-2 gap-2">
-                              {question.options.map((option, oIndex) => (
+                              {question.choices.map((option: string, oIndex: number) => (
                                 <div key={oIndex} className="flex items-center gap-2">
                                   <input
                                     type="radio"
                                     name={`question-${qIndex}`}
-                                    checked={question.correctAnswer === oIndex}
-                                    onChange={() => updateQuizQuestion(qIndex, 'correctAnswer', oIndex)}
+                                    checked={question.correctAnswer === option}
+                                    onChange={() => updateQuizQuestion(qIndex, 'correctAnswer', option)}
                                     className="text-blue-600"
                                   />
                                   <input

@@ -356,7 +356,7 @@ const CourseManagementPage: React.FC = () => {
 
                   <div className="flex justify-between items-center">
                     <span className="text-lg font-bold text-blue-600">
-                      {course.price ? `${course.price.toLocaleString()} VNĐ` : 'Miễn phí'}
+                      {course.price && course.price > 0 ? `${course.price.toLocaleString()} VNĐ` : 'Miễn phí'}
                     </span>
                     
                     <div className="flex gap-2">
