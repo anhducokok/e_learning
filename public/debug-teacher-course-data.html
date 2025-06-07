@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Course Data Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧑‍🏫 Teacher Course Data Test</h1>
+        
+        <div class="section">
+            <h2>Step 1: Login as Teacher</h2>
+            <button onclick="loginAsTeacher()">Login as Teacher</button>
+            <div id="loginResult"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Step 2: Fetch All Courses</h2>
+            <button onclick="fetchCourses()">Fetch Courses</button>
+            <div id="coursesResult"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Step 3: Test Specific Course Data</h2>
+            <input type="text" id="courseIdInput" placeholder="Enter Course ID" style="width: 300px;">
+            <button onclick="testCourseData()">Test Course Data</button>
+            <div id="courseDataResult"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Step 4: API Response Analysis</h2>
+            <div id="analysisResult"></div>
+        </div>
+    </div>
+
+    <script>
+        let authToken = null;
+        let teacherId = null;
+        
+        async function loginAsTeacher() {
+            const resultDiv = document.getElementById('loginResult');
+            resultDiv.innerHTML = '<p class="info">🔄 Logging in...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:3212/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'teacher@example.com',
+                        password: '11042004'
+                    })
+                });
+                
+                const data = await response.json();
+                console.log('Login response:', data);
+                
+                if (data.success && data.data?.access_token) {
+                    authToken = data.data.access_token;
+                    teacherId = data.data.user?.id;
+                    
+                    resultDiv.innerHTML = `
+                        <p class="success">✅ Login successful!</p>
+                        <p><strong>User:</strong> ${data.data.user?.name} (${data.data.user?.email})</p>
+                        <p><strong>Role:</strong> ${data.data.user?.role}</p>
+                        <p><strong>User ID:</strong> ${teacherId}</p>
+                        <p><strong>Token:</strong> ${authToken ? 'Present' : 'Missing'}</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ Login failed: ${data.message || 'Unknown error'}</p>`;
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                resultDiv.innerHTML = `<p class="error">❌ Login error: ${error.message}</p>`;
+            }
+        }
+        
+        async function fetchCourses() {
+            const resultDiv = document.getElementById('coursesResult');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<p class="error">❌ Please login first</p>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<p class="info">🔄 Fetching courses...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:3212/courses', {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                console.log('Courses response:', data);
+                
+                if (Array.isArray(data) && data.length > 0) {
+                    const teacherCourses = data.filter(course => course.teacherID === teacherId);
+                    
+                    resultDiv.innerHTML = `
+                        <p class="success">✅ Courses fetched successfully!</p>
+                        <p><strong>Total courses:</strong> ${data.length}</p>
+                        <p><strong>Courses owned by teacher:</strong> ${teacherCourses.length}</p>
+                        <h3>Teacher's Courses:</h3>
+                        <pre>${JSON.stringify(teacherCourses.map(c => ({
+                            id: c.id,
+                            title: c.title,
+                            teacherID: c.teacherID
+                        })), null, 2)}</pre>
+                    `;
+                    
+                    // Auto-fill first course ID
+                    if (teacherCourses.length > 0) {
+                        document.getElementById('courseIdInput').value = teacherCourses[0].id;
+                    }
+                } else {
+                    resultDiv.innerHTML = `<p class="error">❌ No courses found or unexpected response format</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                console.error('Courses fetch error:', error);
+                resultDiv.innerHTML = `<p class="error">❌ Courses fetch error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testCourseData() {
+            const courseId = document.getElementById('courseIdInput').value.trim();
+            const resultDiv = document.getElementById('courseDataResult');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<p class="error">❌ Please login first</p>';
+                return;
+            }
+            
+            if (!courseId) {
+                resultDiv.innerHTML = '<p class="error">❌ Please enter a course ID</p>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<p class="info">🔄 Testing course data...</p>';
+            
+            try {
+                // Test course details
+                const courseResponse = await fetch(`http://localhost:3212/courses/${courseId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const courseData = await courseResponse.json();
+                
+                // Test lessons
+                const lessonsResponse = await fetch(`http://localhost:3212/lessons/course/${courseId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const lessonsData = await lessonsResponse.json();
+                
+                // Test quizzes
+                const quizzesResponse = await fetch(`http://localhost:3212/quizzes/course/${courseId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const quizzesData = await quizzesResponse.json();
+                
+                resultDiv.innerHTML = `
+                    <p class="success">✅ Course data test completed!</p>
+                    <h3>Course Details:</h3>
+                    <pre>${JSON.stringify(courseData, null, 2)}</pre>
+                    <h3>Lessons (${lessonsData.data?.length || 0} found):</h3>
+                    <pre>${JSON.stringify(lessonsData, null, 2)}</pre>
+                    <h3>Quizzes (${quizzesData.data?.length || 0} found):</h3>
+                    <pre>${JSON.stringify(quizzesData, null, 2)}</pre>
+                `;
+                
+                // Analyze the responses
+                analyzeResponses(courseData, lessonsData, quizzesData);
+                
+            } catch (error) {
+                console.error('Course data test error:', error);
+                resultDiv.innerHTML = `<p class="error">❌ Course data test error: ${error.message}</p>`;
+            }
+        }
+        
+        function analyzeResponses(courseData, lessonsData, quizzesData) {
+            const analysisDiv = document.getElementById('analysisResult');
+            
+            const analysis = {
+                course: {
+                    hasData: !!courseData,
+                    structure: typeof courseData,
+                    keys: courseData ? Object.keys(courseData) : []
+                },
+                lessons: {
+                    isSuccessResponse: lessonsData?.success === true,
+                    hasDataArray: Array.isArray(lessonsData?.data),
+                    dataLength: lessonsData?.data?.length || 0,
+                    statusCode: lessonsData?.statusCode,
+                    rawDataType: typeof lessonsData?.data
+                },
+                quizzes: {
+                    isSuccessResponse: quizzesData?.success === true,
+                    hasDataArray: Array.isArray(quizzesData?.data),
+                    dataLength: quizzesData?.data?.length || 0,
+                    statusCode: quizzesData?.statusCode,
+                    rawDataType: typeof quizzesData?.data
+                }
+            };
+            
+            let issues = [];
+            
+            if (analysis.lessons.dataLength === 0) {
+                issues.push('⚠️ No lessons found - check if lessons exist for this course');
+            }
+            
+            if (analysis.quizzes.dataLength === 0) {
+                issues.push('⚠️ No quizzes found - check if quizzes exist for this course');
+            }
+            
+            if (!analysis.lessons.isSuccessResponse) {
+                issues.push('❌ Lessons API response format is incorrect');
+            }
+            
+            if (!analysis.quizzes.isSuccessResponse) {
+                issues.push('❌ Quizzes API response format is incorrect');
+            }
+            
+            analysisDiv.innerHTML = `
+                <h3>🔍 API Response Analysis</h3>
+                <pre>${JSON.stringify(analysis, null, 2)}</pre>
+                <h3>📋 Issues Found:</h3>
+                ${issues.length > 0 ? issues.map(issue => `<p>${issue}</p>`).join('') : '<p class="success">✅ No issues found!</p>'}
+            `;
+        }
+    </script>
+</body>
+</html>

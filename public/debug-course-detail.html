@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug CourseDetailManagePage</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; background-color: #f5f5f5; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        button { background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 10px 0; }
+        button:hover { background-color: #45a049; }
+        #output { background-color: #1e1e1e; color: #ffffff; padding: 15px; border-radius: 4px; font-family: 'Consolas', 'Monaco', monospace; white-space: pre-wrap; max-height: 600px; overflow-y: auto; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Debug CourseDetailManagePage</h1>
+        <p>Debug data fetching issues in CourseDetailManagePage by testing the exact API calls it makes.</p>
+        
+        <button onclick="runDebug()">Run Debug Test</button>
+        <button onclick="clearOutput()">Clear Output</button>
+        
+        <div id="output"></div>
+    </div>
+
+    <script>
+        const outputDiv = document.getElementById('output');
+        
+        function clearOutput() {
+            outputDiv.textContent = '';
+        }
+        
+        function log(message) {
+            outputDiv.textContent += message + '\n';
+            outputDiv.scrollTop = outputDiv.scrollHeight;
+        }
+        
+        console.log = (...args) => {
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            log(message);
+        };
+        
+        console.error = (...args) => {
+            const message = '❌ ' + args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            log(message);
+        };
+        
+        async function runDebug() {
+            clearOutput();
+            
+            try {
+                const script = document.createElement('script');
+                script.src = './debug-course-detail.js';
+                script.onload = () => log('Debug script loaded and running...');
+                script.onerror = () => log('❌ Failed to load debug script');
+                document.head.appendChild(script);
+            } catch (error) {
+                console.error('Failed to load debug script:', error);
+            }
+        }
+    </script>
+</body>
+</html>

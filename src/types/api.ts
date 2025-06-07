@@ -37,7 +37,7 @@ export interface Course {
   createdAt?: string;
   updatedAt?: string;
   lessons?: Lesson[];
-  teacherID?: string;
+  teacherId?: string; // <-- match backend field
   teacher?: User;
   createdBy?: string; // Add the createdBy field for ownership
 }
@@ -80,12 +80,26 @@ export interface QuizQuestion {
   quiz?: Quiz;
 }
 
+export interface QuestionAnswer {
+  id: string;
+  questionId: string;
+  selectedAnswer: string;
+  isCorrect: boolean;
+  pointsEarned: number;
+  question?: QuizQuestion;
+}
+
 export interface QuizSubmission {
   id: string;
-  answers: number[];
-  score?: number;
   userId: string;
   quizId: string;
+  score: number;
+  totalPoints: number;
+  maxPoints: number;
+  answers: QuestionAnswer[];
+  startedAt?: string;
+  submittedAt?: string;
+  timeSpent?: number;
   user?: User;
   quiz?: Quiz;
   createdAt?: string;
@@ -129,6 +143,7 @@ export interface CreateLessonRequest {
   title: string;
   textContent?: string;
   orderIndex: number;
+
   videoUrl?: string;
 }
 

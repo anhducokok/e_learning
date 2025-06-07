@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Learning Authentication Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .card {
+            background-color: #f9fafb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        button:hover {
+            background-color: #2563eb;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .output {
+            background-color: #1e293b;
+            color: #f8fafc;
+            font-family: monospace;
+            padding: 16px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>E-Learning Authentication Test</h1>
+    
+    <div class="card">
+        <h2>Authentication</h2>
+        <div>
+            <label for="email">Email</label>
+            <input type="email" id="email" value="teacher@example.com">
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" value="11042004">
+        </div>
+        <div>
+            <button onclick="doLogin()">Login</button>
+            <button onclick="doLogout()">Logout</button>
+            <button onclick="checkAuth()">Check Auth State</button>
+        </div>
+        <h3>Authentication Status</h3>
+        <div class="output" id="auth-output">Not checked yet</div>
+    </div>
+    
+    <div class="card">
+        <h2>Test API Calls</h2>
+        <div>
+            <label for="course-id">Course ID</label>
+            <input type="text" id="course-id" value="d6c8556b-0c3d-44a3-b8e7-b8a24234a866">
+        </div>
+        <div>
+            <button onclick="fetchCourses()">Fetch Courses</button>
+            <button onclick="fetchLessons()">Fetch Lessons</button>
+            <button onclick="fetchQuizzes()">Fetch Quizzes</button>
+        </div>
+        <h3>API Response</h3>
+        <div class="output" id="api-output">No call made yet</div>
+    </div>
+    
+    <div class="card">
+        <h2>Debug Video URL</h2>
+        <div>
+            <label for="video-url">Video URL</label>
+            <input type="text" id="video-url" value="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">
+        </div>
+        <div>
+            <button onclick="testVideo()">Test Video</button>
+        </div>
+        <div id="video-container"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3212';
+        
+        // Auth functions
+        function updateAuthOutput() {
+            const output = document.getElementById('auth-output');
+            const token = localStorage.getItem('auth_token');
+            
+            if (token) {
+                const userData = localStorage.getItem('user_data');
+                let userInfo = 'No user data';
+                
+                if (userData) {
+                    try {
+                        const user = JSON.parse(userData);
+                        userInfo = `User: ${user.name} (${user.email}), Role: ${user.role}`;
+                    } catch (e) {
+                        userInfo = 'Failed to parse user data';
+                    }
+                }
+                
+                output.textContent = `✅ Authenticated\nToken: ${token.substring(0, 20)}...\n${userInfo}`;
+            } else {
+                output.textContent = '❌ Not authenticated (no token)';
+            }
+        }
+        
+        async function doLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const output = document.getElementById('auth-output');
+            
+            output.textContent = 'Logging in...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.data?.access_token) {
+                    localStorage.setItem('auth_token', data.data.access_token);
+                    
+                    if (data.data.user) {
+                        localStorage.setItem('user_data', JSON.stringify(data.data.user));
+                    }
+                    
+                    output.textContent = `Login successful!\nResponse: ${JSON.stringify(data, null, 2)}`;
+                    updateAuthOutput();
+                } else {
+                    output.textContent = `Login failed!\nResponse: ${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                output.textContent = `Error during login: ${error.message}`;
+            }
+        }
+        
+        function doLogout() {
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('user_data');
+            updateAuthOutput();
+            document.getElementById('auth-output').textContent = 'Logged out successfully';
+        }
+        
+        function checkAuth() {
+            updateAuthOutput();
+        }
+        
+        // API test functions
+        async function makeAuthenticatedRequest(url) {
+            const token = localStorage.getItem('auth_token');
+            const headers = {};
+            
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            return fetch(url, { headers });
+        }
+        
+        async function fetchCourses() {
+            const output = document.getElementById('api-output');
+            output.textContent = 'Fetching courses...';
+            
+            try {
+                const response = await makeAuthenticatedRequest(`${API_BASE}/courses`);
+                const data = await response.json();
+                
+                output.textContent = `Status: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                output.textContent = `Error fetching courses: ${error.message}`;
+            }
+        }
+        
+        async function fetchLessons() {
+            const courseId = document.getElementById('course-id').value;
+            const output = document.getElementById('api-output');
+            
+            if (!courseId) {
+                output.textContent = 'Please enter a course ID';
+                return;
+            }
+            
+            output.textContent = `Fetching lessons for course ${courseId}...`;
+            
+            try {
+                const response = await makeAuthenticatedRequest(`${API_BASE}/lessons/course/${courseId}`);
+                const data = await response.json();
+                
+                output.textContent = `Status: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                output.textContent = `Error fetching lessons: ${error.message}`;
+            }
+        }
+        
+        async function fetchQuizzes() {
+            const courseId = document.getElementById('course-id').value;
+            const output = document.getElementById('api-output');
+            
+            if (!courseId) {
+                output.textContent = 'Please enter a course ID';
+                return;
+            }
+            
+            output.textContent = `Fetching quizzes for course ${courseId}...`;
+            
+            try {
+                const response = await makeAuthenticatedRequest(`${API_BASE}/quizzes/course/${courseId}`);
+                const data = await response.json();
+                
+                output.textContent = `Status: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                output.textContent = `Error fetching quizzes: ${error.message}`;
+            }
+        }
+        
+        // Video testing
+        function testVideo() {
+            const videoUrl = document.getElementById('video-url').value;
+            const container = document.getElementById('video-container');
+            
+            container.innerHTML = '';
+            
+            if (videoUrl) {
+                const video = document.createElement('video');
+                video.src = videoUrl;
+                video.controls = true;
+                video.width = 640;
+                video.style.maxWidth = '100%';
+                video.style.borderRadius = '8px';
+                video.style.marginTop = '10px';
+                
+                video.addEventListener('loadstart', () => console.log('Video loadstart event'));
+                video.addEventListener('loadeddata', () => console.log('Video loadeddata event'));
+                video.addEventListener('canplay', () => console.log('Video canplay event'));
+                video.addEventListener('error', (e) => console.error('Video error:', e));
+                
+                container.appendChild(video);
+            }
+        }
+        
+        // Initialize
+        updateAuthOutput();
+    </script>
+</body>
+</html>

@@ -38,7 +38,7 @@ export const courseService = {  async getAllCourses(): Promise<Course[]> {
         id: courseData.id,
         title: courseData.title,
         createdBy: courseData.createdBy,
-        teacherID: courseData.teacherID,
+        teacherId: courseData.teacherId,
         teacher: courseData.teacher,
         creator: courseData.creator
       });
@@ -92,11 +92,10 @@ export const courseService = {  async getAllCourses(): Promise<Course[]> {
       throw new Error(error.response?.data?.message || 'Failed to fetch enrolled courses');
     }
   },
-
   async createCourse(courseData: CreateCourseRequest): Promise<Course> {
     try {
       const response = await apiClient.post<any>(API_ENDPOINTS.COURSES.BASE, courseData);
-      return response.data?.data;
+      return response.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to create course');
     }
@@ -105,7 +104,7 @@ export const courseService = {  async getAllCourses(): Promise<Course[]> {
   async updateCourse(id: string, courseData: UpdateCourseRequest): Promise<Course> {
     try {
       const response = await apiClient.patch<any>(API_ENDPOINTS.COURSES.BY_ID(id), courseData);
-      return response.data?.data;
+      return response.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to update course');
     }

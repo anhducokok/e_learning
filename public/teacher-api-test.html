@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #output {
+            background-color: #1e1e1e;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Teacher API Test</h1>
+        <p>Test teacher login and course data access for CourseDetailManagePage debugging.</p>
+        
+        <button onclick="runTest()">Run Teacher API Test</button>
+        <button onclick="clearOutput()">Clear Output</button>
+        
+        <div id="output"></div>
+    </div>
+
+    <script>
+        const outputDiv = document.getElementById('output');
+        
+        function clearOutput() {
+            outputDiv.textContent = '';
+        }
+        
+        function log(message) {
+            outputDiv.textContent += message + '\n';
+            outputDiv.scrollTop = outputDiv.scrollHeight;
+        }
+        
+        // Override console.log for this test
+        const originalLog = console.log;
+        const originalError = console.error;
+        
+        console.log = (...args) => {
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            log(message);
+            originalLog(...args);
+        };
+        
+        console.error = (...args) => {
+            const message = '❌ ' + args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            log(message);
+            originalError(...args);
+        };
+        
+        async function runTest() {
+            clearOutput();
+            log('🔍 Starting Teacher API Test...\n');
+            
+            try {
+                // Import and run the test script
+                const script = document.createElement('script');
+                script.src = './teacher-api-test.js';
+                document.head.appendChild(script);
+            } catch (error) {
+                console.error('Failed to load test script:', error);
+            }
+        }
+    </script>
+</body>
+</html>

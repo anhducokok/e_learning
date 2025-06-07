@@ -28,13 +28,20 @@ export const API_ENDPOINTS = {
     BY_COURSE: (courseId: string) => `/lessons/course/${courseId}`,
     BY_ID: (id: string) => `/lessons/${id}`,
   },
-  
-  // Quizzes endpoints
+    // Quizzes endpoints
   QUIZZES: {
     BASE: '/quizzes',
     BY_COURSE: (courseId: string) => `/quizzes/course/${courseId}`,
     BY_LESSON: (lessonId: string) => `/quizzes/lesson/${lessonId}`,
+    BY_ID: (id: string) => `/quizzes/${id}`,
     SUBMIT: (id: string) => `/quizzes/${id}/submit`,
+    SUBMIT_FINAL: (id: string) => `/quizzes/${id}/submit-final`,
+    START: (id: string) => `/quizzes/${id}/start`,
+    SAVE_DRAFT: (id: string) => `/quizzes/${id}/save-draft`,
+    GET_DRAFT: (id: string) => `/quizzes/${id}/draft`,
+    SUBMISSION: (id: string) => `/quizzes/${id}/submission`,
+    STATISTICS: (id: string) => `/quizzes/${id}/statistics`,
+    MY_SUBMISSIONS: '/quizzes/my-submissions',
   },
 
   // Schedule endpoints

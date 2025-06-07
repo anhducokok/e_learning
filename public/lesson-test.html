@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson Rendering Test</title>
+  <style>
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .lesson { margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+    .lesson h2 { margin-top: 0; }
+    video { width: 100%; max-height: 400px; background: #000; }
+    .content { white-space: pre-wrap; }
+    .warning { color: #a00; }
+    .debug { background: #f5f5f5; padding: 10px; margin-top: 15px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Lesson Rendering Test</h1>
+  <p>This page tests the rendering of videos in lesson content</p>
+
+  <div id="auth-info">
+    <h2>Authentication Status</h2>
+    <div id="auth-status">Checking...</div>
+  </div>
+  
+  <div class="lesson">
+    <h2>Test Video Playback</h2>
+    <div class="video-container">
+      <h3>Sample Video 1</h3>
+      <video controls>
+        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+        <p>Your browser doesn't support HTML5 video.</p>
+      </video>
+      <p><strong>Video URL:</strong> <a href="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" target="_blank">https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4</a></p>
+      <div id="status-1" class="debug">Waiting for video to load...</div>
+    </div>
+
+    <div class="video-container">
+      <h3>Sample Video 2</h3>
+      <video controls>
+        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" type="video/mp4">
+        <p>Your browser doesn't support HTML5 video.</p>
+      </video>
+      <p><strong>Video URL:</strong> <a href="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" target="_blank">https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4</a></p>
+      <div id="status-2" class="debug">Waiting for video to load...</div>
+    </div>
+  </div>
+
+  <div id="fetch-lessons">
+    <h2>API Test - Fetch Lessons</h2>
+    <button id="fetch-btn">Fetch Lessons from API</button>
+    <div id="api-result" class="debug">Click button to fetch lessons...</div>
+    <div id="lessons-container"></div>
+  </div>
+  
+  <script>
+    // Check auth status
+    function checkAuth() {
+      const token = localStorage.getItem('auth_token');
+      const authStatus = document.getElementById('auth-status');
+      
+      if (token) {
+        authStatus.innerHTML = `
+          <div style="color: green">✓ Authenticated</div>
+          <div>Token: ${token.substring(0, 20)}...</div>
+          <button id="clear-auth">Clear Authentication</button>
+        `;
+        document.getElementById('clear-auth').addEventListener('click', () => {
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('user_data');
+          checkAuth();
+        });
+      } else {
+        authStatus.innerHTML = `
+          <div style="color: red">✗ Not authenticated</div>
+          <button id="login-btn">Login (Teacher)</button>
+        `;
+        document.getElementById('login-btn').addEventListener('click', login);
+      }
+    }
+
+    // Login function
+    async function login() {
+      const authStatus = document.getElementById('auth-status');
+      authStatus.textContent = 'Logging in...';
+      
+      try {
+        const response = await fetch('http://localhost:3212/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: 'teacher@example.com',
+            password: '11042004'
+          })
+        });
+        
+        const data = await response.json();
+        if (data.success && data.data?.access_token) {
+          localStorage.setItem('auth_token', data.data.access_token);
+          localStorage.setItem('user_data', JSON.stringify(data.data.user));
+          authStatus.textContent = 'Login successful!';
+          setTimeout(checkAuth, 500);
+        } else {
+          authStatus.textContent = 'Login failed: ' + (data.message || 'Unknown error');
+        }
+      } catch (error) {
+        authStatus.textContent = 'Login error: ' + error.message;
+      }
+    }
+
+    // Track video loading
+    document.querySelectorAll('video').forEach((video, index) => {
+      const statusDiv = document.getElementById(`status-${index + 1}`);
+      
+      video.onloadeddata = () => {
+        statusDiv.innerHTML = `
+          <div style="color: green">✓ Video loaded successfully</div>
+          <div>Duration: ${video.duration.toFixed(1)} seconds</div>
+          <div>Dimensions: ${video.videoWidth}x${video.videoHeight}</div>
+        `;
+      };
+      
+      video.onerror = (e) => {
+        statusDiv.innerHTML = `
+          <div style="color: red">✗ Error loading video</div>
+          <div>Error code: ${video.error ? video.error.code : 'unknown'}</div>
+          <div>Message: ${video.error ? video.error.message : 'unknown error'}</div>
+        `;
+      };
+    });
+
+    // Fetch lessons
+    document.getElementById('fetch-btn').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('api-result');
+      const lessonsContainer = document.getElementById('lessons-container');
+      const token = localStorage.getItem('auth_token');
+      
+      if (!token) {
+        resultDiv.textContent = 'Error: Not authenticated. Please login first.';
+        return;
+      }
+      
+      resultDiv.textContent = 'Fetching lessons...';
+      
+      try {
+        // First get a course
+        const coursesResponse = await fetch('http://localhost:3212/courses');
+        const coursesResult = await coursesResponse.json();
+        
+        if (!coursesResult.data || coursesResult.data.length === 0) {
+          resultDiv.textContent = 'No courses found';
+          return;
+        }
+        
+        const courseId = coursesResult.data[0].id;
+        
+        // Then get lessons for that course
+        const lessonsResponse = await fetch(`http://localhost:3212/lessons/course/${courseId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        const lessonsResult = await lessonsResponse.json();
+        resultDiv.innerHTML = `
+          <div>API Response:</div>
+          <pre>${JSON.stringify({
+            success: lessonsResult.success,
+            statusCode: lessonsResult.statusCode,
+            message: lessonsResult.message,
+            dataType: Array.isArray(lessonsResult.data) ? 'array' : typeof lessonsResult.data,
+            dataLength: Array.isArray(lessonsResult.data) ? lessonsResult.data.length : 'n/a'
+          }, null, 2)}</pre>
+        `;
+        
+        if (lessonsResult.success && Array.isArray(lessonsResult.data)) {
+          const lessons = lessonsResult.data;
+          lessonsContainer.innerHTML = '';
+          
+          lessons.forEach((lesson, index) => {
+            const lessonDiv = document.createElement('div');
+            lessonDiv.className = 'lesson';
+            lessonDiv.innerHTML = `
+              <h2>${lesson.title}</h2>
+              ${lesson.videoUrl ? `
+                <div class="video-container">
+                  <h3>Video</h3>
+                  <video controls id="lesson-video-${index}">
+                    <source src="${lesson.videoUrl}" type="video/mp4">
+                    <p>Your browser doesn't support HTML5 video.</p>
+                  </video>
+                  <p><strong>Video URL:</strong> <a href="${lesson.videoUrl}" target="_blank">${lesson.videoUrl}</a></p>
+                  <div id="lesson-status-${index}" class="debug">Waiting for video to load...</div>
+                </div>
+              ` : '<p class="warning">No video URL for this lesson</p>'}
+              <div>
+                <h3>Content</h3>
+                <div class="content">${lesson.textContent || lesson.content || '<p class="warning">No content</p>'}</div>
+              </div>
+            `;
+            
+            lessonsContainer.appendChild(lessonDiv);
+            
+            if (lesson.videoUrl) {
+              const video = document.getElementById(`lesson-video-${index}`);
+              const statusDiv = document.getElementById(`lesson-status-${index}`);
+              
+              video.onloadeddata = () => {
+                statusDiv.innerHTML = `
+                  <div style="color: green">✓ Video loaded successfully</div>
+                  <div>Duration: ${video.duration.toFixed(1)} seconds</div>
+                  <div>Dimensions: ${video.videoWidth}x${video.videoHeight}</div>
+                `;
+              };
+              
+              video.onerror = (e) => {
+                statusDiv.innerHTML = `
+                  <div style="color: red">✗ Error loading video</div>
+                  <div>Error code: ${video.error ? video.error.code : 'unknown'}</div>
+                  <div>Message: ${video.error ? video.error.message : 'unknown error'}</div>
+                `;
+              };
+            }
+          });
+        } else {
+          lessonsContainer.innerHTML = '<p class="warning">No lessons found or data format incorrect</p>';
+        }
+      } catch (error) {
+        resultDiv.textContent = 'Error fetching lessons: ' + error.message;
+      }
+    });
+
+    // Initialize
+    checkAuth();
+  </script>
+</body>
+</html>
