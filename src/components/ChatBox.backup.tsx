@@ -4,30 +4,26 @@ import type { ChatMessage } from "../contexts/ChatContext";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function ChatBox() {
-  const { messages, sendMessage } = useChat();
-  const { isAuthenticated, user } = useAuth();
-
-  // Nếu chưa đăng nhập thì không hiển thị chat box
-  if (!isAuthenticated || !user?.id) return null;
-
+  const { messages, sendMessage, currentUserId } = useChat();
   const [receiverId, setReceiverId] = useState("");
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<ChatMessage[]>([]);
+  const { isAuthenticated, user, logout, getRoleBasedRoute } = useAuth();
 
-  // Tin nhắn realtime (chỉ hiển thị khi đang chat)
-  const chatMessages = receiverId ? messages[receiverId] ?? [] : [];
-
-  // Lấy lịch sử chat giữa user.id và receiverId từ server
+  // Lấy lịch sử chat giữa currentUserId và receiverId từ server
   useEffect(() => {
     if (!receiverId) {
       setHistory([]);
       return;
     }
-    fetch(`/chat/history?userA=${user.id}&userB=${receiverId}`)
+    fetch(`/chat/history?userA=${user?.id}&userB=${receiverId}`)
       .then((res) => res.json())
-      .then((data) => setHistory(data?.data || []))
+      .then((data) => setHistory(data?.data || [])) // Lấy data.data thay vì data
       .catch(() => setHistory([]));
-  }, [receiverId, user.id]);
+  }, [receiverId, currentUserId]);
+
+  // Tin nhắn realtime (chỉ hiển thị khi đang chat)
+  const chatMessages = receiverId ? messages[receiverId] ?? [] : [];
 
   const handleSend = () => {
     if (!input.trim() || !receiverId) return;
@@ -45,6 +41,7 @@ export default function ChatBox() {
   );
 
   return (
+    
     <div className="p-4 border w-80">
       <div className="mb-2">
         <input
@@ -57,7 +54,8 @@ export default function ChatBox() {
       <div className="h-48 overflow-y-auto bg-gray-100 mb-2 p-2">
         {allMessages.map((m, i) => (
           <div key={m.id || i}>
-            <b>{m.senderId === user.id ? "You" : m.senderId}:</b> {m.content}
+            <b>{m.senderId === currentUserId ? "You" : m.senderId}:</b>{" "}
+            {m.content}
           </div>
         ))}
       </div>

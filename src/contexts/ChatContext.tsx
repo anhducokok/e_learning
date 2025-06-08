@@ -66,7 +66,8 @@ import { useEffect, useState, useContext, createContext } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from "./AuthContext";
 
-interface Message {
+// Định nghĩa interface ChatMessage đúng với entity và DB
+export interface ChatMessage {
   id: string;
   senderId: string;
   receiverId: string;
@@ -75,7 +76,7 @@ interface Message {
 }
 
 interface ChatContextType {
-  messages: Record<string, Message[]>;
+  messages: Record<string, ChatMessage[]>;
   sendMessage: (receiverId: string, content: string) => void;
   currentUserId: string;
 }
@@ -84,7 +85,7 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
-  const [messages, setMessages] = useState<Record<string, Message[]>>({});
+  const [messages, setMessages] = useState<Record<string, ChatMessage[]>>({});
   const [socket, setSocket] = useState<Socket | null>(null);
 
   // Lấy userId từ AuthContext
@@ -97,11 +98,10 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     });
     setSocket(newSocket);
 
-    newSocket.on('message', (message: Message) => {
+    newSocket.on('message', (message: ChatMessage) => {
       setMessages((prev) => {
         const otherUserId =
           message.senderId === currentUserId ? message.receiverId : message.senderId;
-
         const msgs = prev[otherUserId] || [];
         return {
           ...prev,
