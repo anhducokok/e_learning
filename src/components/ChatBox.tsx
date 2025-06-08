@@ -1,54 +1,67 @@
-import React, { useEffect, useState } from "react";
-import { useChat } from "../contexts/Chat_Context";
+import { useState, useEffect } from "react";
+import { useChat } from "../contexts/ChatContext";
 
-const ChatBox: React.FC = () => {
-  const { socket } = useChat();
-  const [messages, setMessages] = useState<string[]>([]);
+export default function ChatBox() {
+  const { messages, sendMessage, currentUserId } = useChat();
+  const [receiverId, setReceiverId] = useState("");
   const [input, setInput] = useState("");
+  const [history, setHistory] = useState<any[]>([]);
 
+  // Lấy lịch sử chat giữa currentUserId và receiverId từ server
   useEffect(() => {
-    if (!socket) return;
-
-    socket.on("message", (msg: string) => {
-      setMessages((prev) => [...prev, msg]);
-    });
-
-    return () => {
-      socket.off("message");
-    };
-  }, [socket]);
-
-  const sendMessage = () => {
-    if (input.trim() && socket) {
-      socket.emit("message", input);
-      setMessages((prev) => [...prev, input]);
-      setInput("");
+    if (!receiverId) {
+      setHistory([]);
+      return;
     }
+    fetch(`/api/chat/history?user1=${currentUserId}&user2=${receiverId}`)
+      .then((res) => res.json())
+      .then((data) => setHistory(data || []))
+      .catch(() => setHistory([]));
+  }, [receiverId, currentUserId]);
+
+  // Tin nhắn realtime (chỉ hiển thị khi đang chat)
+  const chatMessages = receiverId ? messages[receiverId] || [] : [];
+
+  const handleSend = () => {
+    if (!input.trim() || !receiverId) return;
+    sendMessage(receiverId, input);
+    setInput("");
   };
 
+  // Gộp lịch sử và tin nhắn realtime, loại trùng theo id nếu có
+  const allMessages = [
+    ...history,
+    ...chatMessages.filter((m) => !history.some((h) => h.id === m.id)),
+  ];
+  allMessages.sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
+
   return (
-    <div className="fixed bottom-4 right-4 w-80 bg-white border rounded shadow p-3 flex flex-col">
-      <div className="flex-1 overflow-y-auto h-48 mb-2 border p-2">
-        {messages.map((msg, i) => (
-          <div key={i} className="mb-1 break-words">{msg}</div>
+    <div className="p-4 border w-80">
+      <div className="mb-2">
+        <input
+          value={receiverId}
+          onChange={(e) => setReceiverId(e.target.value)}
+          placeholder="Nhập ID người nhận"
+          className="border px-2 py-1 w-full mb-2"
+        />
+      </div>
+      <div className="h-48 overflow-y-auto bg-gray-100 mb-2 p-2">
+        {allMessages.map((m, i) => (
+          <div key={m.id || i}>
+            <b>{m.senderId === currentUserId ? "You" : m.senderId}:</b>{" "}
+            {m.content}
+          </div>
         ))}
       </div>
       <input
-        type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        placeholder="Nhập tin nhắn..."
-        className="border p-2 mb-2 w-full rounded"
+        onKeyDown={(e) => e.key === "Enter" && handleSend()}
+        placeholder="Type a message"
+        className="border px-2 py-1 w-full"
       />
-      <button
-        onClick={sendMessage}
-        className="bg-blue-600 text-white rounded px-3 py-1 hover:bg-blue-700"
-      >
-        Gửi
-      </button>
     </div>
   );
-};
-
-export default ChatBox;
+}

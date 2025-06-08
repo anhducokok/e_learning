@@ -1,5 +1,8 @@
-export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3212').replace(/\/$/, '');
-
+// export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3212').replace(/\/$/, '');
+const hostname = window.location.hostname;
+export const API_BASE_URL = hostname === 'localhost' || hostname === '127.0.0.1'
+  ? 'http://localhost:3212'
+  : 'http://192.168.0.101:3212';
 export const API_ENDPOINTS = {
   // Auth endpoints
   AUTH: {

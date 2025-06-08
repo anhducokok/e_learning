@@ -25,6 +25,7 @@ import CourseManagementPage from "./pages/teacher/CourseManagementPage";
 import CourseDetailManagePage from "./pages/teacher/CourseDetailManagePage";
 import CheckoutPage from "./pages/student/CheckoutPage";
 import AdminPaymentPage from "./pages/admin/AdminPaymentApprovalPage";
+import chatbox from "./components/ChatBox";
 
 function App() {
   return (

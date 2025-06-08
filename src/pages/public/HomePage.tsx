@@ -7,6 +7,7 @@ import BlogSection from "../../components/BlogSection";
 import TestimonialsSection from "../../components/TestimonialsSection";
 import FeedbackSection from "../../components/FeedbackSection";
 import ContactSection from "../../components/ContactSection";
+import ChatPopup from "../../components/ChatPopup";
 
 const HomePage: React.FC = () => {
   return (
@@ -17,6 +18,7 @@ const HomePage: React.FC = () => {
       <TestimonialsSection />
       <ContactSection />
       <BlogSection />
+      <ChatPopup />
     </div>
   );
 };
