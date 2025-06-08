@@ -14,9 +14,6 @@ export default function ChatBox() {
   const [input, setInput] = useState("");
   const [history, setHistory] = useState<ChatMessage[]>([]);
 
-  // Tin nhắn realtime (chỉ hiển thị khi đang chat)
-  const chatMessages = receiverId ? messages[receiverId] ?? [] : [];
-
   // Lấy lịch sử chat giữa user.id và receiverId từ server
   useEffect(() => {
     if (!receiverId) {
@@ -25,9 +22,16 @@ export default function ChatBox() {
     }
     fetch(`/chat/history?userA=${user.id}&userB=${receiverId}`)
       .then((res) => res.json())
-      .then((data) => setHistory(data?.data || []))
+      .then((data) => {
+        // Debug log để kiểm tra dữ liệu trả về
+        console.log("Lịch sử chat API trả về:", data);
+        setHistory(Array.isArray(data?.data) ? data.data : []);
+      })
       .catch(() => setHistory([]));
   }, [receiverId, user.id]);
+
+  // Tin nhắn realtime (chỉ hiển thị khi đang chat)
+  const chatMessages = receiverId ? messages[receiverId] ?? [] : [];
 
   const handleSend = () => {
     if (!input.trim() || !receiverId) return;
@@ -55,6 +59,9 @@ export default function ChatBox() {
         />
       </div>
       <div className="h-48 overflow-y-auto bg-gray-100 mb-2 p-2">
+        {allMessages.length === 0 && (
+          <div className="text-gray-400">Chưa có tin nhắn nào</div>
+        )}
         {allMessages.map((m, i) => (
           <div key={m.id || i}>
             <b>{m.senderId === user.id ? "You" : m.senderId}:</b> {m.content}

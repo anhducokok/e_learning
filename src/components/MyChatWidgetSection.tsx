@@ -37,7 +37,7 @@ export default function MyChatWidget() {
     //   ))} */}
     // </div>
     <div style={{ position: "fixed", bottom: 20, right: 20, zIndex: 1000 }}>
-          <ChatBox />
-        </div>
+      {/* <ChatBox /> */}
+    </div>
   );
 }
