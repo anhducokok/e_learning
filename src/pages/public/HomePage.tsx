@@ -1,7 +1,6 @@
 // src/pages/public/HomePage.tsx
 import React from "react";
 import HeroSection from "../../components/HeroSection";
-import FeaturesSection from "../../components/FeaturesSection";
 import CoursesSection from "../../components/CoursesSection";
 import BlogSection from "../../components/BlogSection";
 import TestimonialsSection from "../../components/TestimonialsSection";

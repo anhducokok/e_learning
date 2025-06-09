@@ -18,3 +18,31 @@
   bottom: 0;
   left: 0;
 }
+
+/* Drag and drop styles */
+.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+  z-index: 1000;
+}
+
+.drag-handle {
+  cursor: grab;
+  transition: color 0.2s ease;
+}
+
+.drag-handle:hover {
+  color: #3b82f6;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.sortable-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sortable-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

@@ -50,12 +50,19 @@ export const lessonService = {
       throw new Error(error.response?.data?.message || 'Failed to update lesson');
     }
   },
-
   async deleteLesson(id: string): Promise<void> {
     try {
       await apiClient.delete(API_ENDPOINTS.LESSONS.BY_ID(id));
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to delete lesson');
+    }
+  },
+
+  async reorderLessons(courseId: string, lessonIds: string[]): Promise<void> {
+    try {
+      await apiClient.put(`/lessons/course/${courseId}/reorder`, { lessonIds });
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Failed to reorder lessons');
     }
   },
 };

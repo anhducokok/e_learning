@@ -8,13 +8,186 @@ import {
   QuestionMarkCircleIcon,
   ChevronLeftIcon,
   PlayIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  Bars3Icon
 } from '@heroicons/react/24/outline';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { courseService, lessonService, quizService } from '../../services';
 import type { Course, Lesson, Quiz, CreateLessonRequest, CreateQuizRequest } from '../../types/api';
 import DashboardHeader from '../../components/DashboardHeader';
 import QuizStatisticsDashboard from '../../components/quiz/QuizStatisticsDashboard';
 import logoImage from "../../images/d1fe66745c26de30ce87421d08acff5f22ef002b.jpg";
+
+// Sortable Lesson Item Component
+interface SortableLessonItemProps {
+  lesson: Lesson;
+  onEdit: (lesson: Lesson) => void;
+  onDelete: (lessonId: string) => void;
+}
+
+const SortableLessonItem: React.FC<SortableLessonItemProps> = ({ lesson, onEdit, onDelete }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: lesson.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className={`border rounded-lg p-4 bg-white sortable-item ${isDragging ? 'dragging shadow-lg z-10' : 'hover:bg-gray-50'}`}
+    >
+      <div className="flex justify-between items-start">
+        <div className="flex items-start gap-3 flex-1">
+          <button
+            {...attributes}
+            {...listeners}
+            className="mt-1 p-1 text-gray-400 hover:text-gray-600 drag-handle"
+            title="Drag to reorder"
+          >
+            <Bars3Icon className="h-5 w-5" />
+          </button>
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
+                Bài {lesson.orderIndex || lesson.order}
+              </span>
+              <h3 className="font-semibold">{lesson.title}</h3>
+            </div>
+            <p className="text-gray-600 mb-2 line-clamp-2">{lesson.textContent || lesson.content}</p>
+            <div className="flex items-center gap-4 text-sm text-gray-500">
+              {lesson.duration && <span>⏱️ {lesson.duration}</span>}
+              {lesson.videoUrl && <span>🎥 Video có sẵn</span>}
+            </div>
+          </div>
+        </div>
+        <div className="flex gap-2 ml-4">
+          <button
+            onClick={() => onEdit(lesson)}
+            className="p-2 text-blue-600 hover:bg-blue-100 rounded"
+            title="Chỉnh sửa"
+          >
+            <PencilIcon className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => onDelete(lesson.id)}
+            className="p-2 text-red-600 hover:bg-red-100 rounded"
+            title="Xóa"
+          >
+            <TrashIcon className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Sortable Quiz Item Component
+interface SortableQuizItemProps {
+  quiz: Quiz;
+  onViewStats: (quiz: Quiz) => void;
+  onEdit: (quiz: Quiz) => void;
+  onDelete: (quizId: string) => void;
+}
+
+const SortableQuizItem: React.FC<SortableQuizItemProps> = ({ quiz, onViewStats, onEdit, onDelete }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: quiz.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className={`border rounded-lg p-4 bg-white sortable-item ${isDragging ? 'dragging shadow-lg z-10' : 'hover:bg-gray-50'}`}
+    >
+      <div className="flex justify-between items-start">
+        <div className="flex items-start gap-3 flex-1">
+          <button
+            {...attributes}
+            {...listeners}
+            className="mt-1 p-1 text-gray-400 hover:text-gray-600 drag-handle"
+            title="Drag to reorder"
+          >
+            <Bars3Icon className="h-5 w-5" />
+          </button>
+          <div className="flex-1">
+            <h3 className="font-semibold mb-2">{quiz.title}</h3>
+            <p className="text-gray-600 mb-2">{quiz.description}</p>
+            <div className="text-sm text-gray-500">
+              📝 {quiz.questions?.length || 0} câu hỏi
+            </div>
+          </div>
+        </div>
+        <div className="flex gap-2 ml-4">
+          <button
+            onClick={() => onViewStats(quiz)}
+            className="p-2 text-green-600 hover:bg-green-100 rounded"
+            title="Xem thống kê"
+          >
+            <ChartBarIcon className="h-4 w-4" />
+          </button>          <button
+            onClick={() => onEdit(quiz)}
+            className="p-2 text-blue-600 hover:bg-blue-100 rounded"
+            title="Chỉnh sửa"
+          >
+            <PencilIcon className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => {
+              if (confirm('Bạn có chắc chắn muốn xóa bài kiểm tra này?')) {
+                onDelete(quiz.id);
+              }
+            }}
+            className="p-2 text-red-600 hover:bg-red-100 rounded"
+            title="Xóa"
+          >
+            <TrashIcon className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const CourseDetailManagePage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -29,6 +202,7 @@ const CourseDetailManagePage: React.FC = () => {
   const [showQuizForm, setShowQuizForm] = useState(false);
   const [showQuizStatistics, setShowQuizStatistics] = useState(false);
   const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
+  const [editingQuiz, setEditingQuiz] = useState<Quiz | null>(null);
   const [selectedQuizForStats, setSelectedQuizForStats] = useState<Quiz | null>(null);
   // Form states
   const [lessonForm, setLessonForm] = useState<CreateLessonRequest>({
@@ -36,8 +210,7 @@ const CourseDetailManagePage: React.FC = () => {
     textContent: '',
     orderIndex: 1,
     videoUrl: ''
-  });
-  const [quizForm, setQuizForm] = useState<CreateQuizRequest>({
+  });  const [quizForm, setQuizForm] = useState<CreateQuizRequest>({
     title: '',
     description: '',
     courseId: courseId || '',
@@ -51,6 +224,14 @@ const CourseDetailManagePage: React.FC = () => {
       }
     ]
   });
+
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     if (courseId) {
@@ -227,10 +408,66 @@ const CourseDetailManagePage: React.FC = () => {
       setError(err.message || 'Failed to delete quiz');
     }
   };
-
   const handleViewQuizStatistics = (quiz: Quiz) => {
     setSelectedQuizForStats(quiz);
     setShowQuizStatistics(true);
+  };
+
+  // Drag and drop handlers
+  const handleLessonDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = lessons.findIndex(lesson => lesson.id === active.id);
+      const newIndex = lessons.findIndex(lesson => lesson.id === over.id);
+
+      const newLessons = arrayMove(lessons, oldIndex, newIndex);
+      
+      // Update local state immediately for better UX
+      setLessons(newLessons);
+
+      try {
+        // Call API to update order on server
+        const lessonIds = newLessons.map(lesson => lesson.id);
+        await lessonService.reorderLessons(courseId!, lessonIds);
+        
+        // Refresh data to ensure consistency
+        fetchCourseData();
+      } catch (err: any) {
+        console.error('Failed to reorder lessons:', err);
+        setError(err.message || 'Failed to reorder lessons');
+        // Revert local state on error
+        fetchCourseData();
+      }
+    }
+  };
+
+  const handleQuizDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = quizzes.findIndex(quiz => quiz.id === active.id);
+      const newIndex = quizzes.findIndex(quiz => quiz.id === over.id);
+
+      const newQuizzes = arrayMove(quizzes, oldIndex, newIndex);
+      
+      // Update local state immediately for better UX
+      setQuizzes(newQuizzes);
+
+      try {
+        // Call API to update order on server
+        const quizIds = newQuizzes.map(quiz => quiz.id);
+        await quizService.reorderQuizzes(courseId!, quizIds);
+        
+        // Refresh data to ensure consistency
+        fetchCourseData();
+      } catch (err: any) {
+        console.error('Failed to reorder quizzes:', err);
+        setError(err.message || 'Failed to reorder quizzes');
+        // Revert local state on error
+        fetchCourseData();
+      }
+    }
   };
 
   const resetLessonForm = () => {
@@ -255,8 +492,7 @@ const CourseDetailManagePage: React.FC = () => {
           orderIndex: 1
         }
       ]
-    });
-  };const openLessonEditForm = (lesson: Lesson) => {
+    });  };const openLessonEditForm = (lesson: Lesson) => {
     setEditingLesson(lesson);
     setLessonForm({
       title: lesson.title,
@@ -266,6 +502,51 @@ const CourseDetailManagePage: React.FC = () => {
     });
     setShowLessonForm(true);
   };
+  const openQuizEditForm = (quiz: Quiz) => {
+    setEditingQuiz(quiz);
+    
+    // Map quiz questions to the form format
+    const formQuestions = quiz.questions?.map((q: any, index) => ({
+      questionText: q.questionText || q.question || '',
+      type: q.type || 'MCQ' as const,
+      choices: q.choices || q.options || ['', '', '', ''],
+      correctAnswer: typeof q.correctAnswer === 'number' 
+        ? (q.choices || q.options || [])[q.correctAnswer] 
+        : q.correctAnswer || '',
+      orderIndex: q.orderIndex || index + 1
+    })) || [
+      {
+        questionText: '',
+        type: 'MCQ' as const,
+        choices: ['', '', '', ''],
+        correctAnswer: '',
+        orderIndex: 1
+      }
+    ];
+
+    setQuizForm({
+      title: quiz.title,
+      description: quiz.description || '',
+      courseId: courseId || '',
+      questions: formQuestions
+    });
+    setShowQuizForm(true);
+  };
+
+  const handleUpdateQuiz = async () => {
+    if (!editingQuiz) return;
+    
+    try {
+      await quizService.updateQuiz(editingQuiz.id, quizForm);
+      setEditingQuiz(null);
+      setShowQuizForm(false);
+      resetQuizForm();
+      fetchCourseData();
+    } catch (err: any) {
+      setError(err.message || 'Failed to update quiz');
+    }
+  };
+
   const addQuizQuestion = () => {
     setQuizForm({
       ...quizForm,
@@ -428,9 +709,7 @@ const CourseDetailManagePage: React.FC = () => {
               <span className="text-sm text-gray-500">Mô tả</span>
               <p className="mt-1">{course.description}</p>
             </div>
-          </div>
-
-          {/* Lessons Section */}
+          </div>          {/* Lessons Section */}
           <div className="bg-white rounded-lg shadow-md mb-8">
             <div className="px-6 py-4 border-b flex justify-between items-center">
               <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -457,47 +736,30 @@ const CourseDetailManagePage: React.FC = () => {
                   <p className="text-gray-500">Chưa có bài học nào</p>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {lessons.map((lesson) => (
-                    <div key={lesson.id} className="border rounded-lg p-4 hover:bg-gray-50">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">                            <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded">
-                              Bài {lesson.orderIndex || lesson.order}
-                            </span>
-                            <h3 className="font-semibold">{lesson.title}</h3>
-                          </div>
-                          <p className="text-gray-600 mb-2 line-clamp-2">{lesson.textContent || lesson.content}</p>
-                          <div className="flex items-center gap-4 text-sm text-gray-500">
-                            {lesson.duration && <span>⏱️ {lesson.duration}</span>}
-                            {lesson.videoUrl && <span>🎥 Video có sẵn</span>}
-                          </div>
-                        </div>
-                        <div className="flex gap-2 ml-4">
-                          <button
-                            onClick={() => openLessonEditForm(lesson)}
-                            className="p-2 text-blue-600 hover:bg-blue-100 rounded"
-                            title="Chỉnh sửa"
-                          >
-                            <PencilIcon className="h-4 w-4" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteLesson(lesson.id)}
-                            className="p-2 text-red-600 hover:bg-red-100 rounded"
-                            title="Xóa"
-                          >
-                            <TrashIcon className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleLessonDragEnd}
+                >
+                  <SortableContext
+                    items={lessons.map(lesson => lesson.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="space-y-4">
+                      {lessons.map((lesson) => (
+                        <SortableLessonItem
+                          key={lesson.id}
+                          lesson={lesson}
+                          onEdit={openLessonEditForm}
+                          onDelete={handleDeleteLesson}
+                        />
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </SortableContext>
+                </DndContext>
               )}
             </div>
-          </div>
-
-          {/* Quizzes Section */}
+          </div>          {/* Quizzes Section */}
           <div className="bg-white rounded-lg shadow-md">
             <div className="px-6 py-4 border-b flex justify-between items-center">
               <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -506,6 +768,7 @@ const CourseDetailManagePage: React.FC = () => {
               </h2>              <button
                 onClick={() => {
                   setShowQuizForm(true);
+                  setEditingQuiz(null);
                   resetQuizForm();
                 }}
                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2"
@@ -522,45 +785,27 @@ const CourseDetailManagePage: React.FC = () => {
                   <p className="text-gray-500">Chưa có bài kiểm tra nào</p>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {quizzes.map((quiz) => (
-                    <div key={quiz.id} className="border rounded-lg p-4 hover:bg-gray-50">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <h3 className="font-semibold mb-2">{quiz.title}</h3>
-                          <p className="text-gray-600 mb-2">{quiz.description}</p>
-                          <div className="text-sm text-gray-500">
-                            📝 {quiz.questions?.length || 0} câu hỏi
-                          </div>
-                        </div>
-                        <div className="flex gap-2 ml-4">                          <button
-                            onClick={() => handleViewQuizStatistics(quiz)}
-                            className="p-2 text-green-600 hover:bg-green-100 rounded"
-                            title="Xem thống kê"
-                          >
-                            <ChartBarIcon className="h-4 w-4" />
-                          </button>
-                          <button
-                            className="p-2 text-blue-600 hover:bg-blue-100 rounded"
-                            title="Chỉnh sửa"
-                          >
-                            <PencilIcon className="h-4 w-4" />
-                          </button>                          <button
-                            onClick={() => {
-                              if (confirm('Bạn có chắc chắn muốn xóa bài kiểm tra này?')) {
-                                handleDeleteQuiz(quiz.id);
-                              }
-                            }}
-                            className="p-2 text-red-600 hover:bg-red-100 rounded"
-                            title="Xóa"
-                          >
-                            <TrashIcon className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleQuizDragEnd}
+                >
+                  <SortableContext
+                    items={quizzes.map(quiz => quiz.id)}
+                    strategy={verticalListSortingStrategy}
+                  >                    <div className="space-y-4">
+                      {quizzes.map((quiz) => (
+                        <SortableQuizItem
+                          key={quiz.id}
+                          quiz={quiz}
+                          onViewStats={handleViewQuizStatistics}
+                          onEdit={openQuizEditForm}
+                          onDelete={handleDeleteQuiz}
+                        />
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </SortableContext>
+                </DndContext>
               )}
             </div>
           </div>
@@ -644,13 +889,13 @@ const CourseDetailManagePage: React.FC = () => {
                 </div>
               </div>
             </div>
-          )}
-
-          {/* Quiz Form Modal */}
+          )}          {/* Quiz Form Modal */}
           {showQuizForm && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white rounded-lg p-6 w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
-                <h2 className="text-xl font-bold mb-4">Thêm bài kiểm tra mới</h2>
+                <h2 className="text-xl font-bold mb-4">
+                  {editingQuiz ? 'Chỉnh sửa bài kiểm tra' : 'Thêm bài kiểm tra mới'}
+                </h2>
                 
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 gap-4">
@@ -740,11 +985,10 @@ const CourseDetailManagePage: React.FC = () => {
                       ))}
                     </div>
                   </div>
-                </div>
-
-                <div className="flex justify-end gap-2 mt-6">                  <button
+                </div>                <div className="flex justify-end gap-2 mt-6">                  <button
                     onClick={() => {
                       setShowQuizForm(false);
+                      setEditingQuiz(null);
                       resetQuizForm();
                     }}
                     className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
@@ -752,10 +996,10 @@ const CourseDetailManagePage: React.FC = () => {
                     Hủy
                   </button>
                   <button
-                    onClick={handleCreateQuiz}
+                    onClick={editingQuiz ? handleUpdateQuiz : handleCreateQuiz}
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                   >
-                    Tạo bài kiểm tra
+                    {editingQuiz ? 'Cập nhật bài kiểm tra' : 'Tạo bài kiểm tra'}
                   </button>
                 </div>
               </div>

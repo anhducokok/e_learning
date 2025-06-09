@@ -179,13 +179,20 @@ export const quizService = {
       throw new Error(error.response?.data?.message || 'Failed to get user submissions');
     }
   },
-
   async getQuizStatistics(quizId: string): Promise<QuizStatistics> {
     try {
       const response = await apiClient.get<any>(`${API_ENDPOINTS.QUIZZES.BASE}/${quizId}/statistics`);
       return response.data?.data || response.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to get quiz statistics');
+    }
+  },
+
+  async reorderQuizzes(courseId: string, quizIds: string[]): Promise<void> {
+    try {
+      await apiClient.put(`/quizzes/course/${courseId}/reorder`, { quizIds });
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Failed to reorder quizzes');
     }
   },
 };

@@ -159,15 +159,17 @@ const Header: React.FC = () => {
                           : user?.role === "TEACHER"
                           ? "Teacher Dashboard"
                           : "Lớp học của tôi"}
-                      </Link>
-                      {user?.role === "STUDENT" && (
-                        <Link
-                          to="/learning-room"
-                          onClick={() => setIsUserDropdownOpen(false)}
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                        >
-                          Phòng học
-                        </Link>
+                      </Link>                      {user?.role === "STUDENT" && (
+                        <>
+                          <Link
+                            to="/learning-room"
+                            onClick={() => setIsUserDropdownOpen(false)}
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            Phòng học
+                          </Link>
+                          {/* Practice link temporarily removed */}
+                        </>
                       )}
                       <button
                         onClick={handleLogout}
@@ -292,15 +294,17 @@ const Header: React.FC = () => {
                       : user?.role === "TEACHER"
                       ? "Teacher Dashboard"
                       : "Lớp học của tôi"}
-                  </Link>
-                  {user?.role === "STUDENT" && (
-                    <Link
-                      to="/learning-room"
-                      onClick={closeMenu}
-                      className="block w-full px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100"
-                    >
-                      Phòng học
-                    </Link>
+                  </Link>                  {user?.role === "STUDENT" && (
+                    <>
+                      <Link
+                        to="/learning-room"
+                        onClick={closeMenu}
+                        className="block w-full px-4 py-2 rounded-md text-gray-700 hover:bg-gray-100"
+                      >
+                        Phòng học
+                      </Link>
+                      {/* Practice link temporarily removed */}
+                    </>
                   )}
                   <button
                     onClick={handleLogout}

@@ -7,7 +7,7 @@ interface AdminLayoutProps {
   activePath?: string;
 }
 
-const AdminLayout: React.FC<AdminLayoutProps> = ({ children, logoImage, activePath }) => {
+const AdminLayout: React.FC<AdminLayoutProps> = ({ children, logoImage }) => {
   return (
     <div className="flex min-h-screen">
       <AdminSidebar logoImage={logoImage} />

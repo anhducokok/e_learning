@@ -31,15 +31,24 @@ const EnhancedQuizInterface: React.FC<EnhancedQuizInterfaceProps> = ({
   onComplete,
   onExit,
   isRetake = false
-}) => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+}) => {  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [quizAttempt, setQuizAttempt] = useState<QuizAttempt | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<number | null>(null);
   const [isStarted, setIsStarted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [error, setError] = useState<string | null>(null);  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [justStarted, setJustStarted] = useState(false); // Track if quiz was just started
+
+  // Reset states when quiz changes
+  useEffect(() => {
+    setJustStarted(false);
+    setAnswers([]);
+    setCurrentQuestionIndex(0);
+    setIsStarted(false);
+    setError(null);
+    setAutoSaveStatus('idle');
+  }, [quiz.id]);
 
   // Auto-save draft answers every 30 seconds
   useEffect(() => {
@@ -69,27 +78,32 @@ const EnhancedQuizInterface: React.FC<EnhancedQuizInterfaceProps> = ({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isStarted, timeRemaining, quizAttempt]);
-  const startQuiz = async () => {
+  }, [isStarted, timeRemaining, quizAttempt]);  const startQuiz = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // First check if user has already completed this quiz
-      try {
-        const existingSubmission = await quizService.getQuizSubmission(quiz.id);
-        if (existingSubmission && existingSubmission.submittedAt) {
-          // User has already completed this quiz, show the results
-          onComplete(existingSubmission);
-          return;
+      // Check if user has already completed this quiz (skip check for retakes)
+      if (!isRetake) {
+        try {
+          const existingSubmission = await quizService.getQuizSubmission(quiz.id);
+          if (existingSubmission && existingSubmission.submittedAt) {
+            // User has already completed this quiz, show the results
+            onComplete(existingSubmission);
+            return;
+          }
+        } catch (submissionError) {
+          // No existing submission found, continue with starting the quiz
+          console.log('No previous submission found, starting new attempt');
         }
-      } catch (submissionError) {
-        // No existing submission found, continue with starting the quiz
-        console.log('No previous submission found, starting new attempt');
       }      // Start the quiz attempt
       const attempt = await quizService.startQuizAttempt(quiz.id, isRetake);
       setQuizAttempt(attempt);
       setIsStarted(true);
+      setJustStarted(true);
+
+      // Clear the justStarted flag after 3 seconds to allow auto-save
+      setTimeout(() => setJustStarted(false), 3000);
 
       // Set timer if quiz has time limit
       if (attempt.timeLimit) {
@@ -120,21 +134,24 @@ const EnhancedQuizInterface: React.FC<EnhancedQuizInterfaceProps> = ({
     } finally {
       setLoading(false);
     }
-  };
-
-  const saveDraftAnswers = useCallback(async () => {
-    if (!isStarted || answers.length === 0) return;
+  };  const saveDraftAnswers = useCallback(async () => {
+    if (!isStarted || answers.length === 0 || !quizAttempt || justStarted) {
+      console.log('Skipping draft save:', { isStarted, answersLength: answers.length, hasQuizAttempt: !!quizAttempt, justStarted });
+      return;
+    }
 
     try {
+      console.log('Saving draft answers for quiz:', quiz.id, 'with', answers.length, 'answers');
       setAutoSaveStatus('saving');
       await quizService.saveDraftAnswers(quiz.id, { answers });
       setAutoSaveStatus('saved');
       setTimeout(() => setAutoSaveStatus('idle'), 2000);
+      console.log('Draft answers saved successfully');
     } catch (error) {
       setAutoSaveStatus('error');
       console.error('Failed to save draft answers:', error);
     }
-  }, [quiz.id, answers, isStarted]);
+  }, [quiz.id, answers, isStarted, quizAttempt, justStarted]);
 
   const handleAnswerSelect = (questionId: string, selectedAnswer: string) => {
     setAnswers(prev => {
@@ -145,10 +162,8 @@ const EnhancedQuizInterface: React.FC<EnhancedQuizInterfaceProps> = ({
         return updated;
       }
       return [...prev, { questionId, selectedAnswer }];
-    });
-
-    // Auto-save after answer selection with debounce
-    setTimeout(() => saveDraftAnswers(), 1000);
+    });    // Auto-save after answer selection with debounce
+    setTimeout(() => saveDraftAnswers(), 2000);
   };
 
   const handleTimeUp = async () => {

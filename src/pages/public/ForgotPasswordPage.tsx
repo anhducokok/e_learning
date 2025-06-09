@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState("");

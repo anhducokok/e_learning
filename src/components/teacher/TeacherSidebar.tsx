@@ -44,14 +44,14 @@ const TeacherSidebar: React.FC<TeacherSidebarProps> = ({ logoImage }) => {
             >
               Quản lý khóa học
             </Link>
-          </li>
-          <li>
+          </li>          <li>
             <Link to="/teacher/students"
               className="block px-3 py-2 rounded-lg hover:bg-red-100 text-gray-700"
             >
               Học viên
             </Link>
           </li>
+          {/* Practice management temporarily removed */}
           <li>
             <Link to="/teacher/assignments"
               className="block px-3 py-2 rounded-lg hover:bg-red-100 text-gray-700"

@@ -3,10 +3,8 @@ import {
   ChartBarIcon,
   UsersIcon,
   TrophyIcon,
-  ClockIcon,
   CheckCircleIcon,
-  XCircleIcon,
-  EyeIcon
+  XCircleIcon
 } from '@heroicons/react/24/outline';
 import { quizService, type QuizStatistics } from '../../services/quizService';
 import type { Quiz } from '../../types/api';

@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
 import learnChineseImage from '../../images/image.png';
 import TeaBreakImage from '../../images/download.jpg';
 import RoadMapImage from '../../images/download(1).png';

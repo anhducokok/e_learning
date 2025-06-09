@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
 import { courseService } from "../../services";
 import type { Course } from "../../types/api";
 import { useAuth } from "../../contexts/AuthContext";
@@ -10,12 +10,16 @@ const CourseCheckoutPage: React.FC = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+<<<<<<< Updated upstream
   const [transferContent, setTransferContent] = useState<string>("");
   const [confirming, setConfirming] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const navigate = useNavigate();
   const { isAuthenticated, user, logout, getRoleBasedRoute } = useAuth();
+=======
+  const { user } = useAuth();
+>>>>>>> Stashed changes
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -30,11 +34,10 @@ const CourseCheckoutPage: React.FC = () => {
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchCourse();
+    };    fetchCourse();
   }, [id]);
 
+<<<<<<< Updated upstream
   const handleConfirmPayment = async () => {
     if (!user || !course) return;
     setConfirming(true);
@@ -61,6 +64,8 @@ const CourseCheckoutPage: React.FC = () => {
     }
   };
 
+=======
+>>>>>>> Stashed changes
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-50 to-gray-100">

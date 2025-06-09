@@ -201,7 +201,7 @@ const QuizSubmissionHistory: React.FC<QuizSubmissionHistoryProps> = ({
       {/* Submissions List */}
       {submissions.length > 0 ? (
         <div className="space-y-4">
-          {submissions.map((submission, index) => (
+          {submissions.map((submission) => (
             <div 
               key={submission.id} 
               className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 hover:shadow-lg transition-all duration-300"

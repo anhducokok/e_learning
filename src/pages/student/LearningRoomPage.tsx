@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
 import { courseService } from '../../services';
 import { useAuth } from '../../contexts/AuthContext';
 import type { Course } from '../../types/api';

@@ -7,7 +7,7 @@ interface TeacherLayoutProps {
   activePath?: string;
 }
 
-const TeacherLayout: React.FC<TeacherLayoutProps> = ({ children, logoImage, activePath }) => {
+const TeacherLayout: React.FC<TeacherLayoutProps> = ({ children, logoImage }) => {
   return (
     <div className="flex min-h-screen">
       <TeacherSidebar logoImage={logoImage} />

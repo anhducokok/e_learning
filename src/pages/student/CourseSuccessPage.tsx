@@ -1,13 +1,8 @@
 import React from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import tralelaPicture from "../../images/tralela.jpg";
 
 const NotFoundPage: React.FC = () => {
-  const navigate = useNavigate();
-
-  const handleBack = () => {
-    navigate("/");
-  };
 
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center bg-white text-center px-4">

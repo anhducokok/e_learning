@@ -109,15 +109,11 @@ const categories = [
 ];
 
 const BlogSection: React.FC = () => {
-  const [activeCategory, setActiveCategory] = useState('all');
-  
-  // Filter posts based on active category (show only 6 posts for section)
+  const [activeCategory] = useState('all');
+    // Filter posts based on active category (show only 6 posts for section)
   const filteredPosts = activeCategory === 'all' 
     ? blogPosts.slice(0, 6)
     : blogPosts.filter(post => post.category === activeCategory).slice(0, 6);
-
-  // Featured post is the first post
-  const featuredPost = blogPosts[0];
 
   return (
     <section className="py-16 px-4 bg-gray-50">

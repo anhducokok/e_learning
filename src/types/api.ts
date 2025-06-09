@@ -1,3 +1,8 @@
+// Practice module types
+export type PracticeSkill = 'READING' | 'LISTENING' | 'GRAMMAR';
+export type PracticeLevel = 'BASIC' | 'INTERMEDIATE' | 'ADVANCED';
+export type QuestionType = 'MCQ' | 'TRUE_FALSE'; // Match backend Prisma schema
+
 export interface User {
   id: string;
   email: string;
@@ -206,6 +211,7 @@ export interface WeeklySchedule {
   days: ScheduleDay[];
 }
 
+<<<<<<< Updated upstream
 export interface PaymentRequest {
   id: string;
   userId: string;
@@ -216,3 +222,124 @@ export interface PaymentRequest {
   transferContent: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
 }
+=======
+export interface PracticeQuestion {
+  id: string;
+  question: string;
+  questionType: QuestionType;
+  options: string[];
+  correctAnswer?: string;
+  explanation?: string;
+  audioUrl?: string;
+  imageUrl?: string;
+  points: number;
+  orderIndex: number;
+}
+
+export interface Practice {
+  id: string;
+  title: string;
+  description: string;
+  skill: PracticeSkill;
+  level: PracticeLevel;
+  questionCount: number;
+  timeLimit: number;
+  createdAt: string;
+  updatedAt: string;
+  questions?: PracticeQuestion[];
+  creator?: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  _count?: {
+    questions: number;
+    attempts: number;
+  };
+}
+
+export interface PracticeAttempt {
+  id: string;
+  userId: string;
+  practiceId: string;
+  score: number;
+  totalPoints: number;
+  maxPoints: number;
+  correctAnswers: number;
+  totalQuestions: number;
+  timeSpent: number;
+  startedAt: string;
+  completedAt?: string;
+  practice?: {
+    id: string;
+    title: string;
+    skill: PracticeSkill;
+    level: PracticeLevel;
+    questionCount: number;
+  };
+}
+
+export interface PracticeAnswer {
+  id: string;
+  attemptId: string;
+  questionId: string;
+  selectedAnswer: string;
+  isCorrect: boolean;
+  pointsEarned: number;
+  question?: PracticeQuestion;
+}
+
+export interface CreatePracticeRequest {
+  title: string;
+  description: string;
+  skill: PracticeSkill;
+  level: PracticeLevel;
+  questionCount: number;
+  timeLimit: number;
+  questions: CreatePracticeQuestionRequest[];
+}
+
+export interface CreatePracticeQuestionRequest {
+  question: string;
+  questionType: QuestionType;
+  options: string[];
+  correctAnswer: string;
+  explanation?: string;
+  audioUrl?: string;
+  imageUrl?: string;
+  points?: number;
+  orderIndex: number;
+}
+
+export interface SubmitPracticeRequest {
+  timeSpent: number;
+  answers: SubmitPracticeAnswerRequest[];
+}
+
+export interface SubmitPracticeAnswerRequest {
+  questionId: string;
+  selectedAnswer: string;
+}
+
+export interface PracticeStats {
+  totalAttempts: number;
+  completedAttempts: number;
+  completionRate: number;
+  averageScore: number;
+  recentAttempts: PracticeAttempt[];
+}
+
+export interface StartPracticeResponse {
+  attemptId: string;
+  startedAt: string;
+  practice: Practice;
+}
+
+export interface PracticeFilterRequest {
+  skill?: PracticeSkill;
+  level?: PracticeLevel;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+>>>>>>> Stashed changes

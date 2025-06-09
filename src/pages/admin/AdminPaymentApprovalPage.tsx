@@ -119,41 +119,6 @@ const AdminPaymentApprovalPage: React.FC = () => {
     ],
   };
 
-  // Danh sách menu sidebar
-  const sidebarItems = [
-    {
-      id: "students",
-      label: "Học viên",
-      href: "/admin/students",
-      notificationCount: 0,
-    },
-    {
-      id: "courses",
-      label: "Khóa học",
-      href: "/admin/courses",
-      notificationCount: 0,
-    },
-    {
-      id: "upcoming",
-      label: "Sắp khai giảng",
-      href: "/admin/upcoming-courses",
-      notificationCount: 2,
-    },
-    {
-      id: "feedback",
-      label: "Phản hồi",
-      href: "/admin/feedback",
-      notificationCount: 3,
-    },
-    {
-      id: "payments",
-      label: "Yêu cầu thanh toán",
-      href: "/admin/payments",
-      notificationCount: paymentRequests.filter(
-        (req) => req.status === "PENDING"
-      ).length,
-    },
-  ];
 
   // Thông báo cho admin
   const adminNotifications = [

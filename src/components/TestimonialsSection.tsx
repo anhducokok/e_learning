@@ -1,5 +1,4 @@
 import React from 'react';
-import { Quote } from 'lucide-react';
 import ava from '../images/chén nỳ quíu sòn.jpg'
 
 const TestimonialSection: React.FC = () => {
