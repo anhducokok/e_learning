@@ -311,7 +311,7 @@ const AdminPaymentApprovalPage: React.FC = () => {
                       {paymentRequests.map((request) => (
                         <tr key={request.id}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {usersMap[request.userId] || "Không rõ"}
+                            {(request.transferContent).split('-')[1]?.trim()}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {coursesMap[request.courseId] || "Không rõ"}
