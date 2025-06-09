@@ -42,6 +42,9 @@
 //     if (!confirm("Bạn có chắc chắn muốn chấp nhận yêu cầu này? Người dùng sẽ được ghi danh vào khóa học.")) return;
 
 //     try {
+//       // Gọi enrollInCourse để ghi danh user vào khóa học
+//       await courseService.enrollInCourse(courseId);
+//       // Sau đó cập nhật trạng thái payment (nếu cần)
 //       await paymentService.approvePayment(requestId, username, courseId);
 //       fetchPaymentRequests(); // Làm mới danh sách sau khi chấp nhận
 //     } catch (err: any) {
@@ -201,6 +204,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { paymentService } from "../../services/paymentService";
+import { courseService } from "../../services/courseService";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -354,7 +359,7 @@ const AdminPaymentApprovalPage: React.FC = () => {
   ];
 
   // Xử lý chấp nhận yêu cầu
-  const handleApprovePayment = (
+  const handleApprovePayment = async (
     requestId: string,
     courseId: string,
     username: string
@@ -366,14 +371,19 @@ const AdminPaymentApprovalPage: React.FC = () => {
     )
       return;
 
-    setPaymentRequests((prev) =>
-      prev.map((req) =>
-        req.id === requestId ? { ...req, status: "APPROVED" } : req
-      )
-    );
-    // Giả lập ghi danh (thay bằng API thật nếu có)
-    console.log(`Ghi danh ${username} vào khóa học ${courseId}`);
-    setError(null);
+    try {
+      // Gọi enrollInCourse để ghi danh user vào khóa học
+      await courseService.enrollInCourse(courseId);
+      // Sau đó cập nhật trạng thái payment (nếu cần)
+      await paymentService.approvePayment(requestId, username, courseId);
+      setPaymentRequests((prev) =>
+        prev.map((req) =>
+          req.id === requestId ? { ...req, status: "APPROVED" } : req
+        )
+      );
+    } catch (err: any) {
+      setError(err.message || "Không thể chấp nhận yêu cầu");
+    }
   };
 
   // Xử lý từ chối yêu cầu

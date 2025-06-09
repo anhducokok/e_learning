@@ -10,6 +10,10 @@ const CourseCheckoutPage: React.FC = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [transferContent, setTransferContent] = useState<string>("");
+  const [confirming, setConfirming] = useState(false);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const navigate = useNavigate();
   const { isAuthenticated, user, logout, getRoleBasedRoute } = useAuth();
 
@@ -31,9 +35,30 @@ const CourseCheckoutPage: React.FC = () => {
     fetchCourse();
   }, [id]);
 
-  const handleConfirmPayment = () => {
-    // Logic for confirming payment can be added here
-    navigate("/payment-confirmation");
+  const handleConfirmPayment = async () => {
+    if (!user || !course) return;
+    setConfirming(true);
+    setSuccessMsg(null);
+    setErrorMsg(null);
+    try {
+      // Gửi thông tin checkout lên backend
+      await fetch("http://localhost:3212/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user.id,
+          courseId: course.id,
+          price: course.price,
+          transferContent: transferContent || `${course.title} - ${user.name}`,
+        }),
+      });
+      setSuccessMsg("Đã gửi yêu cầu xác nhận chuyển khoản thành công! Vui lòng chờ admin duyệt.");
+      setTimeout(() => navigate("/course-success"), 1500);
+    } catch (err: any) {
+      setErrorMsg("Gửi yêu cầu thất bại. Vui lòng thử lại!");
+    } finally {
+      setConfirming(false);
+    }
   };
 
   if (loading) {
@@ -124,7 +149,13 @@ const CourseCheckoutPage: React.FC = () => {
                   <strong className="font-medium">Ngân hàng:</strong> MB Bank - Ngân hàng Quân đội Việt Nam
                 </p>
                 <p className="text-lg text-gray-700">
-                  <strong className="font-medium">Nội dung chuyển khoản:</strong> {course.title} - {user?.name}
+                  <strong className="font-medium">Nội dung chuyển khoản:</strong>
+                  <input
+                    type="text"
+                    value={transferContent || `${course.title} - ${user?.name}`}
+                    onChange={e => setTransferContent(e.target.value)}
+                    className="border rounded px-2 py-1 ml-2 w-64"
+                  />
                 </p>
               </div>
               <div className="flex-1 flex justify-center items-center">
@@ -142,12 +173,13 @@ const CourseCheckoutPage: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
-            <Link
-              to="/course-success"
-              className="flex-1 text-center bg-[#A82828] text-white px-6 py-4 rounded-lg font-semibold hover:bg-red-700 transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-md"
+            <button
+              onClick={handleConfirmPayment}
+              disabled={confirming}
+              className="flex-1 text-center bg-[#A82828] text-white px-6 py-4 rounded-lg font-semibold hover:bg-red-700 transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-md disabled:opacity-60"
             >
-              Xác nhận chuyển khoản
-            </Link>
+              {confirming ? "Đang gửi..." : "Xác nhận chuyển khoản"}
+            </button>
             <Link
               to="/courses"
               className="flex-1 text-center bg-gray-200 text-gray-800 px-6 py-4 rounded-lg font-semibold hover:bg-gray-300 transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-md"
@@ -155,6 +187,8 @@ const CourseCheckoutPage: React.FC = () => {
               Quay lại danh sách
             </Link>
           </div>
+          {successMsg && <div className="mt-4 text-green-600 font-semibold text-center">{successMsg}</div>}
+          {errorMsg && <div className="mt-4 text-red-600 font-semibold text-center">{errorMsg}</div>}
         </div>
       </main>
     </div>
