@@ -25,12 +25,9 @@ import CourseManagementPage from "./pages/teacher/CourseManagementPage";
 import CourseDetailManagePage from "./pages/teacher/CourseDetailManagePage";
 import CheckoutPage from "./pages/student/CheckoutPage";
 import AdminPaymentPage from "./pages/admin/AdminPaymentApprovalPage";
-<<<<<<< Updated upstream
-import chatbox from "./components/ChatBox";
-=======
-import PracticePage from "./pages/PracticePage";
-import PracticeManagementPage from "./pages/teacher/PracticeManagementPage";
->>>>>>> Stashed changes
+// import chatbox from "./components/ChatBox";
+// import PracticePage from "./pages/PracticePage";
+// import PracticeManagementPage from "./pages/teacher/PracticeManagementPage";
 
 function App() {
   return (
@@ -88,14 +85,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
+            {/* <Route
               path="/teacher/practices"
               element={
                 <ProtectedRoute allowedRoles={["teacher"]}>
                   <PracticeManagementPage />
                 </ProtectedRoute>
               }
-            />
+            /> */}
             {/* Public and Student Routes - With Layout */}
             <Route path="/" element={<MainLayout />}>
               <Route index element={<HomePage />} />
@@ -125,14 +122,14 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
+              {/* <Route
                 path="practice"
                 element={
                   <ProtectedRoute allowedRoles={["student", "teacher", "admin"]}>
                     <PracticePage />
                   </ProtectedRoute>
                 }
-              />
+              /> */}
               <Route
                 path="course-success"
                 element={
