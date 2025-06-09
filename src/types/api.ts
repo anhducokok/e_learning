@@ -205,3 +205,14 @@ export interface WeeklySchedule {
   weekEnd: string; // ISO date string
   days: ScheduleDay[];
 }
+
+export interface PaymentRequest {
+  id: string;
+  userId: string;
+  userName?: string;
+  courseId: string;
+  courseName?: string;
+  price: number;
+  transferContent: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+}

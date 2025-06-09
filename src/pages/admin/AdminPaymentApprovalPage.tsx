@@ -14,12 +14,14 @@ import {
 } from "chart.js";
 import { paymentService } from "../../services/paymentService";
 import { courseService } from "../../services/courseService";
+import { userService } from "../../services/userService";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 interface PaymentRequest {
   id: string;
-  username: string;
+  userId: string;
+  userName: string;
   courseId: string;
   courseName: string;
   price: number;
@@ -29,20 +31,47 @@ interface PaymentRequest {
 
 const AdminPaymentApprovalPage: React.FC = () => {
   const [paymentRequests, setPaymentRequests] = useState<PaymentRequest[]>([]);
+  const [coursesMap, setCoursesMap] = useState<Record<string, string>>({});
+  const [usersMap, setUsersMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Lấy danh sách yêu cầu thanh toán từ API khi component mount
   useEffect(() => {
-    fetchPaymentRequests();
-    // eslint-disable-next-line
+    Promise.all([fetchPaymentRequests(), fetchCourses(), fetchUsers()]);
   }, []);
+
+  const fetchCourses = async () => {
+    try {
+      const courses = await courseService.getAllCourses();
+      const coursesById = courses.reduce((acc, course) => {
+        acc[course.id] = course.title;
+        return acc;
+      }, {} as Record<string, string>);
+      setCoursesMap(coursesById);
+    } catch (err) {
+      console.error("Error loading courses/users", err);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const users = await userService.getAllUsers();
+      const usersById = users.reduce((acc, user) => {
+        acc[user.id] = user.name;
+        return acc;
+      }, {} as Record<string, string>);
+      setUsersMap(usersById);
+    } catch (err) {
+      console.error("Error loading courses/users", err);
+    }
+  };
 
   const fetchPaymentRequests = async () => {
     try {
       setLoading(true);
-      // Lấy tất cả yêu cầu thanh toán (mọi trạng thái)
-      const requests = await paymentService.getAllPayments();
+      // Lấy tất cả yêu cầu thanh toán (không chỉ PENDING)
+      const requests = await paymentService.getPendingPayments();
       setPaymentRequests(requests);
       setError(null);
     } catch (err: any) {
@@ -76,7 +105,7 @@ const AdminPaymentApprovalPage: React.FC = () => {
 
   // Dữ liệu biểu đồ: Số yêu cầu theo khóa học
   const courseRequestCounts = paymentRequests.reduce((acc, req) => {
-    acc[req.courseName] = (acc[req.courseName] || 0) + 1;
+    acc[req.courseId] = (acc[req.courseId] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
   const barData = {
@@ -150,7 +179,7 @@ const AdminPaymentApprovalPage: React.FC = () => {
   const handleApprovePayment = async (
     requestId: string,
     courseId: string,
-    username: string
+    userId: string
   ) => {
     if (
       !confirm(
@@ -160,7 +189,7 @@ const AdminPaymentApprovalPage: React.FC = () => {
       return;
     try {
       await courseService.enrollInCourse(courseId);
-      await paymentService.approvePayment(requestId, username, courseId);
+      await paymentService.approvePayment(requestId, userId, courseId);
       fetchPaymentRequests();
     } catch (err: any) {
       setError(err.message || "Không thể chấp nhận yêu cầu");
@@ -282,10 +311,10 @@ const AdminPaymentApprovalPage: React.FC = () => {
                       {paymentRequests.map((request) => (
                         <tr key={request.id}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {request.username}
+                            {usersMap[request.userId] || "Không rõ"}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {request.courseName}
+                            {coursesMap[request.courseId] || "Không rõ"}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {request.price.toLocaleString()}
@@ -318,7 +347,7 @@ const AdminPaymentApprovalPage: React.FC = () => {
                                     handleApprovePayment(
                                       request.id,
                                       request.courseId,
-                                      request.username
+                                      request.userId
                                     )
                                   }
                                   className="text-green-600 hover:text-green-800 mr-4"
