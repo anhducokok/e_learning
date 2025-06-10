@@ -36,312 +36,230 @@ const AdminPaymentApprovalPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Lấy danh sách yêu cầu thanh toán từ API khi component mount
-  useEffect(() => {
-    Promise.all([fetchPaymentRequests(), fetchCourses(), fetchUsers()]);
-  }, []);
-
-  const fetchCourses = async () => {
-    try {
-      const courses = await courseService.getAllCourses();
-      const coursesById = courses.reduce((acc, course) => {
-        acc[course.id] = course.title;
-        return acc;
-      }, {} as Record<string, string>);
-      setCoursesMap(coursesById);
-    } catch (err) {
-      console.error("Error loading courses/users", err);
-    }
-  };
-
-  const fetchUsers = async () => {
-    try {
-      const users = await userService.getAllUsers();
-      const usersById = users.reduce((acc, user) => {
-        acc[user.id] = user.name;
-        return acc;
-      }, {} as Record<string, string>);
-      setUsersMap(usersById);
-    } catch (err) {
-      console.error("Error loading courses/users", err);
-    }
-  };
-
-  const fetchPaymentRequests = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      // Lấy tất cả yêu cầu thanh toán (không chỉ PENDING)
-      const requests = await paymentService.getPendingPayments();
+      const [requests, courses, users] = await Promise.all([
+        paymentService.getPendingPayments(),
+        courseService.getAllCourses(),
+        userService.getAllUsers(),
+      ]);
+
+      setCoursesMap(
+        courses.reduce((acc, c) => {
+          acc[c.id] = c.title;
+          return acc;
+        }, {} as Record<string, string>)
+      );
+
+      setUsersMap(
+        users.reduce((acc, u) => {
+          acc[u.id] = u.name;
+          return acc;
+        }, {} as Record<string, string>)
+      );
+
       setPaymentRequests(requests);
-      setError(null);
     } catch (err: any) {
-      setError(err.message || "Không thể tải danh sách yêu cầu thanh toán");
+      setError(err.message || "Lỗi tải dữ liệu");
     } finally {
       setLoading(false);
     }
   };
 
-  // Thống kê số lượng yêu cầu theo trạng thái
-  const stats = [
-    {
-      title: "Yêu cầu đang chờ",
-      count: paymentRequests.filter((req) => req.status === "PENDING").length,
-      color: "bg-yellow-500",
-      href: "#",
-    },
-    {
-      title: "Yêu cầu đã duyệt",
-      count: paymentRequests.filter((req) => req.status === "APPROVED").length,
-      color: "bg-green-600",
-      href: "#",
-    },
-    {
-      title: "Yêu cầu đã từ chối",
-      count: paymentRequests.filter((req) => req.status === "REJECTED").length,
-      color: "bg-red-600",
-      href: "#",
-    },
-  ];
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  // Dữ liệu biểu đồ: Số yêu cầu theo khóa học
-  const courseRequestCounts = paymentRequests.reduce((acc, req) => {
-    acc[req.courseId] = (acc[req.courseId] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-  const barData = {
-    labels: Object.keys(courseRequestCounts),
-    datasets: [
-      {
-        label: "Số yêu cầu thanh toán",
-        backgroundColor: "#2563eb",
-        data: Object.values(courseRequestCounts),
-      },
-    ],
-  };
+  const handleApprove = async (request: PaymentRequest) => {
+    const confirmed = confirm(
+      "Bạn có chắc chắn muốn chấp nhận yêu cầu này? Người dùng sẽ được ghi danh vào khóa học."
+    );
+    if (!confirmed) return;
 
-
-  // Thông báo cho admin
-  const adminNotifications = [
-    {
-      id: "1",
-      title: "Yêu cầu thanh toán mới",
-      message: "Có 3 yêu cầu thanh toán mới cần duyệt",
-      time: "10 phút trước",
-      type: "info" as const,
-      read: false,
-    },
-    {
-      id: "2",
-      title: "Yêu cầu đã duyệt",
-      message: "Yêu cầu thanh toán cho HSK 1 đã được duyệt",
-      time: "1 giờ trước",
-      type: "success" as const,
-      read: true,
-    },
-  ];
-
-  // Xử lý chấp nhận yêu cầu
-  const handleApprovePayment = async (
-    requestId: string,
-    courseId: string,
-    userId: string
-  ) => {
-    if (
-      !confirm(
-        "Bạn có chắc chắn muốn chấp nhận yêu cầu này? Người dùng sẽ được ghi danh vào khóa học."
-      )
-    )
-      return;
     try {
-      await courseService.enrollInCourse(courseId);
-      await paymentService.approvePayment(requestId, userId, courseId);
-      fetchPaymentRequests();
+      await courseService.enrollInCourse(request.courseId);
+      await paymentService.approvePayment(request.id, request.userId, request.courseId);
+      fetchData();
     } catch (err: any) {
       setError(err.message || "Không thể chấp nhận yêu cầu");
     }
   };
 
-  // Xử lý từ chối yêu cầu
-  const handleRejectPayment = async (requestId: string) => {
+  const handleReject = async (requestId: string) => {
     if (!confirm("Bạn có chắc chắn muốn từ chối yêu cầu này?")) return;
     try {
       await paymentService.rejectPayment(requestId);
-      fetchPaymentRequests();
+      fetchData();
     } catch (err: any) {
       setError(err.message || "Không thể từ chối yêu cầu");
     }
   };
 
+  const stats = [
+    {
+      title: "Đang chờ",
+      count: paymentRequests.filter((r) => r.status === "PENDING").length,
+      color: "bg-yellow-500",
+    },
+    {
+      title: "Đã duyệt",
+      count: paymentRequests.filter((r) => r.status === "APPROVED").length,
+      color: "bg-green-600",
+    },
+    {
+      title: "Từ chối",
+      count: paymentRequests.filter((r) => r.status === "REJECTED").length,
+      color: "bg-red-600",
+    },
+  ];
+
+  const courseCounts = paymentRequests.reduce((acc, r) => {
+    const name = coursesMap[r.courseId] || "Không rõ";
+    acc[name] = (acc[name] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const barData = {
+    labels: Object.keys(courseCounts),
+    datasets: [
+      {
+        label: "Yêu cầu thanh toán",
+        data: Object.values(courseCounts),
+        backgroundColor: "#2563eb",
+      },
+    ],
+  };
+
+  const notifications = [
+    {
+      id: "1",
+      title: "Yêu cầu mới",
+      message: `${stats[0].count} yêu cầu thanh toán đang chờ duyệt`,
+      time: "Vừa xong",
+      type: "info",
+      read: false,
+    },
+  ];
+
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="h-12 w-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
     <AdminLayout logoImage={logoImage} activePath="/admin-dashboard/payment">
-      <div className="flex min-h-screen bg-gray-50">
-        {/* Main content */}
-        <main className="flex-1 flex flex-col">
-          <DashboardHeader
-            title="Quản lý yêu cầu thanh toán"
-            notifications={adminNotifications}
-          />
-          <div className="flex-1 p-8">
-            {/* Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-              {stats.map((stat, index) => (
-                <a
-                  href={stat.href}
-                  key={index}
-                  className="transform hover:scale-105 transition-all"
-                >
-                  <div className="rounded-xl shadow-md overflow-hidden">
-                    <div className={`p-5 text-white text-center ${stat.color}`}>
-                      <h3 className="text-lg font-semibold">{stat.title}</h3>
-                    </div>
-                    <div className="bg-white py-4 text-center">
-                      <p
-                        className={`text-3xl font-bold text-${stat.color.replace(
-                          "bg-",
-                          ""
-                        )}`}
-                      >
-                        {stat.count}
-                      </p>
-                    </div>
-                  </div>
-                </a>
-              ))}
-            </div>
-
-            {/* Biểu đồ */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-10">
-              <div className="bg-white rounded-xl p-6 shadow-lg">
-                <h2 className="text-lg font-semibold text-gray-700 mb-4">
-                  Thống kê yêu cầu thanh toán theo khóa học
-                </h2>
-                <Bar data={barData} options={{ responsive: true }} />
+      <main className="flex flex-col bg-gray-50 min-h-screen">
+        <DashboardHeader title="Quản lý thanh toán" />
+        <div className="p-6 space-y-10">
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {stats.map((stat, i) => (
+              <div key={i} className="rounded-xl overflow-hidden shadow hover:shadow-md transition">
+                <div className={`${stat.color} p-4 text-white text-center font-semibold`}>
+                  {stat.title}
+                </div>
+                <div className="bg-white text-center text-3xl font-bold py-4 text-gray-800">
+                  {stat.count}
+                </div>
               </div>
-            </div>
-
-            {/* Bảng yêu cầu thanh toán */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-700 mb-4">
-                Danh sách yêu cầu thanh toán
-              </h2>
-              {error && (
-                <div className="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                  {error}
-                </div>
-              )}
-              {paymentRequests.length === 0 ? (
-                <div className="text-center py-12">
-                  <CheckCircleIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    Không có yêu cầu thanh toán
-                  </h3>
-                  <p className="text-gray-500">
-                    Hiện tại không có yêu cầu thanh toán nào.
-                  </p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Tên người dùng
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Tên khóa học
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Giá (VNĐ)
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Nội dung chuyển khoản
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Trạng thái
-                        </th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Hành động
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {paymentRequests.map((request) => (
-                        <tr key={request.id}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {(request.transferContent).split('-')[1]?.trim()}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {coursesMap[request.courseId] || "Không rõ"}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {request.price.toLocaleString()}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-500">
-                            {request.transferContent}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs ${
-                                request.status === "PENDING"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : request.status === "APPROVED"
-                                  ? "bg-green-100 text-green-800"
-                                  : "bg-red-100 text-red-800"
-                              }`}
-                            >
-                              {request.status === "PENDING"
-                                ? "Đang chờ"
-                                : request.status === "APPROVED"
-                                ? "Đã duyệt"
-                                : "Đã từ chối"}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            {request.status === "PENDING" && (
-                              <>
-                                <button
-                                  onClick={() =>
-                                    handleApprovePayment(
-                                      request.id,
-                                      request.courseId,
-                                      request.userId
-                                    )
-                                  }
-                                  className="text-green-600 hover:text-green-800 mr-4"
-                                  title="Chấp nhận"
-                                >
-                                  <CheckCircleIcon className="h-5 w-5" />
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    handleRejectPayment(request.id)
-                                  }
-                                  className="text-red-600 hover:text-red-800"
-                                  title="Từ chối"
-                                >
-                                  <XCircleIcon className="h-5 w-5" />
-                                </button>
-                              </>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
+            ))}
           </div>
-        </main>
-      </div>
+
+          {/* Chart */}
+          <div className="bg-white rounded-xl p-6 shadow-lg">
+            <h2 className="text-lg font-semibold text-gray-700 mb-4">
+              Thống kê theo khóa học
+            </h2>
+            <Bar data={barData} options={{ responsive: true, plugins: { legend: { display: false } } }} />
+          </div>
+
+          {/* Payment Table */}
+          <div className="bg-white rounded-xl shadow p-6">
+            <h2 className="text-lg font-semibold text-gray-700 mb-4">
+              Danh sách yêu cầu
+            </h2>
+
+            {error && (
+              <div className="mb-4 text-red-700 bg-red-100 border border-red-400 px-4 py-2 rounded">
+                {error}
+              </div>
+            )}
+
+            {paymentRequests.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                <CheckCircleIcon className="h-12 w-12 mx-auto mb-2" />
+                Không có yêu cầu nào.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 text-sm">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="px-4 py-2 text-left">Người dùng</th>
+                      <th className="px-4 py-2 text-left">Khóa học</th>
+                      <th className="px-4 py-2 text-left">Giá</th>
+                      <th className="px-4 py-2 text-left">Nội dung CK</th>
+                      <th className="px-4 py-2 text-left">Trạng thái</th>
+                      <th className="px-4 py-2 text-right">Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {paymentRequests.map((r) => (
+                      <tr key={r.id}>
+                        <td className="px-4 py-2">{usersMap[r.userId] || "Không rõ"}</td>
+                        <td className="px-4 py-2">{coursesMap[r.courseId] || "Không rõ"}</td>
+                        <td className="px-4 py-2">{r.price.toLocaleString()}₫</td>
+                        <td className="px-4 py-2">{r.transferContent}</td>
+                        <td className="px-4 py-2">
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              r.status === "PENDING"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : r.status === "APPROVED"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {r.status === "PENDING"
+                              ? "Đang chờ"
+                              : r.status === "APPROVED"
+                              ? "Đã duyệt"
+                              : "Đã từ chối"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 text-right space-x-2">
+                          {r.status === "PENDING" && (
+                            <>
+                              <button
+                                title="Chấp nhận"
+                                onClick={() => handleApprove(r)}
+                                className="text-green-600 hover:text-green-800"
+                              >
+                                <CheckCircleIcon className="h-5 w-5" />
+                              </button>
+                              <button
+                                title="Từ chối"
+                                onClick={() => handleReject(r.id)}
+                                className="text-red-600 hover:text-red-800"
+                              >
+                                <XCircleIcon className="h-5 w-5" />
+                              </button>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
     </AdminLayout>
   );
 };

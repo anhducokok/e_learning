@@ -148,12 +148,8 @@ const CourseCheckoutPage: React.FC = () => {
                 </p>
                 <p className="text-lg text-gray-700">
                   <strong className="font-medium">Nội dung chuyển khoản:</strong>
-                  <input
-                    type="text"
-                    value={transferContent || `${course.title} - ${user?.name}`}
-                    onChange={e => setTransferContent(e.target.value)}
-                    className="border rounded px-2 py-1 ml-2 w-64"
-                  />
+                  <br />
+                  <span className="text-gray-900">{`${course.title} - ${user?.name}`}</span>
                 </p>
               </div>
               <div className="flex-1 flex justify-center items-center">

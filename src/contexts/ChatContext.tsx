@@ -1,72 +1,7 @@
-// import { createContext, useContext, useEffect, useState } from "react";
-// import socket from "../socket"; // Đường dẫn đúng với project bạn
-
-// interface ChatContextType {
-//   openChats: string[];
-//   toggleChat: (userId: string) => void;
-//   sendMessage: (receiverId: string, content: string) => void;
-//   messages: Record<string, any[]>;
-// }
-
-// const ChatContext = createContext<ChatContextType | undefined>(undefined);
-
-// export function ChatProvider({ children }: { children: React.ReactNode }) {
-//   const [openChats, setOpenChats] = useState<string[]>([]);
-//   const [messages, setMessages] = useState<Record<string, any[]>>({});
-
-//   useEffect(() => {
-//     socket.on("receiveMessage", (message) => {
-//       setMessages((prev) => ({
-//         ...prev,
-//         [message.senderId]: [...(prev[message.senderId] || []), message],
-//       }));
-//     });
-//     return () => {
-//       socket.off("receiveMessage");
-//     };
-//   }, []);
-
-//   const sendMessage = (receiverId: string, content: string) => {
-//     const senderId = localStorage.getItem("userId");
-//     const message = { senderId, receiverId, content };
-//     socket.emit("sendMessage", message);
-
-//     // Update UI immediately
-//     setMessages((prev) => ({
-//       ...prev,
-//       [receiverId]: [...(prev[receiverId] || []), message],
-//     }));
-//   };
-
-//   const toggleChat = (userId: string) => {
-//     setOpenChats((prev) =>
-//       prev.includes(userId)
-//         ? prev.filter((id) => id !== userId)
-//         : [...prev, userId]
-//     );
-//   };
-
-//   return (
-//     <ChatContext.Provider value={{ openChats, toggleChat, sendMessage, messages }}>
-//       {children}
-//     </ChatContext.Provider>
-//   );
-// }
-
-// export const useChat = () => {
-//   const context = useContext(ChatContext);
-//   if (!context) {
-//     throw new Error("useChat must be used within a ChatProvider");
-//   }
-//   return context;
-// };
-
-// export const useChat = () => useContext(ChatContext);
-import { useEffect, useState, useContext, createContext } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { useAuth } from "./AuthContext";
+import { useAuth } from './AuthContext';
 
-// Định nghĩa interface ChatMessage đúng với entity và DB
 export interface ChatMessage {
   id: string;
   senderId: string;
@@ -79,49 +14,71 @@ interface ChatContextType {
   messages: Record<string, ChatMessage[]>;
   sendMessage: (receiverId: string, content: string) => void;
   currentUserId: string;
+  openChats: string[];
+  toggleChat: (userId: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
+  const currentUserId = user?.id || '';
   const [messages, setMessages] = useState<Record<string, ChatMessage[]>>({});
-  const [socket, setSocket] = useState<Socket | null>(null);
-
-  // Lấy userId từ AuthContext
-  const currentUserId = user?.id || "";
+  const [openChats, setOpenChats] = useState<string[]>([]);
+  const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    if (!currentUserId) return;
-    const newSocket = io('http://localhost:3212', {
-      withCredentials: true,
-    });
-    setSocket(newSocket);
+    if (!currentUserId || socketRef.current) return;
 
-    newSocket.on('message', (message: ChatMessage) => {
-      setMessages((prev) => {
-        const otherUserId =
-          message.senderId === currentUserId ? message.receiverId : message.senderId;
-        const msgs = prev[otherUserId] || [];
-        return {
-          ...prev,
-          [otherUserId]: [...msgs, message],
-        };
-      });
+    const socket = io('http://localhost:3212', { withCredentials: true });
+    socketRef.current = socket;
+
+    socket.on('message', (message: ChatMessage) => {
+      const otherUserId =
+        message.senderId === currentUserId ? message.receiverId : message.senderId;
+      setMessages(prev => ({
+        ...prev,
+        [otherUserId]: [...(prev[otherUserId] || []), message],
+      }));
     });
 
     return () => {
-      newSocket.disconnect();
+      socket.disconnect();
     };
   }, [currentUserId]);
 
   const sendMessage = (receiverId: string, content: string) => {
+    const socket = socketRef.current;
     if (!socket || !currentUserId) return;
-    socket.emit('newMessage', { senderId: currentUserId, receiverId, content });
+
+    const message: ChatMessage = {
+      id: Date.now().toString(),
+      senderId: currentUserId,
+      receiverId,
+      content,
+      createdAt: new Date().toISOString(),
+    };
+
+    // Emit to server
+    socket.emit('newMessage', message);
+
+    // // Optimistic UI update
+    // setMessages(prev => ({
+    //   ...prev,
+    //   [receiverId]: [...(prev[receiverId] || []), message],
+    // }));
+  };
+
+  const toggleChat = (userId: string) => {
+    setOpenChats(prev =>
+      prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
+    );
   };
 
   return (
-    <ChatContext.Provider value={{ messages, sendMessage, currentUserId }}>
+    <ChatContext.Provider
+      value={{ messages, sendMessage, currentUserId, openChats, toggleChat }}
+    >
       {children}
     </ChatContext.Provider>
   );

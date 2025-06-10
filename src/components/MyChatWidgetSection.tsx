@@ -1,43 +1,40 @@
-import { useChat } from "../contexts/ChatContext";
-import ChatBox from "./ChatBox";
+import { useChat } from '../../src/contexts/ChatContext';
+import ChatBox from './ChatBox';
 
-export default function MyChatWidget() {
-  const chat = useChat();
+const dummyUserList = [
+  { id: '80016a30-2d11-48d5-bb8f-71c0656ef612', name: 'Teacher' },
+  { id: 'd5182703-dae7-4723-ac98-c1a7cd7e1083', name: 'Bob' },
+  { id: '49298468-8a39-4cf0-896f-2fdba3a0e4b6', name: 'Bob' },
+];
 
-  if (!chat) return null;
-
-  // const { openChats, toggleChat } = chat;
+const MyChatWidget = () => {
+  const { openChats, toggleChat, currentUserId } = useChat();
 
   return (
-    // <div className="fixed bottom-4 right-4 flex gap-4 z-[100]">
-    //   {/* {openChats.map((userId) => (
-    //     <div
-    //       key={userId}
-    //       className="w-80 bg-white shadow-2xl rounded-2xl overflow-hidden border border-red-300 flex flex-col"
-    //     >
-    //       <div className="bg-red-700 text-white px-4 py-2 flex justify-between items-center rounded-t-2xl">
-    //         <span className="font-semibold truncate max-w-[calc(100%-32px)]">{userId}</span>
-    //         <button
-    //           onClick={() => toggleChat(userId)}
-    //           className="hover:text-red-300 transition text-xl font-bold"
-    //           aria-label={`Đóng cửa sổ chat với ${userId}`}
-    //         >
-    //           ✖
-    //         </button>
-    //       </div>
-    //       <div className="px-4 py-3 text-sm h-40 overflow-y-auto bg-red-50 text-red-900 italic">
-    //         Tin nhắn với <span className="font-semibold">{userId}</span>
-    //       </div>
-    //       <input
-    //         className="border-t border-red-200 px-4 py-2 text-sm text-red-800 outline-none focus:ring-2 focus:ring-red-600 transition"
-    //         placeholder="Gõ tin nhắn..."
-    //         aria-label={`Nhập tin nhắn với ${userId}`}
-    //       />
-    //     </div>
-    //   ))} */}
-    // </div>
-    <div style={{ position: "fixed", bottom: 20, right: 20, zIndex: 1000 }}>
-      {/* <ChatBox /> */}
+    <div>
+      {/* Button để mở chat */}
+      <div className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2">
+        {dummyUserList
+          .filter(user => user.id !== currentUserId)
+          .map(user => (
+            <button
+              key={user.id}
+              onClick={() => toggleChat(user.id)}
+              className="bg-gray-800 text-white px-3 py-2 rounded hover:bg-gray-600"
+            >
+              Chat with {user.name}
+            </button>
+          ))}
+      </div>
+
+      {/* Các khung ChatBox mở */}
+      <div className="fixed bottom-20 right-4 flex gap-4 z-[100]">
+        {openChats.map(userId => (
+          <ChatBox key={userId} receiverId={userId} />
+        ))}
+      </div>
     </div>
   );
-}
+};
+
+export default MyChatWidget;
