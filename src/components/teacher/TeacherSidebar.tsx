@@ -53,13 +53,18 @@ const TeacherSidebar: React.FC<TeacherSidebarProps> = ({ logoImage }) => {
               Học viên
             </Link>
           </li>
-          <li>
-            <Link to="/teacher/chat"
-              className="block px-3 py-2 rounded-lg hover:bg-red-100 text-gray-700"
+          {/* <li>
+            <Link
+              to="/teacher/chat"
+              className={`block px-3 py-2 rounded-lg hover:bg-red-100 ${
+                activePath.includes("/teacher/chat")
+                  ? "bg-red-100 text-red-800 font-medium"
+                  : "text-gray-700"
+              }`}
             >
               Trò chuyện
             </Link>
-          </li>
+          </li>{" "} */}
           {/* Practice management temporarily removed */}
           <li>
             <Link

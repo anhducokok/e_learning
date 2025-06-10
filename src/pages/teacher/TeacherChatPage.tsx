@@ -35,7 +35,7 @@ const TeacherChat: React.FC = () => {
   ];
 
   return (
-    <TeacherLayout logoImage={logoImage} activePath="/teacher/courses">
+    <TeacherLayout logoImage={logoImage} activePath="/teacher/chat">
       <h1 className="text-2xl font-semibold mb-4">Quản lý khóa học</h1>
       <div className="flex min-h-screen bg-gray-50">
         {/* Main content */}{" "}

@@ -4,9 +4,11 @@ import type { User } from "../types/api";
 import { MessageCircle } from "lucide-react";
 import { useChat } from "../contexts/ChatContext";
 import MyChat from "../components/MyChatWidgetSection";
+import { useAuth } from "../contexts/AuthContext";
 
 const ChatPopup: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const { isAuthenticated, user } = useAuth();
   const { toggleChat, currentUserId, messages } = useChat();
 
   useEffect(() => {
@@ -17,6 +19,7 @@ const ChatPopup: React.FC = () => {
         console.error("Error loading users:", error);
       });
   }, []);
+  if (!isAuthenticated || !user?.id) return null;
 
   const getLastMessage = (userId: string) => {
     const userMessages = messages[userId] || [];
@@ -92,8 +95,6 @@ const ChatPopup: React.FC = () => {
           </div>
         ))}
       </div>
-
-      {/* Hidden chat component for real-time */}
       <div className="hidden">
         <MyChat />
       </div>
