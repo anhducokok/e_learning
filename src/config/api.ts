@@ -64,6 +64,17 @@ export const API_ENDPOINTS = {
     STATS: '/practices/stats',
   },
 
+  // Practices endpoints
+  PRACTICES: {
+    BASE: '/practices',
+    BY_ID: (id: string) => `/practices/${id}`,
+    START: (id: string) => `/practices/${id}/start`,
+    SUBMIT: (id: string) => `/practices/${id}/submit`,
+    ATTEMPTS: (id: string) => `/practices/${id}/attempts`,
+    MY_ATTEMPTS: '/practices/my-attempts',
+    STATS: '/practices/stats',
+  },
+
   // Schedule endpoints
   SCHEDULE: {
     BASE: "/schedule",
