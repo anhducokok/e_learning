@@ -60,7 +60,7 @@ export const lessonService = {
 
   async reorderLessons(courseId: string, lessonIds: string[]): Promise<void> {
     try {
-      await apiClient.put(`/lessons/course/${courseId}/reorder`, { lessonIds });
+      await apiClient.patch(`/lessons/course/${courseId}/reorder`, { lessonIds });
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to reorder lessons');
     }

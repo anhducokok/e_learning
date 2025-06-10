@@ -78,7 +78,7 @@ const AdminPaymentApprovalPage: React.FC = () => {
     if (!confirmed) return;
 
     try {
-      await courseService.enrollInCourse(request.courseId);
+      // await courseService.enrollInCourse(request.courseId);
       await paymentService.approvePayment(request.id, request.userId, request.courseId);
       fetchData();
     } catch (err: any) {
