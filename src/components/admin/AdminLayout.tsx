@@ -1,5 +1,6 @@
 import React from "react";
 import AdminSidebar from "./AdminSidebar";
+import MyChat from "../MyChatWidgetSection";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -14,6 +15,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, logoImage }) => {
       <main className="flex-1 p-6 bg-gray-50 overflow-auto">
         {children}
       </main>
+      <MyChat />
     </div>
   );
 };

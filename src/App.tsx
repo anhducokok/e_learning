@@ -22,12 +22,13 @@ import { ChatProvider } from "./contexts/ChatContext";
 import MainLayout from "./components/MainLayout";
 import SchedulePage from "./pages/public/SchedulePage";
 import CourseManagementPage from "./pages/teacher/CourseManagementPage";
+import TeacherChat from "./pages/teacher/TeacherChatPage";
 import CourseDetailManagePage from "./pages/teacher/CourseDetailManagePage";
 import CheckoutPage from "./pages/student/CheckoutPage";
 import AdminPaymentPage from "./pages/admin/AdminPaymentApprovalPage";
-// import chatbox from "./components/ChatBox";
-// import PracticePage from "./pages/PracticePage";
-// import PracticeManagementPage from "./pages/teacher/PracticeManagementPage";
+import UserListPage from "./pages/admin/UserListPage";
+import ChatBox from "./components/ChatBox";
+import ChatBoxWrapper from "./wrapper/ChatBoxWrapper";
 
 function App() {
   return (
@@ -45,20 +46,43 @@ function App() {
               }
             />
             <Route
+              path="/admin-dashboard/user"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <UserListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-dashboard/chat/:userId"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <ChatBoxWrapper />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/admin-dashboard/payment"
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminPaymentPage />
                 </ProtectedRoute>
               }
-            />
-            {" "}
+            />{" "}
             {/* Teacher Routes - No Layout */}
             <Route
               path="/teacher/dashboard"
               element={
                 <ProtectedRoute allowedRoles={["teacher"]}>
                   <TeacherDashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/teacher/chat"
+              element={
+                <ProtectedRoute allowedRoles={["teacher"]}>
+                  <TeacherChat />
                 </ProtectedRoute>
               }
             />
@@ -77,7 +101,8 @@ function App() {
                   <CourseDetailManagePage />
                 </ProtectedRoute>
               }
-            />            <Route
+            />{" "}
+            <Route
               path="/teacher/courses/:courseId/manage"
               element={
                 <ProtectedRoute allowedRoles={["teacher"]}>
@@ -114,7 +139,8 @@ function App() {
                     <LearningSessionPage />
                   </ProtectedRoute>
                 }
-              />              <Route
+              />{" "}
+              <Route
                 path="my-classes"
                 element={
                   <ProtectedRoute allowedRoles={["student"]}>

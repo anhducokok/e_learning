@@ -1,71 +1,3 @@
-// import { useChat } from '../../src/contexts/ChatContext';
-// import { useEffect, useRef, useState } from 'react';
-
-// interface Props {
-//   receiverId: string;
-// }
-
-// const ChatBox = ({ receiverId }: Props) => {
-//   const { messages, sendMessage, currentUserId, toggleChat } = useChat();
-//   const [input, setInput] = useState('');
-//   const chatEndRef = useRef<HTMLDivElement | null>(null);
-
-//   const chatMessages = messages[receiverId] || [];
-
-//   useEffect(() => {
-//     // Scroll to bottom when messages change
-//     if (chatEndRef.current) {
-//       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-//     }
-//   }, [chatMessages]);
-
-//   const handleSend = () => {
-//     if (input.trim()) {
-//       sendMessage(receiverId, input.trim());
-//       setInput('');
-//     }
-//   };
-
-//   return (
-//     <div className="w-80 h-96 bg-white shadow-lg rounded-lg flex flex-col border border-gray-200">
-//       <div className="bg-red-600 text-white px-4 py-2 rounded-t-lg flex justify-between">
-//         <span>Chat with {receiverId}</span>
-//         <button onClick={() => toggleChat(receiverId)}>×</button>
-//       </div>
-//       <div className="flex-1 overflow-y-auto p-2 space-y-2">
-//         {chatMessages.map((msg, index) => (
-//           <div
-//             key={index}
-//             className={`p-2 rounded-lg max-w-[80%] ${
-//               msg.senderId === currentUserId
-//                 ? 'bg-red-500 text-white self-end ml-auto'
-//                 : 'bg-gray-200 text-black self-start mr-auto'
-//             }`}
-//           >
-//             {msg.content}
-//           </div>
-//         ))}
-//         <div ref={chatEndRef} />
-//       </div>
-//       <div className="p-2 border-t flex gap-2">
-//         <input
-//           className="border flex-1 p-1 rounded"
-//           value={input}
-//           onChange={e => setInput(e.target.value)}
-//           placeholder="Type your message..."
-//         />
-//         <button
-//           onClick={handleSend}
-//           className="bg-red-500 text-white px-3 py-1 rounded"
-//         >
-//           Send
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ChatBox;
 import { useChat } from '../../src/contexts/ChatContext';
 import { useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
@@ -77,15 +9,48 @@ interface Props {
 const ChatBox = ({ receiverId }: Props) => {
   const { messages, sendMessage, currentUserId, toggleChat } = useChat();
   const [input, setInput] = useState('');
+  const [history, setHistory] = useState<any[]>([]);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
-  const chatMessages = messages[receiverId] || [];
+  const realtimeMessages = messages[receiverId] || [];
 
+  // Fetch lịch sử tin nhắn khi ChatBox được mount
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:3212/chat/history?userA=${currentUserId}&userB=${receiverId}`
+        );
+        const result = await res.json();
+        const data = Array.isArray(result?.data) ? result.data : [];
+        setHistory(data);
+      } catch (error) {
+        console.error('Lỗi khi lấy lịch sử chat:', error);
+        setHistory([]);
+      }
+    };
+
+    if (currentUserId && receiverId) {
+      fetchHistory();
+    }
+  }, [receiverId, currentUserId]);
+
+  // Gộp lịch sử và realtime, loại bỏ trùng lặp dựa trên `id`
+  const allMessages = [
+    ...history,
+    ...realtimeMessages.filter(
+      (msg) => !history.some((h) => h.id === msg.id)
+    ),
+  ].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
+
+  // Auto scroll
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [chatMessages]);
+  }, [allMessages]);
 
   const handleSend = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -112,12 +77,12 @@ const ChatBox = ({ receiverId }: Props) => {
 
         {/* Messages */}
         <div className="flex-1 p-6 overflow-y-auto text-red-900 text-base leading-relaxed bg-red-50">
-          {chatMessages.length === 0 && (
+          {allMessages.length === 0 && (
             <p className="italic text-red-500">Xin chào! Bạn cần hỗ trợ gì?</p>
           )}
-          {chatMessages.map((msg, index) => (
+          {allMessages.map((msg, index) => (
             <div
-              key={index}
+              key={msg.id || index}
               className={
                 msg.senderId === currentUserId
                   ? 'text-right mb-2'
