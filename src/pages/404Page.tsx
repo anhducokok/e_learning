@@ -9,15 +9,18 @@ const NotFoundPage: React.FC = () => {
   };
 
   return (
+    
     <div className="min-h-screen bg-gray-800 flex flex-col items-center justify-center bg-white text-center px-4">
       <h1 className="text-9xl font-extrabold text-red-400 mb-4">404</h1>
-      <h2 className="text-2xl md:text-3xl font-semibold text-white mb-3">
-        Oops... Tung tung tung sahur!
+      <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-3">
+        Oops... Bạn đang cố tìm hiểu chúng tôi ?
       </h2>
-      <p className="text-white max-w-md mb-6">
-        Tung, tung, tung, tung, tung, tung, tung, tung, tung, sahur.
+      <p className="text-gray-800 max-w-md mb-6">
+        Đường dẫn vừa tìm không tồn tại đâu bé ơi.
         <br />
-        Tralelero tralala Tralelero tralala
+        Không có mùa xuân ấy đâu.
+        <br />
+        Bỏ cuộc đi!!!
       </p>
       <button
         onClick={handleBack}
