@@ -44,15 +44,21 @@ const TeacherSidebar: React.FC<TeacherSidebarProps> = ({ logoImage }) => {
             >
               Quản lý khóa học
             </Link>
+<<<<<<< Updated upstream
           </li>{" "}
           <li>
             <Link
               to="/teacher/students"
+=======
+          </li>          <li>
+            <Link to="/teacher/students"
+>>>>>>> Stashed changes
               className="block px-3 py-2 rounded-lg hover:bg-red-100 text-gray-700"
             >
               Học viên
             </Link>
           </li>
+<<<<<<< Updated upstream
           {/* <li>
             <Link
               to="/teacher/chat"
@@ -65,6 +71,8 @@ const TeacherSidebar: React.FC<TeacherSidebarProps> = ({ logoImage }) => {
               Trò chuyện
             </Link>
           </li>{" "} */}
+=======
+>>>>>>> Stashed changes
           {/* Practice management temporarily removed */}
           <li>
             <Link

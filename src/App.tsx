@@ -26,9 +26,14 @@ import TeacherChat from "./pages/teacher/TeacherChatPage";
 import CourseDetailManagePage from "./pages/teacher/CourseDetailManagePage";
 import CheckoutPage from "./pages/student/CheckoutPage";
 import AdminPaymentPage from "./pages/admin/AdminPaymentApprovalPage";
+<<<<<<< Updated upstream
 import UserListPage from "./pages/admin/UserListPage";
 import ChatBox from "./components/ChatBox";
 import ChatBoxWrapper from "./wrapper/ChatBoxWrapper";
+=======
+import PracticePage from "./pages/PracticePage";
+import PracticeManagementPage from "./pages/teacher/PracticeManagementPage";
+>>>>>>> Stashed changes
 
 function App() {
   return (
@@ -101,8 +106,12 @@ function App() {
                   <CourseDetailManagePage />
                 </ProtectedRoute>
               }
+<<<<<<< Updated upstream
             />{" "}
             <Route
+=======
+            />            <Route
+>>>>>>> Stashed changes
               path="/teacher/courses/:courseId/manage"
               element={
                 <ProtectedRoute allowedRoles={["teacher"]}>
@@ -110,14 +119,22 @@ function App() {
                 </ProtectedRoute>
               }
             />
+<<<<<<< Updated upstream
             {/* <Route
+=======
+            <Route
+>>>>>>> Stashed changes
               path="/teacher/practices"
               element={
                 <ProtectedRoute allowedRoles={["teacher"]}>
                   <PracticeManagementPage />
                 </ProtectedRoute>
               }
+<<<<<<< Updated upstream
             /> */}
+=======
+            />
+>>>>>>> Stashed changes
             {/* Public and Student Routes - With Layout */}
             <Route path="/" element={<MainLayout />}>
               <Route index element={<HomePage />} />
@@ -139,8 +156,12 @@ function App() {
                     <LearningSessionPage />
                   </ProtectedRoute>
                 }
+<<<<<<< Updated upstream
               />{" "}
               <Route
+=======
+              />              <Route
+>>>>>>> Stashed changes
                 path="my-classes"
                 element={
                   <ProtectedRoute allowedRoles={["student"]}>
@@ -156,6 +177,14 @@ function App() {
                   </ProtectedRoute>
                 }
               /> */}
+              <Route
+                path="practice"
+                element={
+                  <ProtectedRoute allowedRoles={["student", "teacher", "admin"]}>
+                    <PracticePage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="course-success"
                 element={

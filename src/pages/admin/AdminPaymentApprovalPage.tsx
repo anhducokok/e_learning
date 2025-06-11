@@ -131,7 +131,13 @@ const AdminPaymentApprovalPage: React.FC = () => {
     ],
   };
 
+<<<<<<< Updated upstream
   const notifications = [
+=======
+
+  // Thông báo cho admin
+  const adminNotifications = [
+>>>>>>> Stashed changes
     {
       id: "1",
       title: "Yêu cầu mới",
