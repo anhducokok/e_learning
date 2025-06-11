@@ -1,173 +1,232 @@
-import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { courseService } from "../../services";
-import type { Course } from "../../types/api";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { API_BASE_URL } from "../../config/api";
+import { StarIcon, UsersIcon } from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
 
-const CourseDetailPage: React.FC = () => {
+type Course = {
+  id: string;
+  title: string;
+  description: string;
+  content?: string;
+  image: string;
+  price: number;
+  oldPrice: number;
+  rating: number;
+  students: number;
+  hours: number;
+  exercises: number;
+  level?: string;
+  instructor?: { name: string };
+};
+
+function getLevelDisplay(level?: string) {
+  switch (level) {
+    case "beginner":
+      return "Sơ cấp";
+    case "intermediate":
+      return "Trung cấp";
+    case "advanced":
+      return "Cao cấp";
+    default:
+      return "Không xác định";
+  }
+}
+
+export default function CourseDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [course, setCourse] = useState<Course | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [isEnrolling, setIsEnrolling] = useState(false);
+  const { isAuthenticated } = useAuth();
+
   useEffect(() => {
     const fetchCourse = async () => {
-      if (!id) return;
-      
       try {
-        setLoading(true);
-        const course = await courseService.getCourseById(id);
-        setCourse(course);
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch course');
-      } finally {
-        setLoading(false);
+        const res = await fetch(`${API_BASE_URL}/courses/${id}`);
+        const data = await res.json();
+        setCourse(data.data);
+      } catch (err) {
+        console.error("Failed to fetch course:", err);
       }
     };
 
     fetchCourse();
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col">
+  useEffect(() => {
+    if (!course || !isAuthenticated) return;
 
-        <main className="flex-grow flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A82828]"></div>
-        </main>
-  
-      </div>
-    );
-  }
+    const checkEnrollment = async () => {
+      try {
+        const token = localStorage.getItem("auth_token");
+        const res = await fetch(
+          `${API_BASE_URL}/courses/${course.id}/enrollment-status`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex flex-col">
+        if (res.ok) {
+          const data = await res.json();
+          setIsEnrolled(data.data?.isEnrolled || false);
+        }
+      } catch (err) {
+        console.error("Failed to check enrollment status:", err);
+      }
+    };
 
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-xl text-red-500 mb-4">{error}</p>
-            <Link
-              to="/courses"
-              className="bg-[#A82828] text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
-            >
-              Quay lại danh sách khóa học
-            </Link>
-          </div>
-        </main>
+    checkEnrollment();
+  }, [course, isAuthenticated]);
 
-      </div>
-    );
-  }
+  const handleEnrollmentToggle = async () => {
+    if (!isAuthenticated || !course) return;
+    setIsEnrolling(true);
 
-  if (!course) {
-    return (
-      <div className="min-h-screen flex flex-col">
+    try {
+      const token = localStorage.getItem("auth_token");
+      const method = isEnrolled ? "DELETE" : "POST";
 
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-xl text-red-500 mb-4">Khóa học không tồn tại.</p>
-            <Link
-              to="/courses"
-              className="bg-[#A82828] text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
-            >
-              Quay lại danh sách khóa học
-            </Link>
-          </div>
-        </main>
+      const res = await fetch(`${API_BASE_URL}/courses/${course.id}/enroll`, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      </div>
-    );
-  }
+      if (!res.ok) throw new Error("Failed to update enrollment");
 
-  // Format level display
-  const getLevelDisplay = (level: string) => {
-    switch (level) {      case 'BEGINNER': return 'Cơ bản';
-      case 'INTERMEDIATE': return 'Trung cấp';
-      case 'ADVANCED': return 'Nâng cao';
-      case 'exam': return 'Luyện thi';
-      case 'communication': return 'Giao tiếp';
-      default: return level;
+      setIsEnrolled(!isEnrolled);
+    } catch (err: any) {
+      console.error("Enrollment toggle failed:", err);
+      alert(err.message || "Lỗi ghi danh");
+    } finally {
+      setIsEnrolling(false);
     }
   };
 
+  if (!course)
+    return <div className="p-6 text-center">Đang tải khóa học...</div>;
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
+    <div className="max-w-6xl mx-auto px-4 py-8 grid md:grid-cols-3 gap-6">
+      {/* Bên trái */}
+      <div className="md:col-span-2">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          {course.title}
+        </h1>
 
+        <p className="text-gray-700 text-lg mb-4">{course.description}</p>
 
-      <main className="flex-grow max-w-6xl mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Left content */}
-          <div className="md:col-span-2">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              {course.title}
-            </h1>
-            <p className="text-gray-700 text-lg mb-4">{course.description}</p>            <div className="text-sm text-gray-600 space-y-1 mb-6">
-              <p><strong>Giảng viên:</strong> {course.instructor?.name || 'Chưa có thông tin'}</p>
-              <p><strong>Cấp độ:</strong> {getLevelDisplay(course.level)}</p>
-              <p><strong>Giá:</strong> {course.price?.toLocaleString('vi-VN') || 'Liên hệ'} VNĐ</p>
-              {course.rating && (
-                <p><strong>Đánh giá:</strong> {course.rating} ⭐</p>
-              )}
-            </div>
+        <div className="text-sm text-gray-600 space-y-1 mb-6">
+          <p>
+            <strong>Giảng viên:</strong>{" "}
+            {course.instructor?.name || "Chưa có thông tin"}
+          </p>
+          <p>
+            <strong>Cấp độ:</strong> {getLevelDisplay(course.level)}
+          </p>
+          <p>
+            <strong>Giá:</strong>{" "}
+            {course.price?.toLocaleString("vi-VN") || "Liên hệ"} VNĐ
+          </p>
+          {course.rating && (
+            <p>
+              <strong>Đánh giá:</strong> {course.rating} ⭐
+            </p>
+          )}
+        </div>
 
-            <div>
-              <h2 className="text-2xl font-semibold mb-3">Nội dung khóa học</h2>
-              {/* <p className="text-gray-700 leading-relaxed">
-                {course.content}
-              </p> */}
-              
-              <h3 className="text-xl font-semibold mt-6 mb-3">Mục tiêu khóa học</h3>
-              <ul className="text-gray-700 space-y-2">
-                <li>• Nắm vững kiến thức cơ bản về {course.title.toLowerCase()}</li>
-                <li>• Phát triển kỹ năng thực hành thông qua bài tập</li>
-                <li>• Chuẩn bị tốt cho các kỳ thi và ứng dụng thực tế</li>
-                <li>• Tự tin giao tiếp và sử dụng trong công việc</li>
-              </ul>
-            </div>
+        <div>
+          <h2 className="text-2xl font-semibold mb-3">Nội dung khóa học</h2>
+          {/* <p className="text-gray-700 leading-relaxed">{course.content}</p> */}
+
+          <h3 className="text-xl font-semibold mt-6 mb-3">Mục tiêu khóa học</h3>
+          <ul className="text-gray-700 space-y-2">
+            <li>• Nắm vững kiến thức cơ bản về {course.title.toLowerCase()}</li>
+            <li>• Phát triển kỹ năng thực hành thông qua bài tập</li>
+            <li>• Chuẩn bị tốt cho các kỳ thi và ứng dụng thực tế</li>
+            <li>• Tự tin giao tiếp và sử dụng trong công việc</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Sidebar */}
+      <div className="bg-white rounded-lg shadow-lg p-6 sticky top-24 space-y-4 h-fit">
+        <img
+          src={course.image}
+          alt={course.title}
+          className="w-full h-48 object-cover rounded-md"
+          onError={(e) => {
+            e.currentTarget.src = "/images/default-course.jpg";
+          }}
+        />
+
+        <div className="space-y-1">
+          <div className="text-2xl font-bold text-[#A82828]">
+            {Number(course.price).toLocaleString("vi-VN")} VNĐ
           </div>
-
-          {/* Sidebar */}          <div className="bg-white rounded-lg shadow-lg p-6 sticky top-24">
-            <img
-              src={course.image || "/images/default-course.jpg"}
-              alt={course.title}
-              className="w-full h-48 object-cover rounded-md mb-4"
-              onError={(e) => {
-                e.currentTarget.src = "/images/default-course.jpg";
-              }}
-            />
-            
-            <div className="mb-4">
-              <div className="text-2xl font-bold text-[#A82828] mb-2">
-                {course.price?.toLocaleString('vi-VN') || 'Liên hệ'} VNĐ
-              </div>
-              <div className="text-sm text-gray-600">
-                Cấp độ: {getLevelDisplay(course.level)}
-              </div>
-              {course.rating && (
-                <div className="text-sm text-gray-600">
-                  Đánh giá: {course.rating} ⭐
-                </div>
-              )}
-            </div>
-
-            <Link
-              to={`/checkout/${course.id}`}
-              state={{ course }}
-              className="block text-center w-full bg-[#A82828] text-white px-4 py-3 rounded-md font-semibold hover:bg-red-700 transition mb-3"
-            >
-              Đăng ký khóa học            </Link>
-            <Link
-              to="/courses"
-              className="block text-center bg-gray-200 hover:bg-gray-300 px-4 py-3 rounded-md text-gray-800 font-semibold transition"
-            >
-              Quay lại danh sách
-            </Link>
+          <div className="line-through text-gray-400 text-sm">
+            {Number(course.oldPrice).toLocaleString("vi-VN")} VNĐ
           </div>
         </div>
-      </main>
 
+        <div className="flex items-center gap-2 text-sm text-yellow-600">
+          <StarIcon size={16} />
+          <span>{course.rating} ⭐</span>
+        </div>
 
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          <UsersIcon size={16} />
+          <span>{course.students} học viên</span>
+        </div>
+
+        <div className="text-sm text-gray-500">
+          ⏱ {course.hours} giờ học · 📝 {course.exercises} bài tập
+        </div>
+
+        {isAuthenticated ? (
+          isEnrolled ? (
+            <button
+              onClick={handleEnrollmentToggle}
+              disabled={isEnrolling}
+              className={`
+                w-full py-2 rounded-md font-medium text-sm transition
+                ${
+                  isEnrolling
+                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    : "bg-red-100 text-red-600 hover:bg-red-200"
+                }
+              `}
+            >
+              {isEnrolling ? "Đang xử lý..." : "Hủy ghi danh"}
+            </button>
+          ) : (
+            <Link
+              to={`/checkout/${course.id}`}
+              className="block w-full text-center py-2 rounded-md font-medium text-sm bg-[#A82828] text-white hover:bg-red-700 transition"
+            >
+              Thanh toán
+            </Link>
+          )
+        ) : (
+          <Link
+            to="/auth"
+            className="block w-full text-center py-2 rounded-md font-medium text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
+          >
+            Đăng nhập để thanh toán
+          </Link>
+        )}
+
+        <Link
+          to="/courses"
+          className="block text-center bg-gray-200 hover:bg-gray-300 px-4 py-3 rounded-md text-gray-800 font-semibold transition"
+        >
+          Quay lại danh sách
+        </Link>
+      </div>
     </div>
   );
-};
-
-export default CourseDetailPage;
+}
