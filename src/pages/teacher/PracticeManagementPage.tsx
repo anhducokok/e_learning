@@ -58,7 +58,7 @@ const PracticeManagementPage: React.FC = () => {
     timeLimit: 30,
     questions: [{
       question: '',
-      questionType: 'MULTIPLE_CHOICE',
+      questionType: 'MCQ',
       options: ['', '', '', ''],
       correctAnswer: '',
       explanation: '',
@@ -109,7 +109,7 @@ const PracticeManagementPage: React.FC = () => {
       timeLimit: 30,
       questions: [{
         question: '',
-        questionType: 'MULTIPLE_CHOICE',
+        questionType: 'MCQ',
         options: ['', '', '', ''],
         correctAnswer: '',
         explanation: '',
@@ -193,16 +193,17 @@ const PracticeManagementPage: React.FC = () => {
       timeLimit: practice.timeLimit,
       questions: practice.questions?.map(q => ({
         question: q.question,
-        questionType: q.questionType, // already correct
+        questionType: q.questionType === 'MCQ' ? 'MCQ' : q.questionType, 
         options: q.options,
         correctAnswer: q.correctAnswer || '',
         explanation: q.explanation,
         audioUrl: q.audioUrl,
         imageUrl: q.imageUrl,
-        points: q.points,        orderIndex: q.orderIndex
+        points: q.points,
+        orderIndex: q.orderIndex
       })) || [{
         question: '',
-        questionType: 'MULTIPLE_CHOICE',
+        questionType: 'MCQ',
         options: ['', '', '', ''],
         correctAnswer: '',
         explanation: '',
@@ -215,7 +216,7 @@ const PracticeManagementPage: React.FC = () => {
   const addQuestion = () => {
     const newQuestion: PracticeFormQuestion = {
       question: '',
-      questionType: 'MULTIPLE_CHOICE',
+      questionType: 'MCQ',
       options: ['', '', '', ''],
       correctAnswer: '',
       explanation: '',
@@ -611,7 +612,7 @@ const PracticeManagementPage: React.FC = () => {
                             />
                           </div>
                         </div>                        {/* Options */}
-                        {question.questionType === 'MULTIPLE_CHOICE' && (
+                        {question.questionType === 'MCQ' && (
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                               Các phương án trả lời

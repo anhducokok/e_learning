@@ -211,7 +211,6 @@ export interface WeeklySchedule {
   days: ScheduleDay[];
 }
 
-<<<<<<< Updated upstream
 export interface PaymentRequest {
   id: string;
   userId: string;
@@ -222,8 +221,6 @@ export interface PaymentRequest {
   transferContent: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
 }
-=======
->>>>>>> Stashed changes
 export interface PracticeQuestion {
   id: string;
   question: string;
@@ -342,8 +339,5 @@ export interface PracticeFilterRequest {
   search?: string;
   page?: number;
   limit?: number;
-<<<<<<< Updated upstream
 }
-=======
-}
->>>>>>> Stashed changes
+
