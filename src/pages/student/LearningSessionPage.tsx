@@ -23,6 +23,7 @@ import {
 import { processLessons, processQuizzes, checkLessonVideos } from '../../utils/apiHelpers';
 import EnhancedQuizInterface from '../../components/quiz/EnhancedQuizInterface';
 import QuizSubmissionHistory from '../../components/quiz/QuizSubmissionHistory';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface LessonProgress {
   lessonId: string;
@@ -40,19 +41,52 @@ interface QuizAttempt {
 const LearningSessionPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
-    const [course, setCourse] = useState<Course | null>(null);
+  // const { isAuthenticated, user } = useAuth();
+  const [course, setCourse] = useState<Course | null>(null);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'lesson' | 'quiz' | 'quiz-history'>('overview');  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [activeTab, setActiveTab] = useState<'overview' | 'lesson' | 'quiz' | 'quiz-history'>('overview');
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
   const [isQuizMode, setIsQuizMode] = useState(false);
   const [isQuizRetake, setIsQuizRetake] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState<boolean | null>(null);
   
   // Mock progress data - in real app, this would come from API
   const [lessonProgress, setLessonProgress] = useState<LessonProgress[]>([]);
   const [quizAttempts, setQuizAttempts] = useState<QuizAttempt[]>([]);
+
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     setError('Bạn cần đăng nhập để truy cập khóa học này.');
+  //     setLoading(false);
+  //     return;
+  //   }
+  //   if (courseId) {
+  //     checkEnrollment();
+  //   }
+  // }, [courseId, isAuthenticated]);
+
+  // const checkEnrollment = async () => {
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     const status = await courseService.checkEnrollmentStatus(courseId!);
+  //     setIsEnrolled(status.isEnrolled);
+  //     if (!status.isEnrolled) {
+  //       // Not enrolled, redirect to checkout
+  //       navigate(`/courses/${courseId}`);
+  //     } else {
+  //       fetchCourseData();
+  //     }
+  //   } catch (err: any) {
+  //     setError(err.message || 'Không thể kiểm tra trạng thái ghi danh');
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
     if (courseId) {

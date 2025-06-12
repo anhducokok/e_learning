@@ -29,9 +29,6 @@ import AdminPaymentPage from "./pages/admin/AdminPaymentApprovalPage";
 import UserListPage from "./pages/admin/UserListPage";
 import ChatBox from "./components/ChatBox";
 import ChatBoxWrapper from "./wrapper/ChatBoxWrapper";
-import PracticePage from "./pages/PracticePage";
-import PracticeManagementPage from "./pages/teacher/PracticeManagementPage";
-
 
 function App() {
   return (
@@ -106,7 +103,7 @@ function App() {
               }
             />{" "}
             <Route
-
+            />            <Route
               path="/teacher/courses/:courseId/manage"
               element={
                 <ProtectedRoute allowedRoles={["teacher"]}>
@@ -115,16 +112,15 @@ function App() {
               }
             />
             {/* <Route
-
+            <Route
               path="/teacher/practices"
               element={
                 <ProtectedRoute allowedRoles={["teacher"]}>
                   <PracticeManagementPage />
                 </ProtectedRoute>
               }
-
             /> */}
-
+            
             {/* Public and Student Routes - With Layout */}
             <Route path="/" element={<MainLayout />}>
               <Route index element={<HomePage />} />
@@ -148,7 +144,7 @@ function App() {
                 }
               />{" "}
               <Route
-
+              />              <Route
                 path="my-classes"
                 element={
                   <ProtectedRoute allowedRoles={["student"]}>
@@ -164,14 +160,14 @@ function App() {
                   </ProtectedRoute>
                 }
               /> */}
-              <Route
+              {/* <Route
                 path="practice"
                 element={
                   <ProtectedRoute allowedRoles={["student", "teacher", "admin"]}>
                     <PracticePage />
                   </ProtectedRoute>
                 }
-              />
+              /> */}
               <Route
                 path="course-success"
                 element={

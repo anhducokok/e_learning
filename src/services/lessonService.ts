@@ -6,14 +6,11 @@ import type {
   UpdateLessonRequest,
 } from '../types/api';
 
-export const lessonService = {
-  async getLessonsByCourse(courseId: string): Promise<Lesson[]> {
+export const lessonService = {  async getLessonsByCourse(courseId: string): Promise<Lesson[]> {
     try {
       const response = await apiClient.get<any>(API_ENDPOINTS.LESSONS.BY_COURSE(courseId));
-      console.log('[lessonService] Raw API response for lessons:', response);
-      // Use response.data directly, not response.data.data
-      const lessons = response.data || [];
-      console.log('[lessonService] Extracted lessons:', lessons, 'Type:', typeof lessons, 'Is Array:', Array.isArray(lessons));
+      // Backend wraps data in ApiSuccessResponse, so extract from response.data if present
+      const lessons = response?.data || response || [];
       return lessons;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to fetch lessons');
@@ -23,20 +20,18 @@ export const lessonService = {
   async getLessonById(id: string): Promise<Lesson> {
     try {
       const response = await apiClient.get<any>(API_ENDPOINTS.LESSONS.BY_ID(id));
-      return response.data?.data;
+      return response?.data || response;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to fetch lesson');
     }
-  },async createLesson(courseId: string, lessonData: CreateLessonRequest): Promise<Lesson> {
-
-
+  },  async createLesson(courseId: string, lessonData: CreateLessonRequest): Promise<Lesson> {
     try {
       const response = await apiClient.post<any>(
         API_ENDPOINTS.LESSONS.BY_COURSE(courseId),
         lessonData
       );
-      // Backend wraps data in ApiSuccessResponse, so we need to extract the data
-      return response.data?.data;
+      // Return the lesson object from response.data.data if present
+      return response?.data?.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to create lesson');
     }
@@ -45,11 +40,13 @@ export const lessonService = {
   async updateLesson(id: string, lessonData: UpdateLessonRequest): Promise<Lesson> {
     try {
       const response = await apiClient.patch<any>(API_ENDPOINTS.LESSONS.BY_ID(id), lessonData);
-      return response.data?.data;
+      // Return the lesson object from response.data if present
+      return response?.data || response;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to update lesson');
     }
   },
+
   async deleteLesson(id: string): Promise<void> {
     try {
       await apiClient.delete(API_ENDPOINTS.LESSONS.BY_ID(id));
@@ -57,11 +54,9 @@ export const lessonService = {
       throw new Error(error.response?.data?.message || 'Failed to delete lesson');
     }
   },
-
   async reorderLessons(courseId: string, lessonIds: string[]): Promise<void> {
     try {
-      await apiClient.patch(`/lessons/course/${courseId}/reorder`, { lessonIds });
-
+      await apiClient.patch(API_ENDPOINTS.LESSONS.REORDER(courseId), { lessonIds });
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to reorder lessons');
     }
