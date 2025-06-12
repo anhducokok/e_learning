@@ -4,10 +4,7 @@ import db from "../db";
 export const getChatHistory = async (req: Request, res: Response) => {
   const { user1, user2 } = req.query;
 
-  console.log('🔍 Getting chat history for users:', { user1, user2 });
-
   if (!user1 || !user2) {
-    console.log('❌ Missing user IDs');
     return res.status(400).json({ 
       success: false, 
       error: "Missing user IDs. Both user1 and user2 are required." 
@@ -29,14 +26,11 @@ export const getChatHistory = async (req: Request, res: Response) => {
       [user1, user2]
     );
 
-    console.log(`✅ Found ${rows.length} messages`);
-
     res.json({ 
       success: true,
       data: rows
     });
   } catch (err) {
-    console.error('❌ Database error:', err);
     res.status(500).json({ 
       success: false, 
       error: "Failed to fetch chat history" 

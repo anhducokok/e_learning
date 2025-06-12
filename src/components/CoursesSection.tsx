@@ -12,13 +12,11 @@ const CourseListSection: React.FC = () => {
 
   useEffect(() => {
     const fetchCourses = async () => {
-      try {
-        setLoading(true);
+      try {        setLoading(true);
         setError(null);
         const fetchedCourses = await courseService.getAllCourses();
         setCourses(fetchedCourses);
       } catch (err: any) {
-        console.error('Error fetching courses:', err);
         setError(err.message || 'Failed to load courses');
       } finally {
         setLoading(false);

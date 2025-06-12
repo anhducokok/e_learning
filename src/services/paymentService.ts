@@ -12,11 +12,9 @@ export const paymentService = {
         throw new Error(
           `Failed to fetch pending payments: ${response.status} ${response.statusText}`
         );
-      }
-      const data = await response.json();
+      }      const data = await response.json();
       return data.data || [];
     } catch (error) {
-      console.error("❌ getPendingPayments error:", error);
       throw error;
     }
   },
@@ -32,11 +30,9 @@ export const paymentService = {
         throw new Error(
           `Failed to fetch all payments: ${response.status} ${response.statusText}`
         );
-      }
-      const data = await response.json();
+      }      const data = await response.json();
       return data.data || [];
     } catch (error) {
-      console.error("❌ getAllPayments error:", error);
       throw error;
     }
   },
@@ -55,11 +51,9 @@ export const paymentService = {
       if (!response.ok) {
         throw new Error(
           `Failed to approve payment: ${response.status} ${response.statusText}`
-        );
-      }
+        );      }
       return await response.json();
     } catch (error) {
-      console.error("❌ approvePayment error:", error);
       throw error;
     }
   },
@@ -77,11 +71,9 @@ export const paymentService = {
       if (!response.ok) {
         throw new Error(
           `Failed to reject payment: ${response.status} ${response.statusText}`
-        );
-      }
+        );      }
       return await response.json();
     } catch (error) {
-      console.error("❌ rejectPayment error:", error);
       throw error;
     }
   },

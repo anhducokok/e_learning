@@ -42,12 +42,11 @@ export default function CourseDetailPage() {
 
   useEffect(() => {
     const fetchCourse = async () => {
-      try {
-        const res = await fetch(`${API_BASE_URL}/courses/${id}`);
+      try {        const res = await fetch(`${API_BASE_URL}/courses/${id}`);
         const data = await res.json();
         setCourse(data.data);
       } catch (err) {
-        console.error("Failed to fetch course:", err);
+        // Failed to fetch course
       }
     };
 
@@ -67,14 +66,12 @@ export default function CourseDetailPage() {
               Authorization: `Bearer ${token}`,
             },
           }
-        );
-
-        if (res.ok) {
+        );        if (res.ok) {
           const data = await res.json();
           setIsEnrolled(data.data?.isEnrolled || false);
         }
       } catch (err) {
-        console.error("Failed to check enrollment status:", err);
+        // Failed to check enrollment status
       }
     };
 
@@ -96,11 +93,8 @@ export default function CourseDetailPage() {
         },
       });
 
-      if (!res.ok) throw new Error("Failed to update enrollment");
-
-      setIsEnrolled(!isEnrolled);
+      if (!res.ok) throw new Error("Failed to update enrollment");      setIsEnrolled(!isEnrolled);
     } catch (err: any) {
-      console.error("Enrollment toggle failed:", err);
       alert(err.message || "Lỗi ghi danh");
     } finally {
       setIsEnrolling(false);
@@ -185,24 +179,14 @@ export default function CourseDetailPage() {
 
         <div className="text-sm text-gray-500">
           ⏱ {course.hours} giờ học · 📝 {course.exercises} bài tập
-        </div>
-
-        {isAuthenticated ? (
+        </div>        {isAuthenticated ? (
           isEnrolled ? (
-            <button
-              onClick={handleEnrollmentToggle}
-              disabled={isEnrolling}
-              className={`
-                w-full py-2 rounded-md font-medium text-sm transition
-                ${
-                  isEnrolling
-                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                    : "bg-red-100 text-red-600 hover:bg-red-200"
-                }
-              `}
+            <Link
+              to={`/learning-session/${course.id}`}
+              className="block w-full text-center py-2 rounded-md font-medium text-sm bg-green-600 text-white hover:bg-green-700 transition"
             >
-              {isEnrolling ? "Đang xử lý..." : "Hủy ghi danh"}
-            </button>
+              Tiếp tục học
+            </Link>
           ) : (
             <Link
               to={`/checkout/${course.id}`}

@@ -22,19 +22,12 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    // Check if user is already logged in
+  useEffect(() => {    // Check if user is already logged in
     const currentUser = authService.getCurrentUser();
     const isAuth = authService.isAuthenticated();
     
-    console.log('🔐 AuthContext: Checking authentication state');
-    console.log('🔐 Current user from authService:', currentUser);
-    console.log('🔐 Is authenticated:', isAuth);
-    console.log('🔐 Token exists:', localStorage.getItem('auth_token') ? 'Yes' : 'No');
-    
     if (isAuth && currentUser) {
       setUser(currentUser);
-      console.log('✅ User set in AuthContext:', currentUser);
     }
     
     setIsLoading(false);

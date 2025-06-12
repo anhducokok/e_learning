@@ -91,10 +91,8 @@ const EnhancedQuizInterface: React.FC<EnhancedQuizInterfaceProps> = ({
             // User has already completed this quiz, show the results
             onComplete(existingSubmission);
             return;
-          }
-        } catch (submissionError) {
+          }        } catch (submissionError) {
           // No existing submission found, continue with starting the quiz
-          console.log('No previous submission found, starting new attempt');
         }
       }      // Start the quiz attempt
       const attempt = await quizService.startQuizAttempt(quiz.id, isRetake);
@@ -118,11 +116,9 @@ const EnhancedQuizInterface: React.FC<EnhancedQuizInterfaceProps> = ({
             questionId: draft.questionId,
             selectedAnswer: draft.selectedAnswer
           }));
-          setAnswers(draftAnswers);
-        }
+          setAnswers(draftAnswers);        }
       } catch (draftError) {
         // Ignore draft loading errors - user can start fresh
-        console.log('No draft answers found or error loading drafts');
       }
 
     } catch (error: any) {
@@ -136,20 +132,16 @@ const EnhancedQuizInterface: React.FC<EnhancedQuizInterfaceProps> = ({
     }
   };  const saveDraftAnswers = useCallback(async () => {
     if (!isStarted || answers.length === 0 || !quizAttempt || justStarted) {
-      console.log('Skipping draft save:', { isStarted, answersLength: answers.length, hasQuizAttempt: !!quizAttempt, justStarted });
       return;
     }
 
     try {
-      console.log('Saving draft answers for quiz:', quiz.id, 'with', answers.length, 'answers');
       setAutoSaveStatus('saving');
       await quizService.saveDraftAnswers(quiz.id, { answers });
       setAutoSaveStatus('saved');
       setTimeout(() => setAutoSaveStatus('idle'), 2000);
-      console.log('Draft answers saved successfully');
     } catch (error) {
       setAutoSaveStatus('error');
-      console.error('Failed to save draft answers:', error);
     }
   }, [quiz.id, answers, isStarted, quizAttempt, justStarted]);
 

@@ -18,12 +18,10 @@ const AuthPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { login, register, isAuthenticated, getRoleBasedRoute } = useAuth();
   const navigate = useNavigate();
-
   useEffect(() => {
     // Redirect if already authenticated
     if (isAuthenticated) {
       const targetRoute = getRoleBasedRoute();
-      console.log(`🔀 User already authenticated, redirecting to: ${targetRoute}`);
       navigate(targetRoute);
     }
   }, [isAuthenticated, navigate, getRoleBasedRoute]);
@@ -56,11 +54,9 @@ const AuthPage: React.FC = () => {
     setError('');
     setIsLoading(true);
 
-    try {
-      if (isLogin) {
+    try {      if (isLogin) {
         await login(formData.email, formData.password);
         const targetRoute = getRoleBasedRoute();
-        console.log(`🔀 Login successful, redirecting to: ${targetRoute}`);
         navigate(targetRoute);
       } else {
         if (formData.password !== formData.confirmPassword) {
@@ -69,7 +65,6 @@ const AuthPage: React.FC = () => {
         }
         await register(formData.name, formData.email, formData.password);
         const targetRoute = getRoleBasedRoute();
-        console.log(`🔀 Registration successful, redirecting to: ${targetRoute}`);
         navigate(targetRoute);
       }
     } catch (err: any) {

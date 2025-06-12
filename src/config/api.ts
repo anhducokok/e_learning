@@ -2,8 +2,8 @@
 const hostname = window.location.hostname;
 export const API_BASE_URL =
   hostname === "localhost" || hostname === "127.0.0.1"
-    ? "http://localhost:3212"
-    : "http://192.168.0.101:3212";
+    ? "http://localhost:3212/api"
+    : "http://192.168.0.101:3212/api";
 export const API_ENDPOINTS = {
   // Auth endpoints
   AUTH: {
@@ -30,12 +30,12 @@ export const API_ENDPOINTS = {
     MY_COURSES: "/courses/my-courses",
     ENROLLED: "/courses/enrolled",
   },
-
   // Lessons endpoints
   LESSONS: {
     BASE: "/lessons",
     BY_COURSE: (courseId: string) => `/lessons/course/${courseId}`,
     BY_ID: (id: string) => `/lessons/${id}`,
+    REORDER: (courseId: string) => `/lessons/course/${courseId}/reorder`,
   },
   // Quizzes endpoints
   QUIZZES: {

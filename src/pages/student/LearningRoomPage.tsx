@@ -13,35 +13,20 @@ const LearningRoomPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
 
-  // Debug logging for render state
-  console.log('🎭 LearningRoomPage render - Current state:', {
-    user: user ? { id: user.id, name: user.name, email: user.email } : null,
-    myCoursesLength: myCourses?.length || 0,
-    myCourses: myCourses,
-    loading,
-    error
-  });useEffect(() => {
+  useEffect(() => {
     const fetchMyCourses = async () => {
-      console.log('🔍 LearningRoomPage: fetchMyCourses called, user:', user);
       if (!user) {
-        console.log('❌ LearningRoomPage: No user found, skipping course fetch');
         return;
       }
       
       try {
         setLoading(true);
-        console.log('📞 LearningRoomPage: Calling courseService.getMyCourses()...');
         const courses = await courseService.getMyCourses();
-        console.log('✅ LearningRoomPage: Received courses from API:', courses);
-        console.log('📊 LearningRoomPage: Courses array length:', courses?.length || 0);
         setMyCourses(courses);
-        console.log('✅ LearningRoomPage: State updated with courses');
       } catch (err: any) {
-        console.error('❌ LearningRoomPage: Error fetching courses:', err);
         setError(err.message || 'Failed to fetch your courses');
       } finally {
         setLoading(false);
-        console.log('✅ LearningRoomPage: Loading set to false');
       }
     };
 

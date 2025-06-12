@@ -9,11 +9,9 @@ interface RoleBasedRedirectProps {
 const RoleBasedRedirect: React.FC<RoleBasedRedirectProps> = ({ children }) => {
   const { user, isAuthenticated, isLoading, getRoleBasedRoute } = useAuth();
   const navigate = useNavigate();
-
   useEffect(() => {
     if (!isLoading && isAuthenticated && user) {
       const targetRoute = getRoleBasedRoute();
-      console.log(`🔀 Redirecting user with role '${user.role}' to: ${targetRoute}`);
       navigate(targetRoute, { replace: true });
     }
   }, [isAuthenticated, isLoading, user, navigate, getRoleBasedRoute]);

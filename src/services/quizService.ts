@@ -80,11 +80,10 @@ export const quizService = {
       throw new Error(error.response?.data?.message || 'Failed to fetch lesson quizzes');
     }
   },
-
   async createQuiz(quizData: CreateQuizRequest): Promise<Quiz> {
     try {
       const response = await apiClient.post<any>(API_ENDPOINTS.QUIZZES.BASE, quizData);
-      return mapQuizQuestions(response.data?.data);
+      return mapQuizQuestions(response.data?.data || response.data);
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to create quiz');
     }

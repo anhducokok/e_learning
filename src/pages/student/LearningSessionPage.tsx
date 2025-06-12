@@ -154,10 +154,8 @@ const LearningSessionPage: React.FC = () => {
               score: submission?.score || undefined,
               attempts: submission ? 1 : 0 // Backend doesn't track multiple attempts yet
             };
-          });
-          setQuizAttempts(quizAttemptsData);
+          });          setQuizAttempts(quizAttemptsData);
         } catch (submissionError) {
-          console.log('Could not load quiz submissions, using default values');
           // Fallback to default values if submissions can't be loaded
           setQuizAttempts(processedQuizzes.map(quiz => ({
             quizId: quiz.id,
@@ -201,10 +199,9 @@ const LearningSessionPage: React.FC = () => {
           setSelectedLesson(null);
           setActiveTab('quiz');
           setIsQuizMode(false); // This will show the quiz details with completion status
-          return;
-        }
+          return;        }
       } catch (error) {
-        console.log('Could not load previous submission, allowing new attempt');
+        // Could not load previous submission, allowing new attempt
       }
     }
     

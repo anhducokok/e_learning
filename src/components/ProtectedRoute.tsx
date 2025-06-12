@@ -46,11 +46,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   // Check if user has required role
   const userRole = user?.role?.toLowerCase();
   const hasRequiredRole = allowedRoles.some(role => role.toLowerCase() === userRole);
-
   if (!hasRequiredRole) {
     // Redirect to appropriate dashboard based on user's role
     const targetRoute = getRoleBasedRoute();
-    console.log(`🚫 Access denied. User role: ${userRole}, Required: ${allowedRoles.join(', ')}. Redirecting to: ${targetRoute}`);
     return <Navigate to={targetRoute} replace />;
   }
 
