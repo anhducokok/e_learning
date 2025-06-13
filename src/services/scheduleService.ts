@@ -77,9 +77,9 @@ export const scheduleService = {
   },
 
   // Enroll in a course from schedule (requires authentication)
-  async enrollInCourseFromSchedule(courseId: string): Promise<void> {
-    try {
-      const response = await apiClient.post<any>(`/courses/${courseId}/enroll`);
+  async enrollInCourseFromSchedule(courseId: string): Promise<void> {    try {
+      // const response = await apiClient.post<any>(`/courses/${courseId}/enroll`); // response unused
+      await apiClient.post<any>(`/courses/${courseId}/enroll`);
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to enroll in course');
     }

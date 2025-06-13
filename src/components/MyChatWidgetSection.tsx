@@ -2,7 +2,7 @@ import { useChat } from '../../src/contexts/ChatContext';
 import ChatBox from './ChatBox';
 
 const MyChatWidget = () => {
-  const { openChats, toggleChat, currentUserId } = useChat();
+  const { openChats/*, toggleChat, currentUserId*/ } = useChat(); // toggleChat, currentUserId unused
 
   return (
     <div>

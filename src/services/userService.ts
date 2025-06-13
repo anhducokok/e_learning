@@ -20,9 +20,7 @@ export const userService = {
       const userData = response.data || response;
       if (!userData) {
         throw new Error("User data is missing or invalid");
-      }
-
-      // Debug một số trường user
+      }
       return userData;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || "Failed to fetch user");

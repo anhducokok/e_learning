@@ -30,7 +30,6 @@ export const courseService = {
         throw new Error("Course data is missing or invalid");
       }
 
-      // Debug course ownership fields
       return courseData;
     } catch (error: any) {
       throw new Error(
@@ -114,10 +113,9 @@ export const courseService = {
   },
 
   async enrollInCourse(courseId: string): Promise<void> {
-    try {
-      // Log the full URL to debug the API call
-      const url = `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enroll`;
-      const response = await apiClient.post<any>(url);
+    try {      const url = `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enroll`;
+      // const response = await apiClient.post<any>(url); // response unused
+      await apiClient.post<any>(url);
     } catch (error: any) {
       if (error.response) {
       }
@@ -128,9 +126,9 @@ export const courseService = {
   },
 
   async unenrollFromCourse(courseId: string): Promise<void> {
-    try {
-      const url = `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enroll`;
-      const response = await apiClient.delete(url);
+    try {      const url = `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enroll`;
+      // const response = await apiClient.delete(url); // response unused
+      await apiClient.delete(url);
     } catch (error: any) {
       if (error.response) {
       }

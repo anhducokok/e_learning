@@ -87,8 +87,7 @@ const PracticePage: React.FC = () => {
       attemptAnswers: null
     }));
   };
-
-  const handleEditPractice = (practiceId: string) => {
+  const handleEditPractice = (/*practiceId: string*/) => { // practiceId unused
     // Navigate to practice editor (to be implemented)
   };
 

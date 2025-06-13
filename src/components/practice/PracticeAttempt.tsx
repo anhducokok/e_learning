@@ -41,10 +41,9 @@ const PracticeAttemptView: React.FC<PracticeAttemptProps> = ({
         setLoading(true);
         // Gọi startPractice để tạo attempt mới
         const startRes = await practiceService.startPractice(practiceId);
-        if (cancelled) return;
-        setPractice({
+        if (cancelled) return;        setPractice({
           ...startRes.practice,
-          questions: startRes.questions || [] // Ensure questions are always an array
+          // questions: startRes.questions || [] // Ensure questions are always an array - questions not in StartPracticeResponse
         });
         setTimeLeft(startRes.practice.timeLimit);
         setStartTime(new Date(startRes.startedAt));

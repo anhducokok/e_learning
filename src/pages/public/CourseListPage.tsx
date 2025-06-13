@@ -12,42 +12,27 @@ const CourseListPage: React.FC = () => {
     Record<string, boolean>
   >({});
   const { isAuthenticated } = useAuth();
-
-  // Log configuration
-  useEffect(() => {
-    console.log("CourseListPage mounted");
-    console.log("API_BASE_URL:", API_BASE_URL);
-  }, []);
-
   useEffect(() => {
     const fetchClassesWithCourses = async () => {
       try {
         setLoading(true);
 
-        console.log("Fetching classes...");
         const classesResponse = await fetch(`${API_BASE_URL}/classes`);
 
         if (!classesResponse.ok) {
           throw new Error(
             `Failed to fetch classes: ${classesResponse.status} ${classesResponse.statusText}`
           );
-        }
-
-        const classesData = await classesResponse.json();
-        console.log("Classes response:", classesData);
+        }        const classesData = await classesResponse.json();
 
         if (!classesData.data || !Array.isArray(classesData.data)) {
           throw new Error("Invalid classes data format");
-        }
-
-        const classesWithoutCourses = classesData.data;
-        console.log("Classes without courses:", classesWithoutCourses);
+        }const classesWithoutCourses = classesData.data;
 
         // Fetch courses for each class
         const classesWithCourses = await Promise.all(
           classesWithoutCourses.map(async (classItem: Class) => {
             try {
-              console.log(`Fetching courses for class ${classItem.id}...`);
               const coursesResponse = await fetch(
                 `${API_BASE_URL}/classes/${classItem.id}/courses`
               );
@@ -126,10 +111,8 @@ const CourseListPage: React.FC = () => {
             className: classItem.name // Add class name to course for reference
           });
         });
-      }
-    });
+      }    });
 
-    // Debug: log all class names to see what we're working with
     if (activeCategory === "all") {
       return allCourses;
     }// Filter by class name instead of course level

@@ -10,10 +10,8 @@ import tieImage from "../../images/download.jpg";
 const LearningRoomPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('courses');  const [myCourses, setMyCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
+  const [error, setError] = useState<string | null>(null);  const { user } = useAuth();
 
-  // Debug logging for render state
   useEffect(() => {
     const fetchMyCourses = async () => {
       if (!user) {

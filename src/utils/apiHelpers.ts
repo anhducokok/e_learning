@@ -43,11 +43,11 @@ export const processQuizzes = (quizzesData: any): Quiz[] => {
 };
 
 // Function to verify video URLs in lessons
-export const checkLessonVideos = (lessons: Lesson[]): void => {
-  lessons.forEach((lesson, index) => {
+export const checkLessonVideos = (lessons: Lesson[]): void => {  lessons.forEach((lesson/*, index*/) => { // index unused
     if (lesson.videoUrl) {
       try {
-        const url = new URL(lesson.videoUrl);
+        // const url = new URL(lesson.videoUrl); // url unused
+        new URL(lesson.videoUrl);
       } catch (e) {
       }
     }

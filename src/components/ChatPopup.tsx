@@ -11,11 +11,10 @@ const ChatPopup: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
   const { toggleChat, currentUserId, messages } = useChat();
 
-  useEffect(() => {
-    userService
+  useEffect(() => {    userService
       .getAllUsers()
       .then(setUsers)
-      .catch((error) => {
+      .catch((/*error*/) => { // error unused
       });
   }, []);
   if (!isAuthenticated || !user?.id) return null;

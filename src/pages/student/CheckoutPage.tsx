@@ -11,12 +11,12 @@ const CourseCheckoutPage: React.FC = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [transferContent, setTransferContent] = useState<string>("");
+  const [transferContent/*, setTransferContent*/] = useState<string>(""); // setTransferContent unused
   const [confirming, setConfirming] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { isAuthenticated, user, logout, getRoleBasedRoute } = useAuth();
+  const { /*isAuthenticated,*/ user/*, logout, getRoleBasedRoute*/ } = useAuth(); // isAuthenticated, logout, getRoleBasedRoute unused
 
   useEffect(() => {
     const fetchCourse = async () => {

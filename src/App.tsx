@@ -27,10 +27,10 @@ import CourseDetailManagePage from "./pages/teacher/CourseDetailManagePage";
 import CheckoutPage from "./pages/student/CheckoutPage";
 import AdminPaymentPage from "./pages/admin/AdminPaymentApprovalPage";
 import UserListPage from "./pages/admin/UserListPage";
-import ChatBox from "./components/ChatBox";
+// import ChatBox from "./components/ChatBox"; // Unused
 import ChatBoxWrapper from "./wrapper/ChatBoxWrapper";
 import PracticePage from "./pages/PracticePage";
-import PracticeManagementPage from "./pages/teacher/PracticeManagementPage";
+// import PracticeManagementPage from "./pages/teacher/PracticeManagementPage"; // Unused
 
 function App() {
   return (

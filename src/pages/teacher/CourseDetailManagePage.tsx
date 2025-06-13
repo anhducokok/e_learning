@@ -266,12 +266,11 @@ const CourseDetailManagePage: React.FC = () => {
     if (!courseId) return;
     
     try {
-      // Debug course ownership
+
       // Parse and log user data for comparison
       const userData = localStorage.getItem('user_data');
-      if (userData) {
-        try {
-          const user = JSON.parse(userData);
+      if (userData) {        try {
+          // const user = JSON.parse(userData); // user unused
         } catch (e) {
         }
       }
@@ -348,9 +347,8 @@ const CourseDetailManagePage: React.FC = () => {
     if (errors.length > 0) {
       alert('Vui lòng sửa các lỗi sau:\n' + errors.join('\n'));
       return;
-    }
-    try {
-      const result = await quizService.createQuiz(quizForm);
+    }    try {
+      // const result = await quizService.createQuiz(quizForm); // result unused
       setShowQuizForm(false);
       resetQuizForm();
       fetchCourseData();
