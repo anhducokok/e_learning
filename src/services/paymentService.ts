@@ -16,7 +16,6 @@ export const paymentService = {
       const data = await response.json();
       return data.data || [];
     } catch (error) {
-      console.error("❌ getPendingPayments error:", error);
       throw error;
     }
   },
@@ -36,7 +35,6 @@ export const paymentService = {
       const data = await response.json();
       return data.data || [];
     } catch (error) {
-      console.error("❌ getAllPayments error:", error);
       throw error;
     }
   },
@@ -59,7 +57,6 @@ export const paymentService = {
       }
       return await response.json();
     } catch (error) {
-      console.error("❌ approvePayment error:", error);
       throw error;
     }
   },
@@ -81,7 +78,6 @@ export const paymentService = {
       }
       return await response.json();
     } catch (error) {
-      console.error("❌ rejectPayment error:", error);
       throw error;
     }
   },

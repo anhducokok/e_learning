@@ -32,7 +32,6 @@ import ChatBoxWrapper from "./wrapper/ChatBoxWrapper";
 import PracticePage from "./pages/PracticePage";
 import PracticeManagementPage from "./pages/teacher/PracticeManagementPage";
 
-
 function App() {
   return (
     <AuthProvider>

@@ -14,34 +14,20 @@ const LearningRoomPage: React.FC = () => {
   const { user } = useAuth();
 
   // Debug logging for render state
-  console.log('🎭 LearningRoomPage render - Current state:', {
-    user: user ? { id: user.id, name: user.name, email: user.email } : null,
-    myCoursesLength: myCourses?.length || 0,
-    myCourses: myCourses,
-    loading,
-    error
-  });useEffect(() => {
+  useEffect(() => {
     const fetchMyCourses = async () => {
-      console.log('🔍 LearningRoomPage: fetchMyCourses called, user:', user);
       if (!user) {
-        console.log('❌ LearningRoomPage: No user found, skipping course fetch');
         return;
       }
       
       try {
         setLoading(true);
-        console.log('📞 LearningRoomPage: Calling courseService.getMyCourses()...');
         const courses = await courseService.getMyCourses();
-        console.log('✅ LearningRoomPage: Received courses from API:', courses);
-        console.log('📊 LearningRoomPage: Courses array length:', courses?.length || 0);
         setMyCourses(courses);
-        console.log('✅ LearningRoomPage: State updated with courses');
       } catch (err: any) {
-        console.error('❌ LearningRoomPage: Error fetching courses:', err);
         setError(err.message || 'Failed to fetch your courses');
       } finally {
         setLoading(false);
-        console.log('✅ LearningRoomPage: Loading set to false');
       }
     };
 
@@ -129,7 +115,6 @@ const LearningRoomPage: React.FC = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-
 
       <div className="flex max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 gap-6">
         <div className="w-72 bg-white rounded-lg shadow-md flex flex-col">
@@ -265,7 +250,7 @@ const LearningRoomPage: React.FC = () => {
                     <div className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col md:flex-row" key={course.id}>
                       <div className="relative md:w-1/3">
                         <img 
-                          src={course.thumbnail || tralelaImage} 
+                          src={course.image || tralelaImage} 
                           alt={course.title} 
                           className="h-full w-full object-cover"
                           onError={(e) => {
@@ -293,9 +278,8 @@ const LearningRoomPage: React.FC = () => {
                       </div>
                       <div className="p-6 md:w-2/3 flex flex-col justify-between">
                         <div>
-                          <h3 className="font-bold text-lg mb-2 text-gray-800">{course.title}</h3>
-                          <p className="text-sm text-gray-600 mb-4">
-                            <span className="font-semibold">Giảng viên:</span> {course.instructor?.name || 'Chưa có thông tin'}
+                          <h3 className="font-bold text-lg mb-2 text-gray-800">{course.title}</h3>                          <p className="text-sm text-gray-600 mb-4">
+                            <span className="font-semibold">Giảng viên:</span> {course.teacher?.name || course.instructor?.name || 'Chưa có thông tin'}
                           </p>
                         </div>
                         <Link
@@ -494,7 +478,6 @@ const LearningRoomPage: React.FC = () => {
           )}
         </div>
       </div>
-
 
     </div>
   );

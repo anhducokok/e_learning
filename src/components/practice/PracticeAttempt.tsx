@@ -61,7 +61,6 @@ const PracticeAttemptView: React.FC<PracticeAttemptProps> = ({
           setTimeout(() => setRetryCount((c) => c + 1), 400);
         } else {
           setError(err.message || 'Failed to start practice');
-          console.error('Error starting practice:', err);
         }
       } finally {
         setLoading(false);
@@ -150,7 +149,6 @@ const PracticeAttemptView: React.FC<PracticeAttemptProps> = ({
       onComplete(result);
     } catch (err) {
       setError('Failed to submit practice');
-      console.error('Error submitting practice:', err);
     } finally {
       setSubmitting(false);
     }  }, [practice, startTime, practiceId, answers, onComplete, submitting, attemptId]);

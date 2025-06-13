@@ -47,7 +47,6 @@ const PracticePage: React.FC = () => {
         attemptAnswers: answers
       }));
     } catch (error) {
-      console.error('Error fetching practice answers:', error);
       // Still show results even if we can't get detailed answers
       setState(prev => ({
         ...prev,
@@ -91,7 +90,6 @@ const PracticePage: React.FC = () => {
 
   const handleEditPractice = (practiceId: string) => {
     // Navigate to practice editor (to be implemented)
-    console.log('Edit practice:', practiceId);
   };
 
   const handleDeletePractice = async (practiceId: string) => {
@@ -101,7 +99,6 @@ const PracticePage: React.FC = () => {
         // Refresh the list by staying on the same view
         // The PracticeList component will handle the refresh
       } catch (error) {
-        console.error('Error deleting practice:', error);
         alert('Failed to delete practice. Please try again.');
       }
     }

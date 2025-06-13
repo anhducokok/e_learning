@@ -10,7 +10,6 @@ export const chatService = {
     if (res.data.success) {
       return res.data.data;
     } else {
-      console.error(res.data.message);
       return [];
     }
   },

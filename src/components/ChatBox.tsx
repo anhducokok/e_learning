@@ -25,8 +25,7 @@
 //         const data = Array.isArray(result?.data) ? result.data : [];
 //         setHistory(data);
 //       } catch (error) {
-//         console.error('Lỗi khi lấy lịch sử chat:', error);
-//         setHistory([]);
+//         //         setHistory([]);
 //       }
 //     };
 
@@ -156,7 +155,6 @@ const ChatBox = ({ receiverId }: Props) => {
         const user = allUsers.find((u: User) => u.id === receiverId) || null;
         setReceiverUser(user);
       } catch (err) {
-        console.error('Lỗi khi tải thông tin người dùng:', err);
         setReceiverUser(null);
       }
     };
@@ -177,7 +175,6 @@ const ChatBox = ({ receiverId }: Props) => {
         const data = Array.isArray(result?.data) ? result.data : [];
         setHistory(data);
       } catch (error) {
-        console.error('Lỗi khi lấy lịch sử chat:', error);
         setHistory([]);
       }
     };

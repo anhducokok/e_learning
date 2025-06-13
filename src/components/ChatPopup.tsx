@@ -16,7 +16,6 @@ const ChatPopup: React.FC = () => {
       .getAllUsers()
       .then(setUsers)
       .catch((error) => {
-        console.error("Error loading users:", error);
       });
   }, []);
   if (!isAuthenticated || !user?.id) return null;

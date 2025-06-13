@@ -2,14 +2,14 @@
 import React from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import MyChatWidget from "../components/MyChatWidgetSection";
-import ChatWidget from "../components/ChatWidgetSection";
-import ChatDropdown from "../components/ChatDropdownSection";
+// import MyChatWidget from "../components/MyChatWidgetSection";
+// import ChatWidget from "../components/ChatWidgetSection";
+// import ChatDropdown from "../components/ChatDropdownSection";
 import { Outlet } from "react-router-dom";
 
 const MainLayout: React.FC = () => {
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow">
         <Outlet /> {/* Nội dung từng trang sẽ render ở đây */}
@@ -17,10 +17,10 @@ const MainLayout: React.FC = () => {
       <Footer />
       {/* Chatbox hiện ở mọi trang */}
       {/* <ChatBox /> */}
-      <ChatWidget />
-      <MyChatWidget />
-      <ChatDropdown />
-    </>
+      {/* <ChatWidget /> */}
+      {/* <MyChatWidget /> */}
+      {/* <ChatDropdown /> */}
+    </div>
   );
 };
 

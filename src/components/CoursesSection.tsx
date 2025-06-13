@@ -18,7 +18,6 @@ const CourseListSection: React.FC = () => {
         const fetchedCourses = await courseService.getAllCourses();
         setCourses(fetchedCourses);
       } catch (err: any) {
-        console.error('Error fetching courses:', err);
         setError(err.message || 'Failed to load courses');
       } finally {
         setLoading(false);

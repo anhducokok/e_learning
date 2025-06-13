@@ -26,7 +26,6 @@ const TestPage: React.FC = () => {
     setError(null);
     
     try {
-      console.log('Fetching classes...');
       const response = await fetch(`${API_BASE_URL}/classes`);
       
       if (!response.ok) {
@@ -34,8 +33,6 @@ const TestPage: React.FC = () => {
       }
       
       const data = await response.json();
-      console.log('Classes response:', data);
-      
       if (data.success && data.data) {
         setClasses(data.data);
         // Auto-select first class if available
@@ -46,7 +43,6 @@ const TestPage: React.FC = () => {
         throw new Error('Invalid response format');
       }
     } catch (err: any) {
-      console.error('Error fetching classes:', err);
       setError(err.message || 'Failed to fetch classes');
       setClasses([]);
     } finally {
@@ -58,7 +54,6 @@ const TestPage: React.FC = () => {
     setLoadingCourses(true);
     
     try {
-      console.log(`Fetching courses for class ${classId}...`);
       const response = await fetch(`${API_BASE_URL}/classes/${classId}/courses`);
       
       if (!response.ok) {
@@ -66,15 +61,12 @@ const TestPage: React.FC = () => {
       }
       
       const data = await response.json();
-      console.log('Courses response:', data);
-      
       if (data.success && data.data) {
         setCourses(data.data);
       } else {
         throw new Error('Invalid response format');
       }
     } catch (err: any) {
-      console.error('Error fetching courses:', err);
       setCourses([]);
     } finally {
       setLoadingCourses(false);

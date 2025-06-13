@@ -9,17 +9,11 @@ import type {
 export const courseService = {
   async getAllCourses(): Promise<Course[]> {
     try {
-      console.log("🔍 Calling getAllCourses API...");
       const response = await apiClient.get<any>(API_ENDPOINTS.COURSES.BASE);
-      console.log("✅ getAllCourses API Response:", response);
-
       // After API client fix, response should be the direct data
       const courses = response.data || response || [];
-      console.log("📚 All courses data:", courses);
-
       return courses;
     } catch (error: any) {
-      console.error("❌ getAllCourses error:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch courses"
       );
@@ -27,12 +21,9 @@ export const courseService = {
   },
   async getCourseById(id: string): Promise<Course> {
     try {
-      console.log("🔍 Calling getCourseById API for ID:", id);
       const response = await apiClient.get<any>(
         API_ENDPOINTS.COURSES.BY_ID(id)
       );
-      console.log("✅ getCourseById API Response:", response);
-
       // After API client fix, response should be the direct data
       const courseData = response.data || response;
       if (!courseData) {
@@ -40,18 +31,8 @@ export const courseService = {
       }
 
       // Debug course ownership fields
-      console.log("📚 Course ownership debug:", {
-        id: courseData.id,
-        title: courseData.title,
-        createdBy: courseData.createdBy,
-        teacherId: courseData.teacherId,
-        teacher: courseData.teacher,
-        creator: courseData.creator,
-      });
-
       return courseData;
     } catch (error: any) {
-      console.error("❌ getCourseById error:", error);
       throw new Error(
         error.response?.data?.message || "Failed to fetch course"
       );
@@ -59,24 +40,12 @@ export const courseService = {
   },
   async getMyCourses(): Promise<Course[]> {
     try {
-      console.log("🔍 Calling getMyCourses API...");
       const response = await apiClient.get<any>(API_ENDPOINTS.COURSES.ENROLLED);
-      console.log("✅ getMyCourses API Response structure:", {
-        hasData: !!response.data,
-        hasNestedData: !!response.data?.data,
-        isDataArray: Array.isArray(response.data),
-        isNestedDataArray: Array.isArray(response.data?.data),
-      });
-
       // The backend response structure should be:
       // { success: true, statusCode: 200, message: "...", data: [...courses], timestamp: "..." }
 
       // First try to get courses from data.data array (most likely path)
       if (response.data?.data && Array.isArray(response.data.data)) {
-        console.log(
-          "📚 Found courses in response.data.data array:",
-          response.data.data.length
-        );
         return response.data.data;
       }
 
@@ -85,30 +54,18 @@ export const courseService = {
         response.data?.data?.courses &&
         Array.isArray(response.data.data.courses)
       ) {
-        console.log(
-          "📚 Found courses in response.data.data.courses:",
-          response.data.data.courses.length
-        );
         return response.data.data.courses;
       }
 
       // Finally try response.data (if it's already the courses array)
       if (Array.isArray(response.data)) {
-        console.log(
-          "📚 Found courses directly in response.data array:",
-          response.data.length
-        );
         return response.data;
       }
 
       // Fallback to empty array if nothing found
-      console.log("⚠️ No courses found in response structure");
       return [];
     } catch (error: any) {
-      console.error("❌ getMyCourses error:", error);
       if (error.response) {
-        console.error("Response status:", error.response.status);
-        console.error("Response data:", error.response.data);
       }
       throw new Error(
         error.response?.data?.message || "Failed to fetch enrolled courses"
@@ -158,22 +115,11 @@ export const courseService = {
 
   async enrollInCourse(courseId: string): Promise<void> {
     try {
-      console.log(`🔍 Enrolling in course with ID: ${courseId}`);
       // Log the full URL to debug the API call
       const url = `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enroll`;
-      console.log("Enrollment URL:", url);
-
       const response = await apiClient.post<any>(url);
-      console.log("✅ Enrollment response:", response);
     } catch (error: any) {
-      console.error("❌ Enrollment error:", error);
-      console.error(
-        "Request URL:",
-        `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enroll`
-      );
       if (error.response) {
-        console.error("Response status:", error.response.status);
-        console.error("Response data:", error.response.data);
       }
       throw new Error(
         error.response?.data?.message || "Failed to enroll in course"
@@ -183,21 +129,10 @@ export const courseService = {
 
   async unenrollFromCourse(courseId: string): Promise<void> {
     try {
-      console.log(`🔍 Unenrolling from course with ID: ${courseId}`);
       const url = `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enroll`;
-      console.log("Unenrollment URL:", url);
-
       const response = await apiClient.delete(url);
-      console.log("✅ Unenrollment response:", response);
     } catch (error: any) {
-      console.error("❌ Unenrollment error:", error);
-      console.error(
-        "Request URL:",
-        `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enroll`
-      );
       if (error.response) {
-        console.error("Response status:", error.response.status);
-        console.error("Response data:", error.response.data);
       }
       throw new Error(
         error.response?.data?.message || "Failed to unenroll from course"
@@ -209,22 +144,11 @@ export const courseService = {
     courseId: string
   ): Promise<{ isEnrolled: boolean; enrollment?: any }> {
     try {
-      console.log(`🔍 Checking enrollment status for course ID: ${courseId}`);
       const url = `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enrollment-status`;
-      console.log("Enrollment status URL:", url);
-
       const response = await apiClient.get<any>(url);
-      console.log("✅ Enrollment status response:", response);
       return response.data?.data || { isEnrolled: false };
     } catch (error: any) {
-      console.error("❌ Enrollment status check error:", error);
-      console.error(
-        "Request URL:",
-        `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enrollment-status`
-      );
       if (error.response) {
-        console.error("Response status:", error.response.status);
-        console.error("Response data:", error.response.data);
       }
       throw new Error(
         error.response?.data?.message || "Failed to check enrollment status"

@@ -243,17 +243,11 @@ const CourseDetailManagePage: React.FC = () => {
     
     try {
       setLoading(true);
-      console.log('🔍 Fetching course data for courseId:', courseId);
-      
       const [courseData, lessonsData, quizzesData] = await Promise.all([
         courseService.getCourseById(courseId),
         lessonService.getLessonsByCourse(courseId),
         quizService.getQuizzesByCourse(courseId)
       ]);
-      
-      console.log('📚 Course data:', courseData);
-      console.log('📖 Lessons data:', lessonsData, 'Type:', typeof lessonsData, 'Is Array:', Array.isArray(lessonsData));
-      console.log('🧪 Quizzes data:', quizzesData);
         setCourse(courseData);      // Ensure lessonsData is an array before sorting
       const lessonsArray = Array.isArray(lessonsData) ? lessonsData : [];
       setLessons(lessonsArray.sort((a, b) => (a.orderIndex || a.order || 0) - (b.orderIndex || b.order || 0)));
@@ -272,43 +266,21 @@ const CourseDetailManagePage: React.FC = () => {
     if (!courseId) return;
     
     try {
-      console.log('🔍 Creating lesson for courseId:', courseId);
-      console.log('📝 Lesson form data:', lessonForm);
-      console.log('🔑 Current auth token:', localStorage.getItem('auth_token') ? 'Present' : 'Missing');
-      console.log('👤 Current user data:', localStorage.getItem('user_data'));      // Debug course ownership
-      console.log('📚 Current course details:', {
-        id: course?.id,
-        title: course?.title,
-        teacherId: course?.teacherId,
-        createdBy: course?.createdBy,
-        teacher: course?.teacher
-      });
-      
+      // Debug course ownership
       // Parse and log user data for comparison
       const userData = localStorage.getItem('user_data');
       if (userData) {
         try {
           const user = JSON.parse(userData);
-          console.log('👤 Parsed user data:', {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            role: user.role
-          });
         } catch (e) {
-          console.error('Failed to parse user data:', e);
         }
       }
       
       await lessonService.createLesson(courseId, lessonForm);
-      console.log('✅ Lesson created successfully');
-      
       setShowLessonForm(false);
       resetLessonForm();
       fetchCourseData();
     } catch (err: any) {
-      console.error('❌ Failed to create lesson:', err);
-      console.error('Error details:', err.response?.data);
       setError(err.message || 'Failed to create lesson');
     }
   };
@@ -340,7 +312,6 @@ const CourseDetailManagePage: React.FC = () => {
 
   // Quiz management
   const handleCreateQuiz = async () => {
-    console.log('[DEBUG] handleCreateQuiz called', quizForm);
     // --- Robust frontend validation ---
     const errors: string[] = [];
     if (!quizForm.title || quizForm.title.trim() === '') {
@@ -380,7 +351,6 @@ const CourseDetailManagePage: React.FC = () => {
     }
     try {
       const result = await quizService.createQuiz(quizForm);
-      console.log('[DEBUG] Quiz created successfully', result);
       setShowQuizForm(false);
       resetQuizForm();
       fetchCourseData();
@@ -392,7 +362,6 @@ const CourseDetailManagePage: React.FC = () => {
       } else if (err.stack) {
         details = err.stack;
       }
-      console.error('[DEBUG] Quiz creation error:', err, details);
       setError((err.message || 'Failed to create quiz') + (details ? ('\n' + details) : ''));
       alert('Quiz creation failed: ' + (err.message || 'Unknown error') + (details ? ('\n' + details) : ''));
     }
@@ -434,7 +403,6 @@ const CourseDetailManagePage: React.FC = () => {
         // Refresh data to ensure consistency
         fetchCourseData();
       } catch (err: any) {
-        console.error('Failed to reorder lessons:', err);
         setError(err.message || 'Failed to reorder lessons');
         // Revert local state on error
         fetchCourseData();
@@ -462,7 +430,6 @@ const CourseDetailManagePage: React.FC = () => {
         // Refresh data to ensure consistency
         fetchCourseData();
       } catch (err: any) {
-        console.error('Failed to reorder quizzes:', err);
         setError(err.message || 'Failed to reorder quizzes');
         // Revert local state on error
         fetchCourseData();

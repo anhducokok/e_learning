@@ -26,15 +26,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Check if user is already logged in
     const currentUser = authService.getCurrentUser();
     const isAuth = authService.isAuthenticated();
-    
-    console.log('🔐 AuthContext: Checking authentication state');
-    console.log('🔐 Current user from authService:', currentUser);
-    console.log('🔐 Is authenticated:', isAuth);
-    console.log('🔐 Token exists:', localStorage.getItem('auth_token') ? 'Yes' : 'No');
-    
     if (isAuth && currentUser) {
       setUser(currentUser);
-      console.log('✅ User set in AuthContext:', currentUser);
     }
     
     setIsLoading(false);

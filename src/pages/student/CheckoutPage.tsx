@@ -4,7 +4,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { courseService } from "../../services";
 import type { Course } from "../../types/api";
 import { useAuth } from "../../contexts/AuthContext";
-import QR from "../../images/mb.jpg";
+import QR from "../../images/abc.png";
 
 const CourseCheckoutPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -123,8 +123,8 @@ const CourseCheckoutPage: React.FC = () => {
                 <strong className="font-medium">Tên khóa học:</strong> {course.title}
               </p>
               <p className="text-lg text-gray-700">
-                <strong className="font-medium">Giá:</strong>{" "}
-                <span className="text-[#A82828] font-semibold">
+                <strong className="font-bold">Giá:</strong>{" "}
+                <span className="text-[#A82828] font-bold">
                   {course.price?.toLocaleString("vi-VN") || "Liên hệ"} VNĐ
                 </span>
               </p>
@@ -139,13 +139,13 @@ const CourseCheckoutPage: React.FC = () => {
             <div className="flex flex-col md:flex-row gap-8">
               <div className="flex-1 space-y-4">
                 <p className="text-lg text-gray-700">
-                  <strong className="font-medium">Tên chủ tài khoản:</strong> Trần Đình Dũng
+                  <strong className="font-medium">Tên chủ tài khoản:</strong> Vũ Ngọc Khoa
                 </p>
                 <p className="text-lg text-gray-700">
-                  <strong className="font-medium">Số tài khoản:</strong> 2566686868
+                  <strong className="font-medium">Số tài khoản:</strong> 1903 6568 2540 10
                 </p>
                 <p className="text-lg text-gray-700">
-                  <strong className="font-medium">Ngân hàng:</strong> MB Bank - Ngân hàng Quân đội Việt Nam
+                  <strong className="font-medium">Ngân hàng:</strong> Techcombank - Ngân hàng thương mại cổ phần Kỹ Thương Việt Nam
                 </p>
                 <p className="text-lg text-gray-700">
                   <strong className="font-medium">Nội dung chuyển khoản:</strong>
@@ -159,7 +159,7 @@ const CourseCheckoutPage: React.FC = () => {
                   alt="QR Code Thanh Toán"
                   className="w-64 h-64 object-contain rounded-3xl shadow-md border border-gray-200"
                   onError={(e) => {
-                    e.currentTarget.src = "../..//images/mb.jpg";
+                    e.currentTarget.src = "../../images/abc.png";
                   }}
                 />
               </div>

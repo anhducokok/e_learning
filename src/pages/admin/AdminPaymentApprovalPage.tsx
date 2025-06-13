@@ -131,7 +131,6 @@ const AdminPaymentApprovalPage: React.FC = () => {
     ],
   };
 
-
   // Thông báo cho admin
   const adminNotifications = [
     {

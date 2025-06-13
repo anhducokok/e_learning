@@ -22,7 +22,6 @@ export const processApiResponse = <T>(response: any): T[] => {
   }
   
   // If we can't find an array, return empty
-  console.warn('Unexpected API response format:', response);
   return [];
 };
 
@@ -46,15 +45,10 @@ export const processQuizzes = (quizzesData: any): Quiz[] => {
 // Function to verify video URLs in lessons
 export const checkLessonVideos = (lessons: Lesson[]): void => {
   lessons.forEach((lesson, index) => {
-    console.log(`📹 Lesson ${index + 1} - "${lesson.title}":`);
-    console.log(`- Video URL: ${lesson.videoUrl || 'None'}`);
     if (lesson.videoUrl) {
       try {
         const url = new URL(lesson.videoUrl);
-        console.log(`- Video URL protocol: ${url.protocol}`);
-        console.log(`- Video URL domain: ${url.hostname}`);
       } catch (e) {
-        console.warn(`- Invalid URL format for lesson ${index + 1}`);
       }
     }
   });

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowRight, Clock, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import learnChineseImage from '../images/image.png';
 import TeaBreakImage from '../images/download.jpg';
 import RoadMapImage from '../images/download(1).png';
@@ -110,8 +111,8 @@ const categories = [
 
 const BlogSection: React.FC = () => {
   const [activeCategory] = useState('all');
-    // Filter posts based on active category (show only 6 posts for section)
-  const filteredPosts = activeCategory === 'all' 
+  // Filter posts based on active category (show only 6 posts for section)
+  const filteredPosts = activeCategory === 'all'
     ? blogPosts.slice(0, 6)
     : blogPosts.filter(post => post.category === activeCategory).slice(0, 6);
 
@@ -186,8 +187,8 @@ const BlogSection: React.FC = () => {
           {filteredPosts.map((post) => (
             <div key={post.id} className="bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:shadow-lg hover:-translate-y-1">
               <div className="h-48">
-                <img 
-                  src={post.image} 
+                <img
+                  src={post.image}
                   alt={post.title}
                   className="w-full h-full object-cover"
                   onError={(e) => {
@@ -210,7 +211,9 @@ const BlogSection: React.FC = () => {
                     <span>{post.readTime}</span>
                   </div>
                   <button className="text-black-300 hover:text-yellow-700 font-medium text-sm flex items-center gap-1">
+
                     Đọc thêm <ArrowRight className="w-3 h-3" />
+
                   </button>
                 </div>
               </div>
@@ -221,7 +224,11 @@ const BlogSection: React.FC = () => {
         {/* View All Button */}
         <div className="text-center">
           <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium px-8 py-3 rounded-lg transition-colors flex items-center gap-2 mx-auto">
-            Xem tất cả bài viết <ArrowRight className="w-4 h-4" />
+            <Link
+              to={`/blog`}
+              >
+              Xem tất cả bài viết <ArrowRight className="w-4 h-4" />
+            </Link>
           </button>
         </div>
       </div>

@@ -13,7 +13,6 @@ const RoleBasedRedirect: React.FC<RoleBasedRedirectProps> = ({ children }) => {
   useEffect(() => {
     if (!isLoading && isAuthenticated && user) {
       const targetRoute = getRoleBasedRoute();
-      console.log(`🔀 Redirecting user with role '${user.role}' to: ${targetRoute}`);
       navigate(targetRoute, { replace: true });
     }
   }, [isAuthenticated, isLoading, user, navigate, getRoleBasedRoute]);

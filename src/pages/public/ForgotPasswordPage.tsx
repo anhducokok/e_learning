@@ -6,7 +6,6 @@ const ForgotPassword: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Reset password for:", email);
     setSubmitted(true);
   };
 
@@ -49,7 +48,6 @@ const ForgotPassword: React.FC = () => {
           )}
         </div>
       </div>
-
 
     </div>
   );

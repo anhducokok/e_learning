@@ -62,38 +62,31 @@ const MyClassesPage: React.FC = () => {
         return level;
     }
   };
-
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <main className="flex-grow flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A82828]"></div>
-        </main>
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A82828]"></div>
       </div>
     );
   }
-
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-xl text-red-500 mb-4">{error}</p>
-            <Link
-              to="/courses"
-              className="bg-[#A82828] text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
-            >
-              Khám phá khóa học
-            </Link>
-          </div>
-        </main>
+      <div className="flex justify-center items-center h-64">
+        <div className="text-center">
+          <p className="text-xl text-red-500 mb-4">{error}</p>
+          <Link
+            to="/courses"
+            className="bg-[#A82828] text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
+          >
+            Khám phá khóa học
+          </Link>
+        </div>
       </div>
     );
   }
-
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
-      <main className="flex-grow max-w-7xl mx-auto px-4 py-10">
+    <div className="bg-gray-100">
+      <div className="max-w-7xl mx-auto px-4 py-10">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Khóa học của tôi
@@ -228,8 +221,7 @@ const MyClassesPage: React.FC = () => {
                   <button
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className="px-3 py-2 rounded-md bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
+                    className="px-3 py-2 rounded-md bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"                  >
                     Tiếp
                   </button>
                 </div>
@@ -237,7 +229,7 @@ const MyClassesPage: React.FC = () => {
             )}
           </>
         )}
-      </main>
+      </div>
     </div>
   );
 };

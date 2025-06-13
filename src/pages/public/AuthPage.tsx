@@ -23,7 +23,6 @@ const AuthPage: React.FC = () => {
     // Redirect if already authenticated
     if (isAuthenticated) {
       const targetRoute = getRoleBasedRoute();
-      console.log(`🔀 User already authenticated, redirecting to: ${targetRoute}`);
       navigate(targetRoute);
     }
   }, [isAuthenticated, navigate, getRoleBasedRoute]);
@@ -60,7 +59,6 @@ const AuthPage: React.FC = () => {
       if (isLogin) {
         await login(formData.email, formData.password);
         const targetRoute = getRoleBasedRoute();
-        console.log(`🔀 Login successful, redirecting to: ${targetRoute}`);
         navigate(targetRoute);
       } else {
         if (formData.password !== formData.confirmPassword) {
@@ -69,7 +67,6 @@ const AuthPage: React.FC = () => {
         }
         await register(formData.name, formData.email, formData.password);
         const targetRoute = getRoleBasedRoute();
-        console.log(`🔀 Registration successful, redirecting to: ${targetRoute}`);
         navigate(targetRoute);
       }
     } catch (err: any) {
@@ -82,7 +79,6 @@ const AuthPage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
 
-      
       <div className="flex-1 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-7xl flex flex-col md:flex-row bg-white rounded-xl shadow-lg overflow-hidden">
           {/* Form Section */}

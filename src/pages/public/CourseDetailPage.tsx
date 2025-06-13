@@ -33,11 +33,9 @@ function getLevelDisplay(level?: string) {
   }
 }
 
-export default function CourseDetailPage() {
-  const { id } = useParams<{ id: string }>();
+export default function CourseDetailPage() {  const { id } = useParams<{ id: string }>();
   const [course, setCourse] = useState<Course | null>(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
-  const [isEnrolling, setIsEnrolling] = useState(false);
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -47,7 +45,6 @@ export default function CourseDetailPage() {
         const data = await res.json();
         setCourse(data.data);
       } catch (err) {
-        console.error("Failed to fetch course:", err);
       }
     };
 
@@ -74,38 +71,9 @@ export default function CourseDetailPage() {
           setIsEnrolled(data.data?.isEnrolled || false);
         }
       } catch (err) {
-        console.error("Failed to check enrollment status:", err);
       }
-    };
-
-    checkEnrollment();
+    };    checkEnrollment();
   }, [course, isAuthenticated]);
-
-  const handleEnrollmentToggle = async () => {
-    if (!isAuthenticated || !course) return;
-    setIsEnrolling(true);
-
-    try {
-      const token = localStorage.getItem("auth_token");
-      const method = isEnrolled ? "DELETE" : "POST";
-
-      const res = await fetch(`${API_BASE_URL}/courses/${course.id}/enroll`, {
-        method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) throw new Error("Failed to update enrollment");
-
-      setIsEnrolled(!isEnrolled);
-    } catch (err: any) {
-      console.error("Enrollment toggle failed:", err);
-      alert(err.message || "Lỗi ghi danh");
-    } finally {
-      setIsEnrolling(false);
-    }
-  };
 
   if (!course)
     return <div className="p-6 text-center">Đang tải khóa học...</div>;
@@ -185,24 +153,14 @@ export default function CourseDetailPage() {
 
         <div className="text-sm text-gray-500">
           ⏱ {course.hours} giờ học · 📝 {course.exercises} bài tập
-        </div>
-
-        {isAuthenticated ? (
+        </div>        {isAuthenticated ? (
           isEnrolled ? (
-            <button
-              onClick={handleEnrollmentToggle}
-              disabled={isEnrolling}
-              className={`
-                w-full py-2 rounded-md font-medium text-sm transition
-                ${
-                  isEnrolling
-                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                    : "bg-red-100 text-red-600 hover:bg-red-200"
-                }
-              `}
+            <Link
+              to={`/courses/${course.id}/learn`}
+              className="block w-full text-center py-2 rounded-md font-medium text-sm bg-green-600 text-white hover:bg-green-700 transition"
             >
-              {isEnrolling ? "Đang xử lý..." : "Hủy ghi danh"}
-            </button>
+              Tiếp tục học
+            </Link>
           ) : (
             <Link
               to={`/checkout/${course.id}`}

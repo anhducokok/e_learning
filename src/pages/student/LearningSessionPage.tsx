@@ -123,7 +123,6 @@ const LearningSessionPage: React.FC = () => {
           });
           setQuizAttempts(quizAttemptsData);
         } catch (submissionError) {
-          console.log('Could not load quiz submissions, using default values');
           // Fallback to default values if submissions can't be loaded
           setQuizAttempts(processedQuizzes.map(quiz => ({
             quizId: quiz.id,
@@ -170,7 +169,6 @@ const LearningSessionPage: React.FC = () => {
           return;
         }
       } catch (error) {
-        console.log('Could not load previous submission, allowing new attempt');
       }
     }
     

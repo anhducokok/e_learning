@@ -6,7 +6,6 @@ import ChatPopup from "../../components/ChatPopup"
 
 const UserListPage: React.FC = () => {
 
-
   return (
     <AdminLayout logoImage={logoImage} activePath="/admin-dashboard/payment">
       <main className="flex flex-col bg-gray-50 min-h-screen">

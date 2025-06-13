@@ -7,17 +7,10 @@ import { API_BASE_URL } from "../../config/api";
 const CourseListPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [classes, setClasses] = useState<Class[]>([]);
-  const [expandedClasses, setExpandedClasses] = useState<Set<string>>(
-    new Set()
-  );
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [enrollmentStatus, setEnrollmentStatus] = useState<
+  const [error, setError] = useState<string | null>(null);  const [enrollmentStatus, setEnrollmentStatus] = useState<
     Record<string, boolean>
   >({});
-  const [enrollingCourses, setEnrollingCourses] = useState<Set<string>>(
-    new Set()
-  );
   const { isAuthenticated } = useAuth();
 
   // Log configuration
@@ -66,27 +59,13 @@ const CourseListPage: React.FC = () => {
               }
 
               const coursesData = await coursesResponse.json();
-              console.log(`Courses for class ${classItem.id}:`, coursesData);
-
               const courses = coursesData.data || [];
               return { ...classItem, courses };
             } catch (err) {
-              console.error(
-                `Failed to fetch courses for class ${classItem.id}:`,
-                err
-              );
               return { ...classItem, courses: [] };
             }
           })
-        );
-        console.log("Classes with courses:", classesWithCourses);
-        setClasses(classesWithCourses);
-
-        // Expand all classes by default
-        const allClassIds = new Set(
-          classesWithCourses.map((classItem) => classItem.id)
-        );
-        setExpandedClasses(allClassIds);
+        );        setClasses(classesWithCourses);
 
         // If user is authenticated, fetch enrollment status for all courses
         if (isAuthenticated) {
@@ -113,10 +92,6 @@ const CourseListPage: React.FC = () => {
                   statusMap[course.id] = false;
                 }
               } catch (err) {
-                console.error(
-                  `Failed to get enrollment status for course ${course.id}:`,
-                  err
-                );
                 statusMap[course.id] = false;
               }
             }
@@ -125,7 +100,6 @@ const CourseListPage: React.FC = () => {
           setEnrollmentStatus(statusMap);
         }
       } catch (err: any) {
-        console.error("Error in fetchClassesWithCourses:", err);
         setError(err.message || "Failed to fetch classes and courses");
         setClasses([]);
       } finally {
@@ -135,118 +109,68 @@ const CourseListPage: React.FC = () => {
 
     fetchClassesWithCourses();
   }, [isAuthenticated]);
-
   const categories = [
     { id: "all", name: "Tất cả" },
-    { id: "beginner", name: "Căn bản" },
-    { id: "intermediate", name: "Trung cấp" },
-    { id: "advanced", name: "Nâng cao" },
-  ];
-
-  // Filter courses within classes based on category
-  const getFilteredClasses = () => {
-    return classes
-      .map((classItem) => ({
-        ...classItem,
-        courses:
-          activeCategory === "all"
-            ? classItem.courses || []
-            : (classItem.courses || []).filter(
-                (course: Course) => course.level === activeCategory
-              ),
-      }))
-      .filter((classItem) => (classItem.courses?.length || 0) > 0);
-  };
-
-  const toggleClassExpansion = (classId: string) => {
-    setExpandedClasses((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(classId)) {
-        newSet.delete(classId);
-      } else {
-        newSet.add(classId);
+    { id: "HSK4", name: "HSK4" },
+    { id: "HSK1-3", name: "HSK1-3" },
+    {id: "Tiếng Trung Giao Tiếp", name: "Tiếng Trung Giao Tiếp"},
+  ];  // Get all courses from all classes, filtered by category
+  const getFilteredCourses = () => {
+    const allCourses: (Course & { className: string })[] = [];
+    
+    classes.forEach((classItem) => {
+      if (classItem.courses) {
+        classItem.courses.forEach((course) => {
+          allCourses.push({
+            ...course,
+            className: classItem.name // Add class name to course for reference
+          });
+        });
       }
-      return newSet;
     });
-  };
 
-  const handleEnrollment = async (
-    courseId: string,
-    isCurrentlyEnrolled: boolean
-  ) => {
-    if (!isAuthenticated) {
-      alert("Please log in to enroll in courses");
-      return;
-    }
-
-    setEnrollingCourses((prev) => new Set(prev).add(courseId));
-
-    try {
-      const token = localStorage.getItem("auth_token");
-
-      if (isCurrentlyEnrolled) {
-        // Unenroll
-        const response = await fetch(
-          `${API_BASE_URL}/courses/${courseId}/enroll`,
-          {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Failed to unenroll: ${response.status}`);
-        }
-
-        setEnrollmentStatus((prev) => ({ ...prev, [courseId]: false }));
-      } else {
-        // Enroll
-        const response = await fetch(
-          `${API_BASE_URL}/courses/${courseId}/enroll`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`Failed to enroll: ${response.status}`);
-        }
-
-        setEnrollmentStatus((prev) => ({ ...prev, [courseId]: true }));
+    // Debug: log all class names to see what we're working with
+    if (activeCategory === "all") {
+      return allCourses;
+    }// Filter by class name instead of course level
+    return allCourses.filter((course) => {
+      const className = course.className.toLowerCase();
+      
+      if (activeCategory === "HSK4") {
+        return className.includes("hsk 4") || className.includes("hsk4");
+      } else if (activeCategory === "HSK1-3") {
+        return className.includes("hsk 1") ||
+               className.includes("hsk 2") ||
+               className.includes("hsk 3") ||
+               className.includes("hsk1-3") ||
+               className.includes("hsk1") ||
+               className.includes("hsk2") ||
+               className.includes("hsk3");
+      } else if (activeCategory === "Tiếng Trung Giao Tiếp") {
+        return className.includes("giao tiếp") || 
+               className.includes("giao tien") ||
+               className.includes("conversation") ||
+               className.includes("speaking") ||
+               className.includes("co ban") ||
+               className.includes("cơ bản");
       }
-    } catch (err: any) {
-      console.error("Enrollment error:", err);
-      alert(err.message || "Failed to update enrollment");
-    } finally {
-      setEnrollingCourses((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(courseId);
-        return newSet;
-      });
-    }
-  };
-
+      return false;
+    });};
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col bg-gray-100">
-        <main className="flex-grow max-w-6xl mx-auto px-4 py-8 w-full">
+      <div className="bg-gray-100">
+        <div className="max-w-6xl mx-auto px-4 py-8 w-full">
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-[#A82828]"></div>
           </div>
-        </main>
+        </div>
       </div>
     );
   }
-
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col bg-gray-100">
-        <main className="flex-grow max-w-6xl mx-auto px-4 py-8 w-full">
+      <div className="bg-gray-100">
+        <div className="max-w-6xl mx-auto px-4 py-8 w-full">
           <div className="text-center bg-white p-6 rounded-lg shadow-md">
             <div className="text-red-600 text-lg mb-4 font-medium">
               Có lỗi xảy ra khi tải khóa học
@@ -259,16 +183,14 @@ const CourseListPage: React.FC = () => {
               Tải lại trang
             </button>
           </div>
-        </main>
+        </div>
       </div>
     );
   }
-
-  const filteredClasses = getFilteredClasses();
-
+  const filteredCourses = getFilteredCourses();
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
-      <main className="flex-grow max-w-6xl mx-auto px-4 py-8 w-full">
+    <div className="bg-gray-100">
+      <div className="max-w-6xl mx-auto px-4 py-8 w-full">
         <h1 className="text-3xl font-semibold text-gray-800 mb-6">
           Danh sách khóa học
         </h1>
@@ -293,185 +215,119 @@ const CourseListPage: React.FC = () => {
           ))}
         </div>
 
-        {/* Classes List */}
-        <div className="space-y-6">
-          {filteredClasses.map((classItem) => {
-            const isExpanded = expandedClasses.has(classItem.id);
+        {/* Courses Grid */}        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredCourses.map((course) => {
+            const isEnrolled = enrollmentStatus[course.id] || false;
 
             return (
-              <section
-                key={classItem.id}
-                className="bg-white rounded-lg shadow-md border border-gray-200"
+              <article
+                key={course.id}
+                className="bg-white rounded-lg shadow-md border border-gray-200 p-6"
               >
-                {/* Class Header */}
-                <header
-                  onClick={() => toggleClassExpansion(classItem.id)}
-                  className="flex items-center justify-between cursor-pointer p-4 hover:bg-gray-50 transition"
-                  aria-expanded={isExpanded}
+                <Link
+                  to={`/courses/${course.id}`}
+                  className="block mb-4"
                 >
-                  <div>
-                    <h2 className="text-xl font-semibold text-gray-800">
-                      {classItem.name}
-                    </h2>
-                    {classItem.description && (
-                      <p className="mt-1 text-gray-600 text-sm">
-                        {classItem.description}
-                      </p>
-                    )}
-                    <p className="mt-2 text-sm text-gray-500">
-                      {classItem.courses?.length || 0} khóa học
-                    </p>
-                  </div>
-                  <button
-                    aria-label={isExpanded ? "Thu gọn lớp" : "Mở rộng lớp"}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-200 transition
-                      ${isExpanded ? "rotate-180" : ""}`}
+                  <img
+                    src={
+                      course.image ||
+                      "https://https://images.unsplash.com/photo-1594322436404-5a0526db4d13?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8ZXJyb3J8ZW58MHx8MHx8fDA%3D.placeholder.com/300x200"
+                    }
+                    alt={course.title}
+                    className="w-full h-48 object-cover rounded-md"
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        "https://images.unsplash.com/photo-1594322436404-5a0526db4d13?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8ZXJyb3J8ZW58MHx8MHx8fDA%3D";
+                    }}
+                  />
+                </Link>
+
+                <div className="space-y-3">
+                  <Link
+                    to={`/courses/${course.id}`}
+                    className="hover:text-[#A82828] transition"
                   >
-                    <svg
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="w-5 h-5"
-                    >
-                      <path d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-                </header>
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {course.title}
+                    </h3>
+                  </Link>
 
-                {/* Courses List */}
-                {isExpanded && (
-                  <div className="p-4 bg-gray-50">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {classItem.courses?.map((course) => {
-                        const isEnrolled = enrollmentStatus[course.id] || false;
-                        const isEnrolling = enrollingCourses.has(course.id);
+                  <p className="text-gray-600 text-sm line-clamp-3">
+                    {course.description}
+                  </p>
 
-                        return (
-                          <article
-                            key={course.id}
-                            className="bg-white rounded-md shadow-sm border border-gray-200 p-4"
-                          >
-                            <Link
-                              to={`/courses/${course.id}`}
-                              className="block mb-3"
-                            >
-                              <img
-                                src={
-                                  course.thumbnail ||
-                                  "https://via.placeholder.com/150"
-                                }
-                                alt={course.title}
-                                className="w-full h-40 object-cover rounded-md"
-                                loading="lazy"
-                                onError={(e) => {
-                                  e.currentTarget.src =
-                                    "https://via.placeholder.com/150";
-                                }}
-                              />
-                            </Link>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                      {course.className}
+                    </span>
+                    <span className="text-gray-600 capitalize">
+                      {course.level}
+                    </span>
+                  </div>
 
-                            <div className="space-y-2">
-                              <Link
-                                to={`/courses/${course.id}`}
-                                className="hover:text-[#A82828]"
-                              >
-                                <h3 className="text-lg font-medium text-gray-800">
-                                  {course.title}
-                                </h3>
-                              </Link>
-
-                              <p className="text-gray-600 text-sm line-clamp-2">
-                                {course.description}
-                              </p>
-
-                              <div className="flex items-center justify-between text-sm text-gray-500">
-                                <span className="capitalize bg-gray-200 rounded px-2 py-1">
-                                  {course.level}
-                                </span>
-                                {course.duration && (
-                                  <span>{course.duration}</span>
-                                )}
-                                {course.price !== null &&
-                                  course.price !== undefined &&
-                                  course.price > 0 && (
-                                    <span className="font-medium text-gray-700">
-                                      {course.price.toLocaleString()} VND
-                                    </span>
-                                  )}
-                              </div>
-
-                              {course.instructor && (
-                                <div className="text-sm text-gray-500">
-                                  Giảng viên: {course.instructor.name}
-                                </div>
-                              )}
-
-                              {/* Action Button */}
-                              {isAuthenticated ? (
-                                isEnrolled ? (
-                                  <button
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      handleEnrollment(course.id, isEnrolled);
-                                    }}
-                                    disabled={isEnrolling}
-                                    className={`
-                                      w-full py-2 rounded-md font-medium text-sm transition
-                                      ${
-                                        isEnrolling
-                                          ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                                          : "bg-red-100 text-red-600 hover:bg-red-200"
-                                      }
-                                    `}
-                                  >
-                                    {isEnrolling
-                                      ? "Đang xử lý..."
-                                      : "Hủy ghi danh"}
-                                  </button>
-                                ) : (
-                                  <Link
-                                    to={`/checkout/${course.id}`}
-                                    className="block w-full text-center py-2 rounded-md font-medium text-sm bg-[#A82828] text-white hover:bg-red-700 transition"
-                                  >
-                                    Thanh toán
-                                  </Link>
-                                )
-                              ) : (
-                                <Link
-                                  to="/auth"
-                                  className="block w-full text-center py-2 rounded-md font-medium text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
-                                >
-                                  Đăng nhập để thanh toán
-                                </Link>
-                              )}
-                            </div>
-                          </article>
-                        );
-                      })}
+                  {course.duration && (
+                    <div className="text-sm text-gray-500">
+                      Thời lượng: {course.duration}
                     </div>
+                  )}
 
-                    {(!classItem.courses || classItem.courses.length === 0) && (
-                      <p className="text-center text-gray-500 py-4">
-                        Không có khóa học nào trong lớp này
-                      </p>
+                  {course.price !== null &&
+                    course.price !== undefined &&
+                    course.price > 0 && (
+                      <div className="text-lg font-semibold text-[#A82828]">
+                        {course.price.toLocaleString()} VND
+                      </div>
+                    )}
+
+                  {course.instructor && (
+                    <div className="text-sm text-gray-500">
+                      Giảng viên: {course.instructor.name}
+                    </div>
+                  )}                  {/* Action Button */}
+                  <div className="pt-2">
+                    {isAuthenticated ? (
+                      isEnrolled ? (
+                        <Link
+                          to={`/learning-session/${course.id}`}
+                          className="block w-full text-center py-2 rounded-md font-medium text-sm bg-green-600 text-white hover:bg-green-700 transition"
+                        >
+                          Tiếp tục học
+                        </Link>
+                      ) : (
+                        <Link
+                          to={`/checkout/${course.id}`}
+                          className="block w-full text-center py-2 rounded-md font-medium text-sm bg-[#A82828] text-white hover:bg-red-700 transition"
+                        >
+                          Thanh toán
+                        </Link>
+                      )
+                    ) : (
+                      <Link
+                        to="/auth"
+                        className="block w-full text-center py-2 rounded-md font-medium text-sm bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
+                      >
+                        Đăng nhập để thanh toán
+                      </Link>
                     )}
                   </div>
-                )}
-              </section>
+                </div>
+              </article>
             );
           })}
         </div>
 
         {/* No Courses Fallback */}
-        {filteredClasses.length === 0 && (
-          <p className="text-center text-gray-500 text-sm mt-8">
-            Không tìm thấy khóa học phù hợp.
-          </p>
+        {filteredCourses.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg mb-2">
+              Không tìm thấy khóa học phù hợp            </p>
+            <p className="text-gray-400 text-sm">
+              Thử chọn danh mục khác hoặc quay lại sau
+            </p>
+          </div>
         )}
-      </main>
+      </div>
     </div>
   );
 };

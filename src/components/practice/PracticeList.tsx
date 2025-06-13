@@ -40,7 +40,6 @@ const PracticeList: React.FC<PracticeListProps> = ({
       setTotalPages(Math.ceil(response.total / 12));
     } catch (err) {
       setError('Failed to load practices');
-      console.error('Error loading practices:', err);
     } finally {
       setLoading(false);
     }

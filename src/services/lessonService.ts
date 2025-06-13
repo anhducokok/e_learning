@@ -10,10 +10,8 @@ export const lessonService = {
   async getLessonsByCourse(courseId: string): Promise<Lesson[]> {
     try {
       const response = await apiClient.get<any>(API_ENDPOINTS.LESSONS.BY_COURSE(courseId));
-      console.log('[lessonService] Raw API response for lessons:', response);
       // Use response.data directly, not response.data.data
       const lessons = response.data || [];
-      console.log('[lessonService] Extracted lessons:', lessons, 'Type:', typeof lessons, 'Is Array:', Array.isArray(lessons));
       return lessons;
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to fetch lessons');
@@ -28,7 +26,6 @@ export const lessonService = {
       throw new Error(error.response?.data?.message || 'Failed to fetch lesson');
     }
   },async createLesson(courseId: string, lessonData: CreateLessonRequest): Promise<Lesson> {
-
 
     try {
       const response = await apiClient.post<any>(

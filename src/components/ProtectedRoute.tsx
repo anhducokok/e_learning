@@ -20,7 +20,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const bypassAuth = isDevelopment && window.location.search.includes('bypass=true');
   
   if (bypassAuth) {
-    console.log('🔓 Auth bypassed for development');
     return <>{children}</>;
   }
 
@@ -50,7 +49,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (!hasRequiredRole) {
     // Redirect to appropriate dashboard based on user's role
     const targetRoute = getRoleBasedRoute();
-    console.log(`🚫 Access denied. User role: ${userRole}, Required: ${allowedRoles.join(', ')}. Redirecting to: ${targetRoute}`);
     return <Navigate to={targetRoute} replace />;
   }
 

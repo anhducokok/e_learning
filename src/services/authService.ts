@@ -17,12 +17,6 @@ export const authService = {  async login(credentials: LoginRequest): Promise<Au
       // Extract data from the API response structure
       // The backend wraps data in an ApiSuccessResponse: { success, statusCode, message, data: { access_token, user } }
       const authData = response.data?.data || response.data || response;
-      
-      console.log('🔐 Auth data structure:', 
-        authData.access_token ? 'Token found at root level' : 
-        response.data?.data?.access_token ? 'Token found in data.data' : 
-        'Token not found');
-      
       // Store token and user data
       if (authData.access_token) {
         apiClient.setAuthToken(authData.access_token);
@@ -45,12 +39,6 @@ export const authService = {  async login(credentials: LoginRequest): Promise<Au
       // Extract data from the API response structure
       // The backend wraps data in an ApiSuccessResponse: { success, statusCode, message, data: { access_token, user } }
       const authData = response.data?.data || response.data || response;
-      
-      console.log('🔐 Register auth data structure:', 
-        authData.access_token ? 'Token found at root level' : 
-        response.data?.data?.access_token ? 'Token found in data.data' : 
-        'Token not found');
-      
       // Store token and user data
       if (authData.access_token) {
         apiClient.setAuthToken(authData.access_token);
