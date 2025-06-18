@@ -1,5 +1,6 @@
 // import React, { createContext, useContext, useEffect, useState } from "react";
 // import { io, Socket } from "socket.io-client";
+// import { getSocketUrl, SOCKET_CONFIG } from '../config/constants';
 
 // interface ChatContextType {
 //   socket: Socket | null;
@@ -11,8 +12,8 @@
 //   const [socket, setSocket] = useState<Socket | null>(null);
 
 //   useEffect(() => {
-//     const newSocket = io("http://localhost:3212", {
-//       withCredentials: true,
+//     const newSocket = io(getSocketUrl(), {
+//       withCredentials: SOCKET_CONFIG.WITH_CREDENTIALS,
 //     });
 //     setSocket(newSocket);
 
@@ -27,6 +28,7 @@
 // export const useChat = () => useContext(ChatContext);
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import { getSocketUrl, SOCKET_CONFIG } from '../config/constants';
 
 export interface ChatMessage {
   id: string;
@@ -53,8 +55,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [messages, setMessages] = useState<Record<string, ChatMessage[]>>({});
 
   useEffect(() => {
-    const newSocket = io("http://localhost:3212", {
-      withCredentials: true,
+    const newSocket = io(getSocketUrl(), {
+      withCredentials: SOCKET_CONFIG.WITH_CREDENTIALS,
     });
 
     newSocket.on("receiveMessage", (msg: ChatMessage) => {

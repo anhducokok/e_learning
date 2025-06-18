@@ -133,6 +133,7 @@ import { useEffect, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import { userService } from '../services/userService'; // 👈 Thêm import
 import type { User } from '../types/api'; // 👈 Nếu cần
+import { getApiUrl, ENDPOINTS } from '../config/constants'; // 👈 Thêm import
 
 interface Props {
   receiverId: string;
@@ -167,9 +168,8 @@ const ChatBox = ({ receiverId }: Props) => {
   // 👇 Fetch lịch sử tin nhắn
   useEffect(() => {
     const fetchHistory = async () => {
-      try {
-        const res = await fetch(
-          `http://localhost:3212/chat/history?userA=${currentUserId}&userB=${receiverId}`
+      try {        const res = await fetch(
+          `${getApiUrl()}${ENDPOINTS.CHAT_HISTORY}?userA=${currentUserId}&userB=${receiverId}`
         );
         const result = await res.json();
         const data = Array.isArray(result?.data) ? result.data : [];

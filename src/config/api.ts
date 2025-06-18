@@ -1,9 +1,26 @@
-// export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3212').replace(/\/$/, '');
-const hostname = window.location.hostname;
-export const API_BASE_URL =
-  hostname === "localhost" || hostname === "127.0.0.1"
-    ? "http://localhost:3212"
-    : "http://192.168.0.101:3212";
+// API Configuration using environment variables
+const getApiBaseUrl = (): string => {
+  // In production build, always use VITE_API_BASE_URL_PRODUCTION if available
+  if (import.meta.env.PROD && import.meta.env.VITE_API_BASE_URL_PRODUCTION) {
+    return import.meta.env.VITE_API_BASE_URL_PRODUCTION.replace(/\/$/, '');
+  }
+  
+  // In development, use VITE_API_BASE_URL
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '');
+  }
+
+  // Fallback to dynamic hostname detection (last resort)
+  const hostname = window.location.hostname;
+  const productionUrl = "https://api.nihaoeducation.io.vn"; // Default production URL
+  const developmentUrl = "http://localhost:3212";
+  
+  return hostname === "localhost" || hostname === "127.0.0.1"
+    ? developmentUrl
+    : productionUrl;
+};
+
+export const API_BASE_URL = getApiBaseUrl();
 export const API_ENDPOINTS = {
   // Auth endpoints
   AUTH: {

@@ -3,6 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { courseService } from '../../services/courseService';
 import { lessonService } from '../../services/lessonService';
 import { quizService } from '../../services/quizService';
+import { processLessons, processQuizzes, checkLessonVideos } from '../../utils/apiHelpers';
+import { 
+  convertYoutubeUrlToEmbed as convertYoutubeUrlToEmbedHelper,
+  convertGoogleDriveUrlToEmbed as convertGoogleDriveUrlToEmbedHelper 
+} from '../../config/constants';
 import type { Course, Lesson, Quiz, QuizSubmission } from '../../types/api';
 import { 
   BookOpenIcon, 
@@ -20,7 +25,6 @@ import {
   CheckCircleIcon as CheckCircleIconSolid,
   StarIcon as StarIconSolid
 } from '@heroicons/react/24/solid';
-import { processLessons, processQuizzes, checkLessonVideos } from '../../utils/apiHelpers';
 import EnhancedQuizInterface from '../../components/quiz/EnhancedQuizInterface';
 import QuizSubmissionHistory from '../../components/quiz/QuizSubmissionHistory';
 
@@ -249,13 +253,15 @@ const LearningSessionPage: React.FC = () => {
     const completedQuizzes = quizAttempts.filter(a => a.completed).length;
     
     return Math.round(((completedLessons + completedQuizzes) / totalItems) * 100);
-  };
-
-  // Helper function to convert YouTube URL to embed URL
+  };  // Helper function to convert YouTube URL to embed URL
   function convertYoutubeUrlToEmbed(url: string): string {
-    // Chuyển https://www.youtube.com/watch?v=xxxx hoặc https://youtu.be/xxxx thành https://www.youtube.com/embed/xxxx
-    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
-    return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+    // Use helper from constants
+    return convertYoutubeUrlToEmbedHelper(url);
+  }
+
+  function convertGoogleDriveUrlToEmbed(url: string): string {
+    // Use helper from constants  
+    return convertGoogleDriveUrlToEmbedHelper(url);
   }
 
   if (loading) {
@@ -517,6 +523,15 @@ const LearningSessionPage: React.FC = () => {
                             title="YouTube video player"
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        ) : selectedLesson.videoUrl.includes('drive.google.com') ? (
+                          <iframe
+                            key={selectedLesson.id}
+                            className="w-full h-[360px] min-h-[300px]"
+                            src={convertGoogleDriveUrlToEmbed(selectedLesson.videoUrl)}
+                            title="Google Drive video player"
+                            allow="autoplay"
                             allowFullScreen
                           />
                         ) : (

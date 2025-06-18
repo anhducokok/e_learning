@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import type { Course, Class } from "../../types/api";
-import { useAuth } from "../../contexts/AuthContext";
+import { classService } from "../../services/classService";
+import { courseService } from "../../services/courseService";
 import { API_BASE_URL } from "../../config/api";
+import { DEFAULT_IMAGES } from "../../config/constants";
+import type { Class, Course } from "../../types/api";
+import { useAuth } from "../../contexts/AuthContext";
 
 const CourseListPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState("all");
   const [classes, setClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);  const [enrollmentStatus, setEnrollmentStatus] = useState<
+  const [error, setError] = useState<string | null>(null);
+  const [enrollmentStatus, setEnrollmentStatus] = useState<
     Record<string, boolean>
   >({});
   const { isAuthenticated } = useAuth();
@@ -23,11 +27,13 @@ const CourseListPage: React.FC = () => {
           throw new Error(
             `Failed to fetch classes: ${classesResponse.status} ${classesResponse.statusText}`
           );
-        }        const classesData = await classesResponse.json();
+        }
+        const classesData = await classesResponse.json();
 
         if (!classesData.data || !Array.isArray(classesData.data)) {
           throw new Error("Invalid classes data format");
-        }const classesWithoutCourses = classesData.data;
+        }
+        const classesWithoutCourses = classesData.data;
 
         // Fetch courses for each class
         const classesWithCourses = await Promise.all(
@@ -50,7 +56,8 @@ const CourseListPage: React.FC = () => {
               return { ...classItem, courses: [] };
             }
           })
-        );        setClasses(classesWithCourses);
+        );
+        setClasses(classesWithCourses);
 
         // If user is authenticated, fetch enrollment status for all courses
         if (isAuthenticated) {
@@ -98,47 +105,55 @@ const CourseListPage: React.FC = () => {
     { id: "all", name: "Tất cả" },
     { id: "HSK4", name: "HSK4" },
     { id: "HSK1-3", name: "HSK1-3" },
-    {id: "Tiếng Trung Giao Tiếp", name: "Tiếng Trung Giao Tiếp"},
-  ];  // Get all courses from all classes, filtered by category
+    { id: "Tiếng Trung Giao Tiếp", name: "Tiếng Trung Giao Tiếp" },
+  ];
+  // Get all courses from all classes, filtered by category
   const getFilteredCourses = () => {
     const allCourses: (Course & { className: string })[] = [];
-    
+
     classes.forEach((classItem) => {
       if (classItem.courses) {
         classItem.courses.forEach((course) => {
           allCourses.push({
             ...course,
-            className: classItem.name // Add class name to course for reference
+            className: classItem.name, // Add class name to course for reference
           });
         });
-      }    });
+      }
+    });
 
     if (activeCategory === "all") {
       return allCourses;
-    }// Filter by class name instead of course level
+    }
+    // Filter by class name instead of course level
     return allCourses.filter((course) => {
       const className = course.className.toLowerCase();
-      
+
       if (activeCategory === "HSK4") {
         return className.includes("hsk 4") || className.includes("hsk4");
       } else if (activeCategory === "HSK1-3") {
-        return className.includes("hsk 1") ||
-               className.includes("hsk 2") ||
-               className.includes("hsk 3") ||
-               className.includes("hsk1-3") ||
-               className.includes("hsk1") ||
-               className.includes("hsk2") ||
-               className.includes("hsk3");
+        return (
+          className.includes("hsk 1") ||
+          className.includes("hsk 2") ||
+          className.includes("hsk 3") ||
+          className.includes("hsk1-3") ||
+          className.includes("hsk1") ||
+          className.includes("hsk2") ||
+          className.includes("hsk3")
+        );
       } else if (activeCategory === "Tiếng Trung Giao Tiếp") {
-        return className.includes("giao tiếp") || 
-               className.includes("giao tien") ||
-               className.includes("conversation") ||
-               className.includes("speaking") ||
-               className.includes("co ban") ||
-               className.includes("cơ bản");
+        return (
+          className.includes("giao tiếp") ||
+          className.includes("giao tien") ||
+          className.includes("conversation") ||
+          className.includes("speaking") ||
+          className.includes("co ban") ||
+          className.includes("cơ bản")
+        );
       }
       return false;
-    });};
+    });
+  };
   if (loading) {
     return (
       <div className="bg-gray-100">
@@ -198,7 +213,8 @@ const CourseListPage: React.FC = () => {
           ))}
         </div>
 
-        {/* Courses Grid */}        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Courses Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCourses.map((course) => {
             const isEnrolled = enrollmentStatus[course.id] || false;
 
@@ -206,22 +222,17 @@ const CourseListPage: React.FC = () => {
               <article
                 key={course.id}
                 className="bg-white rounded-lg shadow-md border border-gray-200 p-6"
-              >
-                <Link
-                  to={`/courses/${course.id}`}
-                  className="block mb-4"
-                >
+              >                <Link to={`/courses/${course.id}`} className="block mb-4">
                   <img
                     src={
                       course.image ||
-                      "https://https://images.unsplash.com/photo-1594322436404-5a0526db4d13?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8ZXJyb3J8ZW58MHx8MHx8fDA%3D.placeholder.com/300x200"
+                      DEFAULT_IMAGES.COURSE
                     }
                     alt={course.title}
                     className="w-full h-48 object-cover rounded-md"
                     loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.src =
-                        "https://images.unsplash.com/photo-1594322436404-5a0526db4d13?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8ZXJyb3J8ZW58MHx8MHx8fDA%3D";
+                    onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                      e.currentTarget.src = DEFAULT_IMAGES.COURSE;
                     }}
                   />
                 </Link>
@@ -267,7 +278,8 @@ const CourseListPage: React.FC = () => {
                     <div className="text-sm text-gray-500">
                       Giảng viên: {course.instructor.name}
                     </div>
-                  )}                  {/* Action Button */}
+                  )}
+                  {/* Action Button */}
                   <div className="pt-2">
                     {isAuthenticated ? (
                       isEnrolled ? (
@@ -304,7 +316,8 @@ const CourseListPage: React.FC = () => {
         {filteredCourses.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg mb-2">
-              Không tìm thấy khóa học phù hợp            </p>
+              Không tìm thấy khóa học phù hợp
+            </p>
             <p className="text-gray-400 text-sm">
               Thử chọn danh mục khác hoặc quay lại sau
             </p>

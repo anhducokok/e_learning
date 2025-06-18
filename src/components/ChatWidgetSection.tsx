@@ -3,6 +3,7 @@ import { X, MessageCircle } from "lucide-react";
 import { useChat } from "../contexts/ChatContext";
 import type { ChatMessage } from "../contexts/ChatContext";
 import { useAuth } from "../contexts/AuthContext";
+import { getApiUrl, ENDPOINTS } from "../config/constants";
 
 const FIXED_RECEIVER_ID = "d5182703-dae7-4723-ac98-c1a7cd7e1083";
 
@@ -17,7 +18,9 @@ const ChatWidget: React.FC = () => {
   useEffect(() => {
     if (!isOpen || !isAuthenticated || !user?.id) return;
 
-    fetch(`http://localhost:3212/chat/history?userA=${user.id}&userB=${FIXED_RECEIVER_ID}`)
+    fetch(
+      `${getApiUrl()}${ENDPOINTS.CHAT_HISTORY}?userA=${user.id}&userB=${FIXED_RECEIVER_ID}`
+    )
       .then((res) => res.json())
       .then((data) => setHistory(Array.isArray(data?.data) ? data.data : []))
       .catch(() => setHistory([]));

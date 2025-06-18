@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-
-import { courseService } from "../../services";
-import type { Course } from "../../types/api";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { courseService } from "../../services/courseService";
 import { useAuth } from "../../contexts/AuthContext";
+import type { Course } from "../../types/api";
+import { getApiUrl, ENDPOINTS } from "../../config/constants";
+
 import QR from "../../images/abc.png";
 
 const CourseCheckoutPage: React.FC = () => {
@@ -39,9 +40,8 @@ const CourseCheckoutPage: React.FC = () => {
     setConfirming(true);
     setSuccessMsg(null);
     setErrorMsg(null);
-    try {
-      // Gửi thông tin checkout lên backend
-      await fetch("http://localhost:3212/api/checkout", {
+    try {      // Gửi thông tin checkout lên backend
+      await fetch(`${getApiUrl()}${ENDPOINTS.CHECKOUT}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
