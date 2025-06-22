@@ -64,7 +64,7 @@ const Header: React.FC = () => {
     !path.startsWith("/#") && location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-10 bg-red-800 shadow-sm">
+    <header className="header-isolation bg-red-800 shadow-sm">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center py-3">
           <Link to="/" className="flex items-center">
@@ -140,7 +140,7 @@ const Header: React.FC = () => {
                     </svg>
                   </button>
                   {isUserDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border py-1 z-50">
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border py-1 z-[9999]">
                       <div className="px-4 py-2 border-b">
                         <p className="text-sm font-medium text-gray-900">
                           {user?.name || "Người dùng"}
@@ -227,7 +227,7 @@ const Header: React.FC = () => {
       </div>
 
       {isMobile && isMenuOpen && (
-        <div className="fixed right-0 top-0 h-full w-4/5 max-w-[300px] bg-white shadow-lg z-50">
+        <div className="fixed right-0 top-0 h-full w-4/5 max-w-[300px] bg-white shadow-lg z-[9999]">
           <div className="p-4">
             <div className="flex justify-between items-center mb-5">
               <h6 className="font-semibold text-xl">NiHao Education</h6>

@@ -35,14 +35,14 @@ const Footer: React.FC = () => {
                     <span className="text-lg">📧</span>
                     <div>
                       <p className="font-semibold">Email</p>
-                      <p className="text-sm">contact@nihao.edu.vn</p>
+                      <p className="text-sm">nihaoeducation@gmail.com</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
                     <span className="text-lg">📱</span>
                     <div>
                       <p className="font-semibold">Điện thoại</p>
-                      <p className="text-sm">+84 888 999 222</p>
+                      <p className="text-sm">+84 865 869 625</p>
                     </div>
                   </div>
                 </div>
