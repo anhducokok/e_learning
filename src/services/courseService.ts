@@ -6,25 +6,30 @@ import type {
   UpdateCourseRequest,
 } from "../types/api";
 
-export const courseService = {  async getAllCourses(): Promise<Course[]> {
+export const courseService = {
+  async getAllCourses(): Promise<Course[]> {
     try {
-      const response = await apiClient.get<any>(API_ENDPOINTS.COURSES.BASE);
-
-      // After API client fix, response should be the direct data
-      const courses = response.data || response || [];
-
-      return courses;
+      const response = await apiClient.get<Course[]>(API_ENDPOINTS.COURSES.BASE);
+      return response || [];
     } catch (error: any) {
-      throw new Error(
-        error.response?.data?.message || "Failed to fetch courses"
-      );
+      // Log the full error object for debugging
+      console.error('Failed to fetch courses (full error):', error);
+      let errorMessage = 'Failed to fetch courses';
+      if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      throw new Error(errorMessage);
     }
-  },  async getCourseById(id: string): Promise<Course> {
+  },
+  async getCourseById(id: string): Promise<Course> {
     try {
       const response = await apiClient.get<any>(
         API_ENDPOINTS.COURSES.BY_ID(id)
       );
-
       // After API client fix, response should be the direct data
       const courseData = response.data || response;
       if (!courseData) {
@@ -37,37 +42,15 @@ export const courseService = {  async getAllCourses(): Promise<Course[]> {
         error.response?.data?.message || "Failed to fetch course"
       );
     }
-  },  async getMyCourses(): Promise<Course[]> {
+  },
+  async getMyCourses(): Promise<Course[]> {
     try {
-      const response = await apiClient.get<any>(API_ENDPOINTS.COURSES.ENROLLED);
-
-      // The backend response structure should be:
-      // { success: true, statusCode: 200, message: "...", data: [...courses], timestamp: "..." }
-
-      // First try to get courses from data.data array (most likely path)
-      if (response.data?.data && Array.isArray(response.data.data)) {
-        return response.data.data;
-      }
-
-      // Then try response.data.data.courses
-      if (
-        response.data?.data?.courses &&
-        Array.isArray(response.data.data.courses)
-      ) {
-        return response.data.data.courses;
-      }
-
-      // Finally try response.data (if it's already the courses array)
-      if (Array.isArray(response.data)) {
-        return response.data;
-      }
-
-      // Fallback to empty array if nothing found
-      return [];
+      const response = await apiClient.get<Course[]>(API_ENDPOINTS.COURSES.ENROLLED);
+      return response || [];
     } catch (error: any) {
-      throw new Error(
-        error.response?.data?.message || "Failed to fetch enrolled courses"
-      );
+      console.error('Failed to fetch enrolled courses:', error);
+      const errorMessage = error.response?.data?.message || error.message || "Failed to fetch enrolled courses";
+      throw new Error(errorMessage);
     }
   },
   async createCourse(courseData: CreateCourseRequest): Promise<Course> {
@@ -111,23 +94,24 @@ export const courseService = {  async getAllCourses(): Promise<Course[]> {
     }
   },
   async enrollInCourse(courseId: string): Promise<void> {
-    try {
-      // Log the full URL to debug the API call
-      const url = `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enroll`;
-
-      const response = await apiClient.post<any>(url);
+    try {      const url = `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enroll`;
+      // const response = await apiClient.post<any>(url); // response unused
+      await apiClient.post<any>(url);
     } catch (error: any) {
+      if (error.response) {
+      }
       throw new Error(
         error.response?.data?.message || "Failed to enroll in course"
       );
     }
   },
   async unenrollFromCourse(courseId: string): Promise<void> {
-    try {
-      const url = `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enroll`;
-
-      const response = await apiClient.delete(url);
+    try {      const url = `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enroll`;
+      // const response = await apiClient.delete(url); // response unused
+      await apiClient.delete(url);
     } catch (error: any) {
+      if (error.response) {
+      }
       throw new Error(
         error.response?.data?.message || "Failed to unenroll from course"
       );
@@ -138,10 +122,11 @@ export const courseService = {  async getAllCourses(): Promise<Course[]> {
   ): Promise<{ isEnrolled: boolean; enrollment?: any }> {
     try {
       const url = `${API_ENDPOINTS.COURSES.BY_ID(courseId)}/enrollment-status`;
-
       const response = await apiClient.get<any>(url);
       return response.data?.data || { isEnrolled: false };
     } catch (error: any) {
+      if (error.response) {
+      }
       throw new Error(
         error.response?.data?.message || "Failed to check enrollment status"
       );

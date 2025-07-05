@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from './AuthContext';
+import { getSocketUrl, SOCKET_CONFIG } from '../config/constants';
 
 export interface ChatMessage {
   id: string;
@@ -30,7 +31,9 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!currentUserId || socketRef.current) return;
 
-    const socket = io('http://localhost:3212', { withCredentials: true });
+    const socket = io(getSocketUrl(), {
+      withCredentials: SOCKET_CONFIG.WITH_CREDENTIALS,
+    });
     socketRef.current = socket;
 
     socket.on('message', (message: ChatMessage) => {

@@ -3,7 +3,7 @@ import { userService } from "../services/userService";
 import type { User } from "../types/api";
 import { MessageCircle } from "lucide-react";
 import { useChat } from "../contexts/ChatContext";
-import MyChat from "./MyChatWidgetSection";
+import MyChat from "../components/MyChatWidgetSection";
 import { useAuth } from "../contexts/AuthContext";
 
 const ChatPopup: React.FC = () => {
@@ -63,8 +63,6 @@ const ChatPopup: React.FC = () => {
         {usersWithMeta.map((user) => (
           <div
             key={user.id}
-            onClick={() => toggleChat(user.id)}
-            title={`Chat với ${user.name}`}
             className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition"
           >
             <div className="flex items-center gap-3 w-full overflow-hidden">

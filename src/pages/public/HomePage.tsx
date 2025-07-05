@@ -3,10 +3,10 @@ import React from "react";
 import HeroSection from "../../components/HeroSection";
 import CoursesSection from "../../components/CoursesSection";
 import BlogSection from "../../components/BlogSection";
-import TestimonialsSection from "../../components/TestimonialsSection";
+// import TestimonialsSection from "../../components/TestimonialsSection";
 import FeedbackSection from "../../components/FeedbackSection";
 import ContactSection from "../../components/ContactSection";
-import ChatPopup from "../../components/ChatPopup";
+// import ChatPopup from "../../components/ChatPopup";
 
 const HomePage: React.FC = () => {
   return (
@@ -14,10 +14,10 @@ const HomePage: React.FC = () => {
       <HeroSection />
       <FeedbackSection />
       <CoursesSection />
-      <TestimonialsSection />
+      {/* <TestimonialsSection /> */}
       <ContactSection />
       <BlogSection />
-      <ChatPopup />
+      {/* <ChatPopup /> */}
     </div>
   );
 };

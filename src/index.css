@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Header isolation to ensure it's always on top */
+.header-isolation {
+  isolation: isolate;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+}
 
 /* Add this to your index.css */
 .aspect-w-16 {
@@ -45,4 +52,43 @@
 
 .sortable-item:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Image optimization and crisp rendering */
+.hero-background {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Prevent image blurring on transforms */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Better background image rendering */
+.crisp-background {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Responsive background for mobile devices (fixed attachment can cause issues) */
+@media (max-width: 768px) {
+  .crisp-background {
+    background-attachment: scroll;
+  }
 }

@@ -61,23 +61,43 @@ class ApiClient {
       localStorage.removeItem('user_data');
     }
   }  public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.client.get(url, config);
-    return response.data;
+    try {
+      const response = await this.client.get(url, config);
+      return response.data?.data || response.data;
+    } catch (error: any) {
+      console.error('API Get Error:', error.response?.data || error.message);
+      throw error;
+    }
   }
 
   public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.client.post(url, data, config);
-    return response.data;
+    try {
+      const response = await this.client.post(url, data, config);
+      return response.data?.data || response.data;
+    } catch (error: any) {
+      console.error('API Post Error:', error.response?.data || error.message);
+      throw error;
+    }
   }
 
   public async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.client.put(url, data, config);
-    return response.data;
+    try {
+      const response = await this.client.put(url, data, config);
+      return response.data?.data || response.data;
+    } catch (error: any) {
+      console.error('API Put Error:', error.response?.data || error.message);
+      throw error;
+    }
   }
 
   public async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    const response = await this.client.patch(url, data, config);
-    return response.data;
+    try {
+      const response = await this.client.patch(url, data, config);
+      return response.data?.data || response.data;
+    } catch (error: any) {
+      console.error('API Patch Error:', error.response?.data || error.message);
+      throw error;
+    }
   }
   public async delete(url: string, config?: AxiosRequestConfig): Promise<void> {
     await this.client.delete(url, config);

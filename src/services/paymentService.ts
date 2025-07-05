@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "../config/api";
+import { API_ENDPOINTS } from "../config/api";
 
 export const paymentService = {
   /**
@@ -6,13 +6,14 @@ export const paymentService = {
    */
   async getPendingPayments(): Promise<any[]> {
     try {
-      const url = `${API_BASE_URL}/api/checkout/pending`;
+      const url = API_ENDPOINTS.PAYMENTS.PENDING;
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(
           `Failed to fetch pending payments: ${response.status} ${response.statusText}`
         );
-      }      const data = await response.json();
+      }
+      const data = await response.json();
       return data.data || [];
     } catch (error) {
       throw error;
@@ -24,13 +25,14 @@ export const paymentService = {
    */
   async getAllPayments(): Promise<any[]> {
     try {
-      const url = `${API_BASE_URL}/api/checkout/pending`;
+      const url = API_ENDPOINTS.PAYMENTS.PENDING;
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(
           `Failed to fetch all payments: ${response.status} ${response.statusText}`
         );
-      }      const data = await response.json();
+      }
+      const data = await response.json();
       return data.data || [];
     } catch (error) {
       throw error;
@@ -42,7 +44,7 @@ export const paymentService = {
    */
   async approvePayment(requestId: string, userId: string, courseId: string) {
     try {
-      const url = `${API_BASE_URL}/api/checkout/${requestId}/approve`;
+      const url = API_ENDPOINTS.PAYMENTS.APPROVE(requestId);
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -51,7 +53,8 @@ export const paymentService = {
       if (!response.ok) {
         throw new Error(
           `Failed to approve payment: ${response.status} ${response.statusText}`
-        );      }
+        );
+      }
       return await response.json();
     } catch (error) {
       throw error;
@@ -63,7 +66,7 @@ export const paymentService = {
    */
   async rejectPayment(requestId: string) {
     try {
-      const url = `${API_BASE_URL}/api/checkout/${requestId}/reject`;
+      const url = API_ENDPOINTS.PAYMENTS.REJECT(requestId);
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -71,7 +74,8 @@ export const paymentService = {
       if (!response.ok) {
         throw new Error(
           `Failed to reject payment: ${response.status} ${response.statusText}`
-        );      }
+        );
+      }
       return await response.json();
     } catch (error) {
       throw error;

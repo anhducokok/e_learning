@@ -1,56 +1,74 @@
-// export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3212').replace(/\/$/, '');
-const hostname = window.location.hostname;
-export const API_BASE_URL =
-  hostname === "localhost" || hostname === "127.0.0.1"
-    ? "http://localhost:3212/api"
-    : "http://192.168.0.101:3212/api";
+// API Configuration using environment variables
+const getApiBaseUrl = (): string => {
+  let baseUrl = '';
+  // In production build, always use VITE_API_BASE_URL_PRODUCTION if available
+  if (import.meta.env.PROD && import.meta.env.VITE_API_BASE_URL_PRODUCTION) {
+    baseUrl = import.meta.env.VITE_API_BASE_URL_PRODUCTION.replace(/\/$/, '');
+  } else if (import.meta.env.VITE_API_BASE_URL) {
+    // In development, use VITE_API_BASE_URL
+    baseUrl = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '');
+  } else {
+    // Fallback to dynamic hostname detection (last resort)
+    const hostname = window.location.hostname;
+    const productionUrl = "https://api.nihaoeducation.io.vn"; // Default production URL
+    const developmentUrl = "http://localhost:3212";
+    baseUrl = hostname === "localhost" || hostname === "127.0.0.1"
+      ? developmentUrl
+      : productionUrl;
+  }
+  // Log the base URL for debugging
+  // eslint-disable-next-line no-console
+  return baseUrl;
+};
+
+export const API_BASE_URL = getApiBaseUrl();
 export const API_ENDPOINTS = {
   // Auth endpoints
   AUTH: {
-    REGISTER: "/auth/register",
-    LOGIN: "/auth/login",
+    REGISTER: "/api/auth/register",
+    LOGIN: "/api/auth/login",
   },
 
   // Classes endpoints
   CLASSES: {
-    BASE: "/classes",
-    BY_ID: (id: string) => `/classes/${id}`,
+    BASE: "/api/classes",
+    BY_ID: (id: string) => `/api/classes/${id}`,
     COURSES: (id: string) => `/classes/${id}/courses`,
   },
 
   USERS: {
-    BASE: "/users",
-    BY_ID: (id: string) => `/users/${id}`,
+    BASE: "/api/users",
+    BY_ID: (id: string) => `/api/users/${id}`,
   },
 
   // Courses endpoints
   COURSES: {
-    BASE: "/courses",
-    BY_ID: (id: string) => `/courses/${id}`,
-    MY_COURSES: "/courses/my-courses",
-    ENROLLED: "/courses/enrolled",
+    BASE: "/api/courses",
+    BY_ID: (id: string) => `/api/courses/${id}`,
+    MY_COURSES: "/api/courses/my-courses",
+    ENROLLED: "/api/courses/enrolled",
   },
   // Lessons endpoints
   LESSONS: {
-    BASE: "/lessons",
-    BY_COURSE: (courseId: string) => `/lessons/course/${courseId}`,
-    BY_ID: (id: string) => `/lessons/${id}`,
-    REORDER: (courseId: string) => `/lessons/course/${courseId}/reorder`,
+    BASE: "/api/lessons",
+    BY_COURSE: (courseId: string) => `/api/lessons/course/${courseId}`,
+    BY_ID: (id: string) => `/api/lessons/${id}`,
+    REORDER: (courseId: string) => `/api/lessons/course/${courseId}/reorder`,
   },
   // Quizzes endpoints
   QUIZZES: {
     BASE: "/quizzes",
-    BY_COURSE: (courseId: string) => `/quizzes/course/${courseId}`,
-    BY_LESSON: (lessonId: string) => `/quizzes/lesson/${lessonId}`,
-    BY_ID: (id: string) => `/quizzes/${id}`,
-    SUBMIT: (id: string) => `/quizzes/${id}/submit`,
-    SUBMIT_FINAL: (id: string) => `/quizzes/${id}/submit-final`,
-    START: (id: string) => `/quizzes/${id}/start`,
-    SAVE_DRAFT: (id: string) => `/quizzes/${id}/save-draft`,
-    GET_DRAFT: (id: string) => `/quizzes/${id}/draft`,
-    SUBMISSION: (id: string) => `/quizzes/${id}/submission`,
-    STATISTICS: (id: string) => `/quizzes/${id}/statistics`,
-    MY_SUBMISSIONS: "/quizzes/my-submissions",
+    BY_COURSE: (courseId: string) => `/api/quizzes/course/${courseId}`,
+    BY_LESSON: (lessonId: string) => `/api/quizzes/lesson/${lessonId}`,
+    BY_ID: (id: string) => `/api/quizzes/${id}`,
+    SUBMIT: (id: string) => `/api/quizzes/${id}/submit`,
+    SUBMIT_FINAL: (id: string) => `/api/quizzes/${id}/submit-final`,
+    START: (id: string) => `/api/quizzes/${id}/start`,
+    SAVE_DRAFT: (id: string) => `/api/quizzes/${id}/save-draft`,
+    GET_DRAFT: (id: string) => `/api/quizzes/${id}/draft`,
+    SUBMISSION: (id: string) => `/api/quizzes/${id}/submission`,
+    STATISTICS: (id: string) => `/api/quizzes/${id}/statistics`,
+    MY_SUBMISSIONS: "/api/quizzes/my-submissions",
   },
 
   // Practices endpoints
@@ -71,5 +89,14 @@ export const API_ENDPOINTS = {
     TODAY: "/schedule/today",
     UPCOMING: "/schedule/upcoming",
     ACTIVE: "/schedule/active",
+  },
+
+  // Payment endpoints
+  PAYMENTS: {
+    PENDING: "/api/checkout/pending",
+    // If you have an endpoint for all payments, update the path accordingly
+    ALL: "/api/checkout/all",
+    APPROVE: (requestId: string) => `/api/checkout/${requestId}/approve`,
+    REJECT: (requestId: string) => `/api/checkout/${requestId}/reject`,
   },
 };

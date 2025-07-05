@@ -131,18 +131,16 @@ const AdminPaymentApprovalPage: React.FC = () => {
     ],
   };
 
-
-  // Thông báo cho admin
-  const adminNotifications = [
-    {
-      id: "1",
-      title: "Yêu cầu mới",
-      message: `${stats[0].count} yêu cầu thanh toán đang chờ duyệt`,
-      time: "Vừa xong",
-      type: "info",
-      read: false,
-    },
-  ];
+  // Thông báo cho admin  // const adminNotifications = [ // Unused variable
+  //   {
+  //     id: "1",
+  //     title: "Yêu cầu mới",
+  //     message: `${stats[0].count} yêu cầu thanh toán đang chờ duyệt`,
+  //     time: "Vừa xong",
+  //     type: "info",
+  //     read: false,
+  //   },
+  // ];
 
   if (loading) {
     return (

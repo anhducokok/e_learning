@@ -42,7 +42,7 @@ export default function CourseDetailPage() {
 
   useEffect(() => {
     const fetchCourse = async () => {
-      try {        const res = await fetch(`${API_BASE_URL}/courses/${id}`);
+      try {        const res = await fetch(`${API_BASE_URL}/api/courses/${id}`);
         const data = await res.json();
         setCourse(data.data);
       } catch (err) {
@@ -60,7 +60,7 @@ export default function CourseDetailPage() {
       try {
         const token = localStorage.getItem("auth_token");
         const res = await fetch(
-          `${API_BASE_URL}/courses/${course.id}/enrollment-status`,
+          `${API_BASE_URL}/api/courses/${course.id}/enrollment-status`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -86,7 +86,7 @@ export default function CourseDetailPage() {
       const token = localStorage.getItem("auth_token");
       const method = isEnrolled ? "DELETE" : "POST";
 
-      const res = await fetch(`${API_BASE_URL}/courses/${course.id}/enroll`, {
+      const res = await fetch(`${API_BASE_URL}/api/courses/${course.id}/enroll`, {
         method,
         headers: {
           Authorization: `Bearer ${token}`,
@@ -154,7 +154,7 @@ export default function CourseDetailPage() {
           alt={course.title}
           className="w-full h-48 object-cover rounded-md"
           onError={(e) => {
-            e.currentTarget.src = "/images/default-course.jpg";
+            e.currentTarget.src = "/images/china_girl.jpg";
           }}
         />
 

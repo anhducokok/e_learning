@@ -1,54 +1,75 @@
-# React + TypeScript + Vite
+# 📘 E_LEARNING
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+_Empowering Learners, Transforming Education Everywhere_
 
-Currently, two official plugins are available:
+![last commit](https://img.shields.io/badge/last%20commit-today-brightgreen)
+![TypeScript](https://img.shields.io/badge/typescript-99.3%25-blue)
+![Languages](https://img.shields.io/badge/languages-4-blue)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🔧 Built with the tools and technologies:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+![JavaScript](https://img.shields.io/badge/JavaScript-yellow?logo=javascript&style=flat)
+![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=white&style=flat)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&style=flat)
+![ts-node](https://img.shields.io/badge/ts--node-blueviolet?logo=ts-node&style=flat)
+![Vite](https://img.shields.io/badge/Vite-purple?logo=vite&style=flat)
+![ESLint](https://img.shields.io/badge/ESLint-purple?logo=eslint&style=flat)
+![Axios](https://img.shields.io/badge/Axios-pink?logo=axios&style=flat)
+![Socket.io](https://img.shields.io/badge/Socket-purple?logo=socket.io&style=flat)
+![Chart.js](https://img.shields.io/badge/Chart.js-red?logo=chartdotjs&style=flat)
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 📚 Table of Contents
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+- [Overview](#overview)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Testing](#testing)
+
+---
+
+## 📝 Overview
+
+**e_learning** is a robust developer toolkit designed to accelerate the development of dynamic, role-based educational platforms. Built with **React**, **TypeScript**, and **Vite**, it offers a modular architecture that simplifies complex workflows, from course management to real-time communication.
+
+### Why _e_learning_?
+
+This project enables developers to build scalable, interactive e-learning applications with ease. The core features include:
+
+- 🌿 **Modular Architecture**: Centralized configs, environment management, and reusable components streamline development.
+- 🌐 **Real-Time Communication**: Integrated WebSocket and chat systems facilitate seamless live interactions.
+- 🔐 **Role-Based Access Control**: Secure routing and user management tailored for students, teachers, and admins.
+- 🎯 **Educational Focus**: Specialized components and services for courses, quizzes, practices, and analytics.
+- ⚡ **Fast Development**: Powered by Vite and TypeScript for rapid, reliable builds.
+
+---
+
+## 🚀 Getting Started
+
+### 📋 Prerequisites
+
+This project requires the following dependencies:
+
+- **Programming Language**: TypeScript  
+- **Package Manager**: npm
+
+### 💾 Installation
+
+Build **e_learning** from the source and install dependencies:
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/anhducokok/e_learning
+
+2.** Install and run The project**
+   
+   ```bash
+  npm install
+  npm run dev

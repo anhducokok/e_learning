@@ -1,6 +1,6 @@
 import React from "react";
-import { Bar, Doughnut } from "react-chartjs-2";
-import { Link } from "react-router-dom";
+// import { Bar, Doughnut } from "react-chartjs-2"; // Unused imports
+// import { Link } from "react-router-dom"; // Unused import
 import logoImage from "../../images/d1fe66745c26de30ce87421d08acff5f22ef002b.jpg";
 import DashboardHeader from "../../components/DashboardHeader";
 import TeacherLayout from "../../components/teacher/TeacherLayout";

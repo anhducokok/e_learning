@@ -121,7 +121,6 @@ const BlogPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
 
-      
       {/* Hero Section */}
       <div className="relative bg-cover bg-center py-20 text-white" style={{ backgroundImage: 'linear-gradient(rgba(29, 53, 87, 0.85), rgba(29, 53, 87, 0.85)), url("/images/blog-hero-bg.jpg")' }}>
         <div className="max-w-5xl mx-auto text-center px-4">
