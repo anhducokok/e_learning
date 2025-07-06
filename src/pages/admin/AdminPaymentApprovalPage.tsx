@@ -31,6 +31,7 @@ interface PaymentRequest {
 
 const AdminPaymentApprovalPage: React.FC = () => {
   const [paymentRequests, setPaymentRequests] = useState<PaymentRequest[]>([]);
+  const [allPayments, setAllPayments] = useState<PaymentRequest[]>([]);
   const [coursesMap, setCoursesMap] = useState<Record<string, string>>({});
   const [usersMap, setUsersMap] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
@@ -39,11 +40,15 @@ const AdminPaymentApprovalPage: React.FC = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [requests, courses, users] = await Promise.all([
+      const [allPaymentsData, pendingRequests, courses, users] = await Promise.all([
+        paymentService.getAllPayments(),
         paymentService.getPendingPayments(),
         courseService.getAllCourses(),
         userService.getAllUsers(),
       ]);
+
+      setAllPayments(allPaymentsData);
+      setPaymentRequests(pendingRequests);
 
       setCoursesMap(
         courses.reduce((acc, c) => {
@@ -58,8 +63,6 @@ const AdminPaymentApprovalPage: React.FC = () => {
           return acc;
         }, {} as Record<string, string>)
       );
-
-      setPaymentRequests(requests);
     } catch (err: any) {
       setError(err.message || "Lỗi tải dữ liệu");
     } finally {
@@ -78,7 +81,7 @@ const AdminPaymentApprovalPage: React.FC = () => {
     if (!confirmed) return;
 
     try {
-      // await courseService.enrollInCourse(request.courseId);
+      await courseService.enrollInCourse(request.courseId);
       await paymentService.approvePayment(request.id, request.userId, request.courseId);
       fetchData();
     } catch (err: any) {
@@ -114,7 +117,7 @@ const AdminPaymentApprovalPage: React.FC = () => {
     },
   ];
 
-  const courseCounts = paymentRequests.reduce((acc, r) => {
+  const courseCounts = allPayments.reduce((acc, r) => {
     const name = coursesMap[r.courseId] || "Không rõ";
     acc[name] = (acc[name] || 0) + 1;
     return acc;

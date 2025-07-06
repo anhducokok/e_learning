@@ -29,6 +29,8 @@ import AdminPaymentPage from "./pages/admin/AdminPaymentApprovalPage";
 import UserListPage from "./pages/admin/UserListPage";
 import ChatBox from "./components/ChatBox";
 import ChatBoxWrapper from "./wrapper/ChatBoxWrapper";
+import EnrolledStudentsPage from "./pages/teacher/EnrolledStudentsPage";
+import TeacherEnrolledStudentsPage from "./pages/teacher/TeacherEnrolledStudentsPage";
 
 function App() {
   return (
@@ -111,6 +113,10 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/teacher/enrolled-students" element = {<ProtectedRoute allowedRoles={["teacher"]}>
+                  <EnrolledStudentsPage />
+                </ProtectedRoute>}
+                />
             {/* <Route
             <Route
               path="/teacher/practices"

@@ -1,6 +1,7 @@
 import { apiClient } from "./apiClient";
 import { API_ENDPOINTS } from "../config/api";
 import type { User } from "../types/api";
+import type { EnrolledStudent } from "../types/enrolledStudent";
 
 export const userService = {
   async getAllUsers(): Promise<User[]> {
@@ -28,4 +29,31 @@ export const userService = {
       throw new Error(error.response?.data?.message || "Failed to fetch user");
     }
   },
+  async getEnrolledStudentsInMyCourses(): Promise<EnrolledStudent[]> {
+    try {
+      const response = await apiClient.get<EnrolledStudent[]>(
+        API_ENDPOINTS.USERS.ENROLLED_IN_MY_COURSES
+      );
+      return response || [];
+    } catch (error: any) {
+      console.error('Failed to fetch enrolled students:', error);
+      const errorMessage = error.response?.data?.message || error.message || "Failed to fetch enrolled students";
+      throw new Error(errorMessage);
+    }
+  },
+  async getStudentsByCourse(courseId: string): Promise<any[]> {
+    try {
+      const response = await apiClient.get<any>(`/api/users/courses/${courseId}/students`);
+      // console.log('response', response);
+      // Nếu response là { data: [...] }
+      if (response && Array.isArray(response.data?.data)) return response.data.data;
+      // Nếu response là mảng trực tiếp
+      if (Array.isArray(response.data)) return response.data;
+      if (Array.isArray(response)) return response;
+      return [];
+    } catch (error: any) {
+      console.error('Failed to fetch students by course:', error);
+      throw new Error(error.response?.data?.message || "Failed to fetch students by course");
+    }
+  }
 };

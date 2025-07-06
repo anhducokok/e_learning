@@ -25,7 +25,7 @@ export const paymentService = {
    */
   async getAllPayments(): Promise<any[]> {
     try {
-      const url = API_ENDPOINTS.PAYMENTS.PENDING;
+      const url = API_ENDPOINTS.PAYMENTS.ALL;
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(

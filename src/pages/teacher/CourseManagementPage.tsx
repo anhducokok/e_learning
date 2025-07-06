@@ -8,7 +8,7 @@ import {
   QuestionMarkCircleIcon,
   EyeIcon,
 } from "@heroicons/react/24/outline";
-import { courseService, lessonService, quizService } from "../../services";
+import { courseService, lessonService, quizService, userService } from "../../services";
 import type { Course } from "../../types/api";
 import DashboardHeader from "../../components/DashboardHeader";
 import logoImage from "../../images/d1fe66745c26de30ce87421d08acff5f22ef002b.jpg";
@@ -29,6 +29,12 @@ const CourseManagementPage: React.FC = () => {
   const [editingCourse, setEditingCourse] = useState<CourseWithDetails | null>(
     null
   );
+  const [expandedCourseId, setExpandedCourseId] = useState<string | null>(null);
+  const [studentsByCourse, setStudentsByCourse] = useState<{ [courseId: string]: any[] }>({});
+  const [loadingStudents, setLoadingStudents] = useState<{ [courseId: string]: boolean }>({});
+  const [errorStudents, setErrorStudents] = useState<{ [courseId: string]: string | null }>({});
+  const [showStudentModal, setShowStudentModal] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 
   const filteredCourses = courses.filter((course) =>
     course.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -156,6 +162,51 @@ const CourseManagementPage: React.FC = () => {
       price: course.price || 0,
     });
     setShowCreateForm(true);
+  };
+
+  const toggleStudentList = async (courseId: string) => {
+    if (expandedCourseId === courseId) {
+      setExpandedCourseId(null);
+      return;
+    }
+
+    setExpandedCourseId(courseId);
+    setLoadingStudents((prev) => ({ ...prev, [courseId]: true }));
+    setErrorStudents((prev) => ({ ...prev, [courseId]: null }));
+
+    try {
+      const students = await userService.getStudentsByCourse(courseId);
+      setStudentsByCourse((prev) => ({ ...prev, [courseId]: students }));
+    } catch (error) {
+      setErrorStudents((prev) => ({
+        ...prev,
+        [courseId]: (error && typeof error === "object" && "message" in error)
+          ? (error as { message?: string }).message || "Không thể tải danh sách học viên"
+          : "Không thể tải danh sách học viên",
+      }));
+    } finally {
+      setLoadingStudents((prev) => ({ ...prev, [courseId]: false }));
+    }
+  };
+
+  const handleToggleStudents = async (courseId: string) => {
+    if (expandedCourseId === courseId) {
+      setExpandedCourseId(null);
+      return;
+    }
+    setExpandedCourseId(courseId);
+    if (!studentsByCourse[courseId]) {
+      setLoadingStudents((prev) => ({ ...prev, [courseId]: true }));
+      setErrorStudents((prev) => ({ ...prev, [courseId]: null }));
+      try {
+        const students = await userService.getStudentsByCourse(courseId);
+        setStudentsByCourse((prev) => ({ ...prev, [courseId]: students }));
+      } catch (err: any) {
+        setErrorStudents((prev) => ({ ...prev, [courseId]: err.message || "Không thể tải danh sách học viên" }));
+      } finally {
+        setLoadingStudents((prev) => ({ ...prev, [courseId]: false }));
+      }
+    }
   };
 
   const teacherNotifications = [
@@ -432,6 +483,70 @@ const CourseManagementPage: React.FC = () => {
                       </Link>
                     </div>
                   </div>
+
+                  {/* Nút hiển thị danh sách học viên */}
+                  <button
+                    onClick={async () => {
+                      setSelectedCourseId(course.id);
+                      setShowStudentModal(true);
+                      if (!studentsByCourse[course.id]) {
+                        setLoadingStudents((prev) => ({ ...prev, [course.id]: true }));
+                        setErrorStudents((prev) => ({ ...prev, [course.id]: null }));
+                        try {
+                          const students = await userService.getStudentsByCourse(course.id);
+                          setStudentsByCourse((prev) => ({ ...prev, [course.id]: students }));
+                        } catch (err: any) {
+                          setErrorStudents((prev) => ({ ...prev, [course.id]: err.message || "Không thể tải danh sách học viên" }));
+                        } finally {
+                          setLoadingStudents((prev) => ({ ...prev, [course.id]: false }));
+                        }
+                      }
+                    }}
+                    className="w-full mt-2 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                  >
+                    Xem sinh viên
+                  </button>
+
+                  {/* Modal hiển thị danh sách sinh viên */}
+                  {showStudentModal && selectedCourseId === course.id && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                      <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full p-6 relative">
+                        <button
+                          onClick={() => setShowStudentModal(false)}
+                          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-xl font-bold"
+                        >
+                          ×
+                        </button>
+                        <h3 className="text-lg font-semibold mb-4">Danh sách sinh viên đăng ký</h3>
+                        {loadingStudents[course.id] && <div>Đang tải danh sách sinh viên...</div>}
+                        {errorStudents[course.id] && <div className="text-red-500">{errorStudents[course.id]}</div>}
+                        {studentsByCourse[course.id] && studentsByCourse[course.id].length > 0 ? (
+                          <table className="w-full mt-2 border">
+                            <thead>
+                              <tr className="bg-gray-100">
+                                <th className="px-2 py-1 border">Họ tên</th>
+                                <th className="px-2 py-1 border">Email</th>
+                                <th className="px-2 py-1 border">Tiến độ</th>
+                                <th className="px-2 py-1 border">Ngày ghi danh</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {studentsByCourse[course.id].map((item: any) => (
+                                <tr key={item.student.id}>
+                                  <td className="px-2 py-1 border">{item.student.name}</td>
+                                  <td className="px-2 py-1 border">{item.student.email}</td>
+                                  <td className="px-2 py-1 border">{item.enrollmentDetails.progress}%</td>
+                                  <td className="px-2 py-1 border">{new Date(item.enrollmentDetails.enrolledAt).toLocaleString()}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        ) : (
+                          !loadingStudents[course.id] && <div>Chưa có sinh viên nào đăng ký khóa học này.</div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

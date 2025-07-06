@@ -39,6 +39,7 @@ export const API_ENDPOINTS = {
   USERS: {
     BASE: "/api/users",
     BY_ID: (id: string) => `/api/users/${id}`,
+    ENROLLED_IN_MY_COURSES: "/api/users/enrolled-in-my-courses",
   },
 
   // Courses endpoints
@@ -95,7 +96,7 @@ export const API_ENDPOINTS = {
   PAYMENTS: {
     PENDING: "/api/checkout/pending",
     // If you have an endpoint for all payments, update the path accordingly
-    ALL: "/api/checkout/all",
+    ALL: "/api/checkout/",
     APPROVE: (requestId: string) => `/api/checkout/${requestId}/approve`,
     REJECT: (requestId: string) => `/api/checkout/${requestId}/reject`,
   },
