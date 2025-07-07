@@ -26,11 +26,11 @@ import TeacherChat from "./pages/teacher/TeacherChatPage";
 import CourseDetailManagePage from "./pages/teacher/CourseDetailManagePage";
 import CheckoutPage from "./pages/student/CheckoutPage";
 import AdminPaymentPage from "./pages/admin/AdminPaymentApprovalPage";
-import UserListPage from "./pages/admin/UserListPage";
-import ChatBox from "./components/ChatBox";
+// import UserListPage from "./pages/admin/UserListPage";
+// import ChatBox from "./components/ChatBox";
 import ChatBoxWrapper from "./wrapper/ChatBoxWrapper";
 import EnrolledStudentsPage from "./pages/teacher/EnrolledStudentsPage";
-import TeacherEnrolledStudentsPage from "./pages/teacher/TeacherEnrolledStudentsPage";
+// import TeacherEnrolledStudentsPage from "./pages/teacher/TeacherEnrolledStudentsPage";
 import AdminUserManagementPage from "./pages/admin/AdminUserManagementPage";
 
 function App() {

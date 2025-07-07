@@ -29,7 +29,7 @@ export const userService = {
       throw new Error(error.response?.data?.message || "Failed to fetch user");
     }
   },
-  async getEnrolledStudentsInMyCourses(): Promise<EnrolledStudent[]> {
+    async getEnrolledStudentsInMyCourses(): Promise<EnrolledStudent[]> {
     try {
       const response = await apiClient.get<EnrolledStudent[]>(
         API_ENDPOINTS.USERS.ENROLLED_IN_MY_COURSES
@@ -57,14 +57,64 @@ export const userService = {
     }
   },
   async changeUserRole(userId: string, newRole: string) {
-    const response =  apiClient.patch(`/api/users/admin/${userId}/role`, { role: newRole });
-     console.log('response', response);
-     return response || [];
+    try {
+      const response = await apiClient.patch(API_ENDPOINTS.USERS.CHANGE_ROLE(userId), { role: newRole });
+      console.log('Role change response:', response);
+      return response || [];
+    } catch (error: any) {
+      console.error('Failed to change user role:', error);
+      throw new Error(error.response?.data?.message || "Failed to change user role");
+    }
   },
   async updateUserInfo(userId: string, data: any) {
-    return apiClient.patch(`/api/users/admin/${userId}`, data);
+    try {
+      const response = await apiClient.patch(API_ENDPOINTS.USERS.UPDATE_INFO(userId), data);
+      console.log('Update user info response:', response);
+      return response;
+    } catch (error: any) {
+      console.error('Failed to update user info:', error);
+      throw new Error(error.response?.data?.message || "Failed to update user info");
+    }
   },
   async addTeacher(data: { name: string; email: string; password: string }) {
-    return apiClient.post(`/api/users/admin/add-teacher`, data);
-  }
+    try {
+      const response = await apiClient.post(API_ENDPOINTS.USERS.ADD_TEACHER, data);
+      console.log('Add teacher response:', response);
+      return response;
+    } catch (error: any) {
+      console.error('Failed to add teacher:', error);
+      throw new Error(error.response?.data?.message || "Failed to add teacher");
+    }
+  },
+
+  // Admin endpoints
+  async getAllUsersForAdmin(): Promise<User[]> {
+    try {
+      const response = await apiClient.get<any>(API_ENDPOINTS.USERS.ADMIN_ALL);
+      return response.data?.data || response.data || response || [];
+    } catch (error: any) {
+      console.error('Failed to fetch all users for admin:', error);
+      throw new Error(error.response?.data?.message || "Failed to fetch all users");
+    }
+  },
+
+  async getTeachersForAdmin(): Promise<User[]> {
+    try {
+      const response = await apiClient.get<any>(API_ENDPOINTS.USERS.ADMIN_TEACHERS);
+      return response.data?.data || response.data || response || [];
+    } catch (error: any) {
+      console.error('Failed to fetch teachers for admin:', error);
+      throw new Error(error.response?.data?.message || "Failed to fetch teachers");
+    }
+  },
+
+  async getStudentsForAdmin(): Promise<User[]> {
+    try {
+      const response = await apiClient.get<any>(API_ENDPOINTS.USERS.ADMIN_STUDENTS);
+      return response.data?.data || response.data || response || [];
+    } catch (error: any) {
+      console.error('Failed to fetch students for admin:', error);
+      throw new Error(error.response?.data?.message || "Failed to fetch students");
+    }
+  },
 };

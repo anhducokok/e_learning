@@ -7,4 +7,3 @@ export { quizService } from './quizService';
 export { practiceService } from './practiceService';
 export { scheduleService } from './scheduleService';
 export { apiClient } from './apiClient';
-export { userService} from './userService'

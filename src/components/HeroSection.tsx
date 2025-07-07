@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getHeroBackground, preloadHeroImages, HERO_BACKGROUNDS } from '../config/images';
+import {  preloadHeroImages, HERO_BACKGROUNDS } from '../config/images';
 import OptimizedBackground from './OptimizedBackground';
 import HeroBG from '../images/HeroBackGround.jpg'
 const HeroSection: React.FC = () => {
-  const heroBackgroundUrl = getHeroBackground();
+  // const heroBackgroundUrl = getHeroBackground();
 
   // Preload hero images for better performance
   useEffect(() => {

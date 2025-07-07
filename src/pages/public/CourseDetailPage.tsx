@@ -37,12 +37,12 @@ export default function CourseDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [course, setCourse] = useState<Course | null>(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
-  const [isEnrolling, setIsEnrolling] = useState(false);
+  // const [setIsEnrolling] = useState(false);
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchCourse = async () => {
-      try {        const res = await fetch(`${API_BASE_URL}/api/courses/${id}`);
+      try {        const res = await fetch(`${API_BASE_URL}/courses/${id}`);
         const data = await res.json();
         setCourse(data.data);
       } catch (err) {
@@ -60,7 +60,7 @@ export default function CourseDetailPage() {
       try {
         const token = localStorage.getItem("auth_token");
         const res = await fetch(
-          `${API_BASE_URL}/api/courses/${course.id}/enrollment-status`,
+          `${API_BASE_URL}/courses/${course.id}/enrollment-status`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -78,28 +78,28 @@ export default function CourseDetailPage() {
     checkEnrollment();
   }, [course, isAuthenticated]);
 
-  const handleEnrollmentToggle = async () => {
-    if (!isAuthenticated || !course) return;
-    setIsEnrolling(true);
+  // const handleEnrollmentToggle = async () => {
+  //   if (!isAuthenticated || !course) return;
+  //   // setIsEnrolling(true);
 
-    try {
-      const token = localStorage.getItem("auth_token");
-      const method = isEnrolled ? "DELETE" : "POST";
+  //   try {
+  //     const token = localStorage.getItem("auth_token");
+  //     const method = isEnrolled ? "DELETE" : "POST";
 
-      const res = await fetch(`${API_BASE_URL}/api/courses/${course.id}/enroll`, {
-        method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  //     const res = await fetch(`${API_BASE_URL}/courses/${course.id}/enroll`, {
+  //       method,
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
 
-      if (!res.ok) throw new Error("Failed to update enrollment");      setIsEnrolled(!isEnrolled);
-    } catch (err: any) {
-      alert(err.message || "Lỗi ghi danh");
-    } finally {
-      setIsEnrolling(false);
-    }
-  };
+  //     if (!res.ok) throw new Error("Failed to update enrollment");      setIsEnrolled(!isEnrolled);
+  //   } catch (err: any) {
+  //     alert(err.message || "Lỗi ghi danh");
+  //   } finally {
+  //     // setIsEnrolling(false);
+  //   }
+  // };
 
   if (!course)
     return <div className="p-6 text-center">Đang tải khóa học...</div>;
@@ -154,7 +154,7 @@ export default function CourseDetailPage() {
           alt={course.title}
           className="w-full h-48 object-cover rounded-md"
           onError={(e) => {
-            e.currentTarget.src = "/images/china_girl.jpg";
+            e.currentTarget.src = "/images/default-course.jpg";
           }}
         />
 

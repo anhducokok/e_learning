@@ -23,7 +23,7 @@ import {
 import { processLessons, processQuizzes, checkLessonVideos } from '../../utils/apiHelpers';
 import EnhancedQuizInterface from '../../components/quiz/EnhancedQuizInterface';
 import QuizSubmissionHistory from '../../components/quiz/QuizSubmissionHistory';
-import { useAuth } from '../../contexts/AuthContext';
+// import { useAuth } from '../../contexts/AuthContext';
 
 interface LessonProgress {
   lessonId: string;
@@ -52,7 +52,7 @@ const LearningSessionPage: React.FC = () => {
   const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
   const [isQuizMode, setIsQuizMode] = useState(false);
   const [isQuizRetake, setIsQuizRetake] = useState(false);
-  const [isEnrolled, setIsEnrolled] = useState<boolean | null>(null);
+  // const [isEnrolled, setIsEnrolled] = useState<boolean | null>(null);
   
   // Mock progress data - in real app, this would come from API
   const [lessonProgress, setLessonProgress] = useState<LessonProgress[]>([]);

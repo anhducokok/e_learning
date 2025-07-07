@@ -3,6 +3,7 @@ import { userService } from "../../services/userService";
 import logoImage from "../../images/d1fe66745c26de30ce87421d08acff5f22ef002b.jpg"; // Adjust path if needed
 import DashboardHeader from "../../components/DashboardHeader";
 import AdminLayout from "../../components/admin/AdminLayout";
+import AdminAPITester from "../../components/admin/AdminAPITester";
 const AdminUserManagementPage: React.FC = () => {
   const [students, setStudents] = useState<any[]>([]);
   const [teachers, setTeachers] = useState<any[]>([]);
@@ -19,12 +20,19 @@ const AdminUserManagementPage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const allUsers = await userService.getAllUsers();
-      // Debug: kiểm tra dữ liệu trả về
-      // console.log(allUsers);
-      setStudents(allUsers.filter((u: any) => u.role === "STUDENT"));
-      setTeachers(allUsers.filter((u: any) => u.role === "TEACHER"));
+      // Sử dụng các endpoint riêng biệt cho admin
+      const [studentsData, teachersData] = await Promise.all([
+        userService.getStudentsForAdmin(),
+        userService.getTeachersForAdmin()
+      ]);
+      
+      console.log('Students data:', studentsData);
+      console.log('Teachers data:', teachersData);
+      
+      setStudents(studentsData);
+      setTeachers(teachersData);
     } catch (err: any) {
+      console.error('Error fetching users:', err);
       setError(err.message || "Failed to load users");
     } finally {
       setLoading(false);
@@ -83,8 +91,15 @@ const AdminUserManagementPage: React.FC = () => {
 
       {/* Students Section */}
       <div className="mb-10">
-        <h2 className="text-xl font-semibold mb-2">Sinh viên</h2>
-        {/* <button onClick={fetchUsers} className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"> Reload</button> */}
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Sinh viên</h2>
+          <button 
+            onClick={fetchUsers} 
+            className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+          >
+            Reload
+          </button>
+        </div>
         <table className="w-full border mb-4">
           <thead>
             <tr className="bg-gray-100">
@@ -129,7 +144,15 @@ const AdminUserManagementPage: React.FC = () => {
 
       {/* Teachers Section */}
       <div>
-        <h2 className="text-xl font-semibold mb-2">Giáo viên</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Giáo viên</h2>
+          <button 
+            onClick={fetchUsers} 
+            className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+          >
+            Reload
+          </button>
+        </div>
         <table className="w-full border mb-4">
           <thead>
             <tr className="bg-gray-100">
@@ -180,6 +203,8 @@ const AdminUserManagementPage: React.FC = () => {
 
 </main>
 </div>
+{/* Development API Tester */}
+<AdminAPITester />
 </AdminLayout>
   );
 };

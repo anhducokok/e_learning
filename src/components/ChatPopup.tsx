@@ -14,7 +14,7 @@ const ChatPopup: React.FC = () => {
   useEffect(() => {
     userService      .getAllUsers()
       .then(setUsers)
-      .catch((error) => {
+      .catch(() => {
         // Error loading users - handle silently
       });
   }, []);

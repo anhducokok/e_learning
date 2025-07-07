@@ -40,6 +40,13 @@ export const API_ENDPOINTS = {
     BASE: "/api/users",
     BY_ID: (id: string) => `/api/users/${id}`,
     ENROLLED_IN_MY_COURSES: "/api/users/enrolled-in-my-courses",
+    // Admin endpoints for user management
+    ADMIN_ALL: "/api/users/admin/all",
+    ADMIN_TEACHERS: "/api/users/admin/teachers",
+    ADMIN_STUDENTS: "/api/users/admin/students",
+    CHANGE_ROLE: (id: string) => `/api/users/${id}/role`,
+    UPDATE_INFO: (id: string) => `/api/users/${id}`,
+    ADD_TEACHER: "/api/users/admin/add-teacher",
   },
 
   // Courses endpoints
