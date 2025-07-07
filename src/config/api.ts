@@ -96,7 +96,7 @@ export const API_ENDPOINTS = {
   PAYMENTS: {
     PENDING: "/api/checkout/pending",
     // If you have an endpoint for all payments, update the path accordingly
-    ALL: "/api/checkout/",
+    ALL: "/api/checkout",
     APPROVE: (requestId: string) => `/api/checkout/${requestId}/approve`,
     REJECT: (requestId: string) => `/api/checkout/${requestId}/reject`,
   },

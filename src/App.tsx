@@ -31,6 +31,7 @@ import ChatBox from "./components/ChatBox";
 import ChatBoxWrapper from "./wrapper/ChatBoxWrapper";
 import EnrolledStudentsPage from "./pages/teacher/EnrolledStudentsPage";
 import TeacherEnrolledStudentsPage from "./pages/teacher/TeacherEnrolledStudentsPage";
+import AdminUserManagementPage from "./pages/admin/AdminUserManagementPage";
 
 function App() {
   return (
@@ -51,7 +52,7 @@ function App() {
               path="/admin-dashboard/user"
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
-                  <UserListPage />
+                  <AdminUserManagementPage />
                 </ProtectedRoute>
               }
             />

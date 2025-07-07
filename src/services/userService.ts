@@ -55,5 +55,16 @@ export const userService = {
       console.error('Failed to fetch students by course:', error);
       throw new Error(error.response?.data?.message || "Failed to fetch students by course");
     }
+  },
+  async changeUserRole(userId: string, newRole: string) {
+    const response =  apiClient.patch(`/api/users/admin/${userId}/role`, { role: newRole });
+     console.log('response', response);
+     return response || [];
+  },
+  async updateUserInfo(userId: string, data: any) {
+    return apiClient.patch(`/api/users/admin/${userId}`, data);
+  },
+  async addTeacher(data: { name: string; email: string; password: string }) {
+    return apiClient.post(`/api/users/admin/add-teacher`, data);
   }
 };
