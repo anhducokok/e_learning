@@ -44,9 +44,12 @@ export const API_ENDPOINTS = {
     ADMIN_ALL: "/api/users/admin/all",
     ADMIN_TEACHERS: "/api/users/admin/teachers",
     ADMIN_STUDENTS: "/api/users/admin/students",
-    CHANGE_ROLE: (id: string) => `/api/users/${id}/role`,
+    CHANGE_ROLE: (id: string) => `/api/users/admin/${id}/role`,
     UPDATE_INFO: (id: string) => `/api/users/${id}`,
     ADD_TEACHER: "/api/users/admin/add-teacher",
+    // Enrollment management endpoints
+    ADMIN_USER_ENROLLMENTS: (userId: string) => `/api/users/admin/${userId}/enrollments`,
+    ADMIN_UPDATE_ENROLLMENT_DATE: (userId: string, courseId: string) => `/api/users/admin/${userId}/enrollments/${courseId}/date`,
   },
 
   // Courses endpoints
@@ -55,6 +58,16 @@ export const API_ENDPOINTS = {
     BY_ID: (id: string) => `/api/courses/${id}`,
     MY_COURSES: "/api/courses/my-courses",
     ENROLLED: "/api/courses/enrolled",
+    // Teacher-specific endpoints
+    BY_TEACHER: (teacherId: string) => `/api/courses/teacher/${teacherId}`,
+    TEACHER_STATISTICS: (teacherId: string) => `/api/courses/teacher/${teacherId}/statistics`,
+    MY_STATISTICS: "/api/courses/my-statistics",
+    // Admin endpoints
+    CREATE_WITH_TEACHER: "/api/courses/admin/create-with-teacher",
+    ASSIGN_TEACHER: (courseId: string) => `/api/courses/${courseId}/assign-teacher`,
+    // Thumbnail endpoints (URL-based)
+    UPDATE_THUMBNAIL: (courseId: string) => `/api/courses/${courseId}/thumbnail`,
+    DELETE_THUMBNAIL: (courseId: string) => `/api/courses/${courseId}/thumbnail`,
   },
   // Lessons endpoints
   LESSONS: {

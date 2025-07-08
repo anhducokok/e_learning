@@ -250,7 +250,7 @@ const LearningRoomPage: React.FC = () => {
                     <div className="bg-white rounded-xl shadow-md overflow-hidden flex flex-col md:flex-row" key={course.id}>
                       <div className="relative md:w-1/3">
                         <img 
-                          src={course.thumbnail || tralelaImage} 
+                          src={course.thumbnail || course.image || tralelaImage} 
                           alt={course.title} 
                           className="h-full w-full object-cover"
                           onError={(e) => {

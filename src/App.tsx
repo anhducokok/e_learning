@@ -32,6 +32,7 @@ import ChatBoxWrapper from "./wrapper/ChatBoxWrapper";
 import EnrolledStudentsPage from "./pages/teacher/EnrolledStudentsPage";
 // import TeacherEnrolledStudentsPage from "./pages/teacher/TeacherEnrolledStudentsPage";
 import AdminUserManagementPage from "./pages/admin/AdminUserManagementPage";
+import AdminCoursesPage from "./pages/admin/AdminCoursesPage";
 
 function App() {
   return (
@@ -69,6 +70,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminPaymentPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin-dashboard/courses"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminCoursesPage />
                 </ProtectedRoute>
               }
             />{" "}

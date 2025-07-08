@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { testAdminUserAPI } from '../../test-admin-api';
+// import { testAdminUserAPI } from '../../test-admin-api';
 
 const AdminAPITester: React.FC = () => {
   const [testing, setTesting] = useState(false);
@@ -12,8 +12,8 @@ const AdminAPITester: React.FC = () => {
     setResults(null);
     
     try {
-      const testResults = await testAdminUserAPI();
-      setResults(testResults);
+    //   const testResults = await testAdminUserAPI();
+    //   setResults(testResults);
     } catch (err: any) {
       setError(err.message || 'Test failed');
       console.error('Test error:', err);

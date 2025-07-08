@@ -3,7 +3,7 @@ import { userService } from "../../services/userService";
 import logoImage from "../../images/d1fe66745c26de30ce87421d08acff5f22ef002b.jpg"; // Adjust path if needed
 import DashboardHeader from "../../components/DashboardHeader";
 import AdminLayout from "../../components/admin/AdminLayout";
-import AdminAPITester from "../../components/admin/AdminAPITester";
+// import AdminAPITester from "../../components/admin/AdminAPITester";
 const AdminUserManagementPage: React.FC = () => {
   const [students, setStudents] = useState<any[]>([]);
   const [teachers, setTeachers] = useState<any[]>([]);
@@ -204,7 +204,6 @@ const AdminUserManagementPage: React.FC = () => {
 </main>
 </div>
 {/* Development API Tester */}
-<AdminAPITester />
 </AdminLayout>
   );
 };

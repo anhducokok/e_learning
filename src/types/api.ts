@@ -341,3 +341,25 @@ export interface PracticeFilterRequest {
   limit?: number;
 }
 
+export interface UserEnrollment {
+  id: string;
+  userId: string;
+  courseId: string;
+  enrolledAt: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+  course: {
+    id: string;
+    title: string;
+    description: string;
+    price: number;
+    instructor?: {
+      name: string;
+      email: string;
+    };
+  };
+}
+

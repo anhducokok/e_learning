@@ -5,6 +5,7 @@ import { StarIcon, UsersIcon } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
 type Course = {
+  thumbnail: string;
   id: string;
   title: string;
   description: string;
@@ -42,7 +43,7 @@ export default function CourseDetailPage() {
 
   useEffect(() => {
     const fetchCourse = async () => {
-      try {        const res = await fetch(`${API_BASE_URL}/courses/${id}`);
+      try {        const res = await fetch(`${API_BASE_URL}/api/courses/${id}`);
         const data = await res.json();
         setCourse(data.data);
       } catch (err) {
@@ -60,7 +61,7 @@ export default function CourseDetailPage() {
       try {
         const token = localStorage.getItem("auth_token");
         const res = await fetch(
-          `${API_BASE_URL}/courses/${course.id}/enrollment-status`,
+          `${API_BASE_URL}/api/courses/${course.id}/enrollment-status`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -150,11 +151,11 @@ export default function CourseDetailPage() {
       {/* Sidebar */}
       <div className="bg-white rounded-lg shadow-lg p-6 sticky top-24 space-y-4 h-fit">
         <img
-          src={course.image}
+          src={course.image || course.thumbnail }
           alt={course.title}
           className="w-full h-48 object-cover rounded-md"
           onError={(e) => {
-            e.currentTarget.src = "/images/default-course.jpg";
+            e.currentTarget.src = "/images/china_girl.jpg";
           }}
         />
 

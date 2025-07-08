@@ -6,4 +6,5 @@ export { lessonService } from './lessonService';
 export { quizService } from './quizService';
 export { practiceService } from './practiceService';
 export { scheduleService } from './scheduleService';
+export { userService} from './userService'
 export { apiClient } from './apiClient';
