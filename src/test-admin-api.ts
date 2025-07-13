@@ -35,7 +35,7 @@ export const testAdminUserAPI = async () => {
 };
 
 // Optional: Test other admin functions
-export const testAdminUserActions = async (testUserId?: string) => {
+export const testAdminUserActions = async () => {
   console.log('🔧 Testing Admin User Actions...');
   
   try {

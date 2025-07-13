@@ -31,7 +31,6 @@ const CourseManagementPage: React.FC = () => {
   const [editingCourse, setEditingCourse] = useState<CourseWithDetails | null>(
     null
   );
-  const [expandedCourseId, setExpandedCourseId] = useState<string | null>(null);
   const [studentsByCourse, setStudentsByCourse] = useState<{ [courseId: string]: any[] }>({});
   const [loadingStudents, setLoadingStudents] = useState<{ [courseId: string]: boolean }>({});
   const [errorStudents, setErrorStudents] = useState<{ [courseId: string]: string | null }>({});
@@ -163,51 +162,7 @@ const CourseManagementPage: React.FC = () => {
             }
           })
         );
-         const toggleStudentList = async (courseId: string) => {
-    if (expandedCourseId === courseId) {
-      setExpandedCourseId(null);
-      return;
-    }
-
-    setExpandedCourseId(courseId);
-    setLoadingStudents((prev) => ({ ...prev, [courseId]: true }));
-    setErrorStudents((prev) => ({ ...prev, [courseId]: null }));
-
-    try {
-      const students = await userService.getStudentsByCourse(courseId);
-      setStudentsByCourse((prev) => ({ ...prev, [courseId]: students }));
-    } catch (error) {
-      setErrorStudents((prev) => ({
-        ...prev,
-        [courseId]: (error && typeof error === "object" && "message" in error)
-          ? (error as { message?: string }).message || "Không thể tải danh sách học viên"
-          : "Không thể tải danh sách học viên",
-      }));
-    } finally {
-      setLoadingStudents((prev) => ({ ...prev, [courseId]: false }));
-    }
-  };
-
-  const handleToggleStudents = async (courseId: string) => {
-    if (expandedCourseId === courseId) {
-      setExpandedCourseId(null);
-      return;
-    }
-    setExpandedCourseId(courseId);
-    if (!studentsByCourse[courseId]) {
-      setLoadingStudents((prev) => ({ ...prev, [courseId]: true }));
-      setErrorStudents((prev) => ({ ...prev, [courseId]: null }));
-      try {
-        const students = await userService.getStudentsByCourse(courseId);
-        setStudentsByCourse((prev) => ({ ...prev, [courseId]: students }));
-      } catch (err: any) {
-        setErrorStudents((prev) => ({ ...prev, [courseId]: err.message || "Không thể tải danh sách học viên" }));
-      } finally {
-        setLoadingStudents((prev) => ({ ...prev, [courseId]: false }));
-      }
-    }
-  };
-
+        
         console.log('📊 [CourseManagement] Search - Final courses with details:', coursesWithDetails);
         setCourses(coursesWithDetails);
         setTotalPages(Math.ceil(coursesWithDetails.length / coursesPerPage));

@@ -143,9 +143,8 @@ export const userService = {
             enrollment.courseId === courseId
           );
           
-          // Add student info to each enrollment and ensure userId is set
+          // Add student info to each enrollment
           courseEnrollments.forEach((enrollment: any) => {
-            enrollment.userId = student.id; // Ensure userId is set
             enrollment.user = {
               id: student.id,
               name: student.name,
