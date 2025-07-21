@@ -293,14 +293,7 @@ const SchedulePage: React.FC = () => {
 
           <div className="flex items-center justify-between pt-4 border-t border-gray-100">
             <div className="flex items-center">
-              <img
-                src={session.instructor.avatar || '/images/default-avatar.jpg'}
-                alt={session.instructor.name}
-                className="w-8 h-8 rounded-full mr-2"
-                onError={(e) => {
-                  e.currentTarget.src = '/images/default-avatar.jpg';
-                }}
-              />
+              
               <div>
                 <p className="text-sm font-medium text-gray-900">{session.instructor.name}</p>
                 <p className="text-xs text-gray-500">Giảng viên</p>

@@ -24,6 +24,7 @@ const AdminCoursesPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'courses' | 'teachers'>('courses');
+  const [showEditDate, setShowEditDate] = useState(true);
 
   useEffect(() => {
     fetchCourses();
@@ -236,6 +237,24 @@ const AdminCoursesPage: React.FC = () => {
               <div className="bg-white rounded-lg shadow p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-semibold">Danh sách khóa học</h2>
+                  <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600" hidden>Sửa ngày:</span>
+                        <button
+                          onClick={() => setShowEditDate(! showEditDate)}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                            showEditDate ? 'bg-orange-600' : 'bg-gray-300'
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              showEditDate ? 'translate-x-6' : 'translate-x-1'
+                            }`}
+                          />
+                        </button>
+                        <span className={`text-xs font-medium ${showEditDate ? 'text-orange-600' : 'text-gray-400'}`} hidden>
+                          {showEditDate ? 'BẬT' : 'TẮT'}
+                        </span>
+                      </div>
                   <button 
                     onClick={fetchCourses} 
                     className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
@@ -267,9 +286,41 @@ const AdminCoursesPage: React.FC = () => {
 
               {/* Enrollments List */}
               <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl font-semibold mb-4">
-                  {selectedCourse ? `Sinh viên đăng ký: ${selectedCourse.title}` : 'Chọn khóa học để xem danh sách đăng ký'}
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold">
+                    {selectedCourse ? `Sinh viên đăng ký: ${selectedCourse.title}` : 'Chọn khóa học để xem danh sách đăng ký'}
+                  </h2>
+                  
+                  {selectedCourse && (
+                    <div className="flex items-center gap-3">
+                      {/* Toggle Switch for Edit Date */}
+                      {/* <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600" hidden>Sửa ngày:</span>
+                        <button
+                          onClick={() => setShowEditDate(!showEditDate)}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                            showEditDate ? 'bg-orange-600' : 'bg-gray-300'
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              showEditDate ? 'translate-x-6' : 'translate-x-1'
+                            }`}
+                          />
+                        </button>
+                        <span className={`text-xs font-medium ${showEditDate ? 'text-orange-600' : 'text-gray-400'}`}>
+                          {showEditDate ? 'BẬT' : 'TẮT'}
+                        </span>
+                      </div> */}
+                      <button 
+                        onClick={() => selectedCourse && fetchEnrollments(selectedCourse.id)} 
+                        className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+                      >
+                        Reload
+                      </button>
+                    </div>
+                  )}
+                </div>
                 
                 {selectedCourse && (
                   <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -318,7 +369,7 @@ const AdminCoursesPage: React.FC = () => {
                               )}
                             </div>
                             
-                            {editingEnrollment !== enrollment.id && (
+                            {editingEnrollment !== enrollment.id && showEditDate && (
                               <button
                                 onClick={() => handleEditEnrollment(enrollment)}
                                 className="bg-orange-500 text-white px-2 py-1 rounded text-sm hover:bg-orange-600"

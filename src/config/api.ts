@@ -27,6 +27,8 @@ export const API_ENDPOINTS = {
   AUTH: {
     REGISTER: "/api/auth/register",
     LOGIN: "/api/auth/login",
+    PROFILE: "/api/auth/profile",
+    UPDATE_PROFILE: "/api/auth/profile",
   },
 
   // Classes endpoints
@@ -39,6 +41,8 @@ export const API_ENDPOINTS = {
   USERS: {
     BASE: "/api/users",
     BY_ID: (id: string) => `/api/users/${id}`,
+    PROFILE: "/api/users/profile",
+    UPDATE_PROFILE: "/api/users/profile", 
     ENROLLED_IN_MY_COURSES: "/api/users/enrolled-in-my-courses",
     // Admin endpoints for user management
     ADMIN_ALL: "/api/users/admin/all",

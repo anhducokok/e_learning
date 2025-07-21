@@ -66,9 +66,21 @@ export const userService = {
       throw new Error(error.response?.data?.message || "Failed to change user role");
     }
   },
-  async updateUserInfo(userId: string, data: any) {
+  async updateUserInfo(_userId: string, data: any) {
     try {
-      const response = await apiClient.patch(API_ENDPOINTS.USERS.UPDATE_INFO(userId), data);
+      // Try users profile endpoint first
+      let response;
+      try {
+        response = await apiClient.patch(API_ENDPOINTS.USERS.UPDATE_PROFILE, data);
+      } catch (firstError: any) {
+        // If users profile endpoint fails, try auth profile endpoint
+        if (firstError.response?.status === 404) {
+          console.log('Users profile endpoint not found, trying auth profile endpoint...');
+          response = await apiClient.patch(API_ENDPOINTS.AUTH.UPDATE_PROFILE, data);
+        } else {
+          throw firstError;
+        }
+      }
       console.log('Update user info response:', response);
       return response;
     } catch (error: any) {
